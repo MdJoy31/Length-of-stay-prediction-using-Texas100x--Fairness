@@ -1,0 +1,38 @@
+{
+  "title": "Texas-100X Fairness Metrics Reliability Analysis",
+  "author": "Md Jannatul Rakib Joy",
+  "institution": "Swinburne University of Technology",
+  "timestamp": "2026-02-19T11:48:08.756629",
+  "research_question": "How reliable are fairness metrics in healthcare prediction models?",
+  "methodology": {
+    "fairness_metrics": [
+      "Demographic Parity",
+      "Equalized Odds",
+      "Equal Opportunity",
+      "Predictive Parity",
+      "Calibration"
+    ],
+    "stability_tests": [
+      "Bootstrap (B=1000)",
+      "Seed Sensitivity (S=50)",
+      "Threshold Sweep (\u03c4=99)"
+    ],
+    "protected_attributes": [
+      "RACE",
+      "ETHNICITY",
+      "SEX",
+      "AGE_GROUP"
+    ],
+    "ml_models": [
+      "Logistic Regression",
+      "Random Forest",
+      "Gradient Boosting",
+      "Neural Network"
+    ]
+  },
+  "key_findings": [
+    "Bootstrap analysis reveals significant uncertainty in fairness metric estimates",
+    "Random seed sensitivity shows metric stability varies by subgroup",
+    "Classification threshold significantly impacts fairness-performance trade-off"
+  ]
+}

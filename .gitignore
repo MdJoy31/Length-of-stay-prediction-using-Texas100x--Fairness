@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Data files (too large for git)
+data/*.p
+data/*.csv
+
+# Model files
+models/*.pkl
+models/*.joblib
+models/*.pt
+
+# Results (regeneratable)
+results/*.pkl
+processed_data/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Figures (regeneratable, but we keep them)
+# figures/
