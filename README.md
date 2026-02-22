@@ -1,176 +1,128 @@
-# 🏥 Texas-100X Fairness Metrics Reliability Analysis
+# Length-of-Stay Prediction & Fairness Metrics Reliability Analysis
+## Texas-100X Hospital Discharge Dataset
 
-## Q1 Journal Publication Project
-
-**Author:** Md Jannatul Rakib Joy  
-**Supervisors:** Dr. Caslon Chua, Dr. Viet Vo  
+**Author:** Md Rakibul Islam Joy
+**Supervisors:** Dr. Caslon Chua, Dr. Viet Vo
 **Institution:** Swinburne University of Technology
+**Program:** Masters by Research
 
 ---
 
-## 📋 Research Question
+## Research Question
 
-**"How reliable are fairness metrics when evaluating healthcare prediction models?"**
+**"How reliable are fairness metrics when evaluating healthcare prediction models across different data volumes, model architectures, and fairness interventions?"**
 
-This project tests whether standard fairness metrics produce consistent, trustworthy results across different experimental conditions in healthcare AI.
+## Key Results
+
+| Model | Accuracy | F1-Score | AUC-ROC |
+|-------|----------|----------|---------|
+| Logistic Regression | 0.802 | 0.784 | 0.884 |
+| Random Forest | 0.862 | 0.848 | 0.941 |
+| Gradient Boosting | 0.874 | 0.858 | 0.950 |
+| XGBoost (GPU) | 0.878 | 0.863 | 0.953 |
+| **LightGBM (GPU)** | **0.879** | **0.864** | **0.954** |
+| PyTorch DNN (GPU) | 0.857 | 0.843 | 0.938 |
+| **Stacking Ensemble** | **0.879** | **0.865** | **0.954** |
+
+**vs Reference Paper (Tarek et al. 2025):** F1 improved from 0.550 → 0.865 (+57%)
+
+### Fairness Results (RACE attribute)
+| Model | DI | WTPR | SPD | EOD |
+|-------|----|------|-----|-----|
+| Standard (LightGBM) | 0.64 | 0.84 | 0.08 | 0.07 |
+| Fair (λ=5.0 reweighing) | 0.68 | 0.81 | 0.07 | 0.05 |
 
 ---
 
-## 📁 Your Data Files
+## Project Structure
 
-You have the **FULL Texas-100X dataset** (925,128 records):
 ```
-./data/
-├── texas_100x.csv           (36 MB)  ← Main dataset
-├── texas_100x_features.p    (79 MB)  ← Preprocessed features
-├── texas_100x_labels.p      (7 MB)   ← Labels
-└── texas_100x_feature_desc.p (51 KB) ← Feature descriptions
+├── LOS_Prediction_Standard.ipynb     # Clean notebook (standard comments)
+├── LOS_Prediction_Detailed.ipynb     # Detailed notebook (extensive explanations)
+├── Fairness_Analysis_Complete.ipynb   # Original analysis notebook
+├── README.md
+│
+├── data/
+│   ├── texas_100x.csv                # Main dataset (925,128 records)
+│   ├── texas_100x_features.p
+│   ├── texas_100x_labels.p
+│   └── texas_100x_feature_desc.p
+│
+├── presentation/
+│   ├── weekly_review.md              # Supervisor presentation content
+│   └── weekly_review.pptx            # PowerPoint (7 slides)
+│
+├── scripts/                          # Pipeline scripts
+│   ├── run_all.py
+│   ├── script1_data_preprocessing.py
+│   ├── script2_model_training.py
+│   ├── script3_fairness_metrics.py
+│   ├── script4a_bootstrap_stability.py
+│   ├── script4b_sample_size.py
+│   ├── script4c_cross_hospital.py
+│   ├── script4d_seed_sensitivity.py
+│   ├── script4e_threshold_sweep.py
+│   └── script5_final_report.py
+│
+├── figures/                          # Generated plots
+├── results/                          # Saved model results
+└── report/                           # Generated reports
 ```
 
 ---
 
-## 🔬 Complete Testing Framework
+## Dataset
 
-### 5 Fairness Metrics
-| # | Metric | What It Tests |
-|---|--------|---------------|
-| 1 | Demographic Parity | Equal selection rates |
-| 2 | Equalized Odds | Equal TPR + FPR |
-| 3 | Equal Opportunity | Equal TPR (sensitivity) |
-| 4 | Predictive Parity | Equal precision |
-| 5 | Calibration (ECE) | Probability accuracy |
+**Texas-100X Hospital Discharge Data**
+- 925,128 patient records from Texas hospitals
+- 12 features including demographics, diagnosis, procedure codes
+- Binary target: Length of Stay > 3 days (Extended Stay)
+- ~55% Normal / ~45% Extended (balanced)
 
-### 5 Stability Tests
-| # | Test | Parameters | What It Measures |
-|---|------|------------|------------------|
-| 1 | Bootstrap | B=1,000 | Sampling uncertainty |
-| 2 | Sample Size | N=10K→Full | Data requirement |
-| 3 | Cross-Hospital | K=50 folds | Site heterogeneity |
-| 4 | Seed Sensitivity | S=50 | Split variance |
-| 5 | Threshold Sweep | τ=99 | Threshold sensitivity |
+## Models
 
-### 4 Protected Attributes (13 Subgroups)
-- **RACE:** White, Black, Hispanic, Asian, Other
-- **ETHNICITY:** Hispanic, Non-Hispanic
-- **SEX:** Male, Female
-- **AGE_GROUP:** Pediatric, Adult, Middle-aged, Elderly
+- **6 ML models:** LR, RF, GB, XGBoost (GPU), LightGBM (GPU), PyTorch DNN (GPU)
+- **Stacking Ensemble:** 5-fold OOF with LGB+XGB+HistGB base → meta-learner
+- **Hyperparameters:** Optimized via 50-agent parallel search
 
-### 4 ML Models
-- Logistic Regression
-- Random Forest
-- Gradient Boosting
-- Neural Network
+## Feature Engineering
 
----
+- **Target encoding** with Bayesian smoothing for diagnosis, procedure, hospital
+- **Hospital-level features** (+3.3% F1 improvement)
+- **Interaction features** (age×charges, diagnosis×procedure, etc.)
+- **35+ engineered features** from 12 original columns
 
-## 🚀 How to Run
+## Fairness Analysis
 
-### Option 1: Run Everything
+- **6 metrics:** Disparate Impact, WTPR, SPD, EOD, PPV Ratio, Equalized Odds
+- **4 protected attributes:** Race, Ethnicity, Sex, Age Group
+- **9-size subset stability:** 1K, 2K, 5K, 10K, 25K, 50K, 100K, 200K, Full
+- **Lambda-reweighing:** Improves DI by ~6% with only ~1% F1 cost
+
+## How to Run
+
+### Notebooks (Recommended)
+Open either notebook in VS Code or Jupyter:
+- `LOS_Prediction_Standard.ipynb` — Clean, professional analysis
+- `LOS_Prediction_Detailed.ipynb` — Detailed with extensive explanations
+
+### Requirements
 ```bash
-cd scripts
-python run_all.py
+pip install numpy pandas scikit-learn xgboost lightgbm torch matplotlib seaborn tqdm
 ```
 
-### Option 2: Run Step by Step
-```bash
-python script1_data_preprocessing.py     # ~2 min
-python script2_model_training.py         # ~10 min
-python script3_fairness_metrics.py       # ~5 min
-python script4a_bootstrap_stability.py   # ~2 hours
-python script4b_sample_size.py           # ~1 hour
-python script4c_cross_hospital.py        # ~2 hours
-python script4d_seed_sensitivity.py      # ~2 hours
-python script4e_threshold_sweep.py       # ~30 min
-python script5_final_report.py           # ~5 min
-```
-
-**Total Runtime: ~8-10 hours** (run overnight)
+### Hardware
+- GPU recommended (NVIDIA RTX series)
+- ~8GB VRAM for GPU-accelerated training
+- ~16GB RAM for dataset processing
 
 ---
 
-## 📊 Output Files
+## Reference
 
-After completion:
-```
-./figures/
-├── fairness_metrics_*.png (4 per attribute)
-├── fairness_disparity_heatmap.png
-├── bootstrap_ci_forest_plot.png
-├── sample_size_convergence.png
-├── cross_hospital_boxplot.png
-├── seed_sensitivity_violin.png
-├── threshold_sweep_*.png
-└── final_dashboard.png
+Tarek et al. (2025) — "Reliability of Fairness Metrics under Synthetic Augmentation" (CHASE '25)
 
-./tables/
-├── fairness_metrics_by_subgroup.csv
-├── bootstrap_confidence_intervals.csv
-├── sample_size_convergence.csv
-├── cross_hospital_heterogeneity.csv
-├── seed_sensitivity_statistics.csv
-└── comprehensive_comparison.csv
+## Contact
 
-./results/
-├── fairness_results.pkl
-├── bootstrap_*.pkl
-├── sample_size_*.pkl
-├── cross_hospital_*.pkl
-├── seed_*.pkl
-└── threshold_*.pkl
-```
-
----
-
-## 🤖 FIRST PROMPT FOR YOUR AGENT
-
-Copy and paste this to start:
-
-```
-I'm starting a fairness analysis project on the Texas-100X hospital discharge dataset.
-
-DATA FILES (in ./data/):
-- texas_100x.csv (36 MB, 925K records) - main dataset
-- texas_100x_features.p - preprocessed features
-- texas_100x_labels.p - labels
-- texas_100x_feature_desc.p - feature descriptions
-
-RESEARCH QUESTION: How reliable are fairness metrics in healthcare prediction models?
-
-TASK: Length of Stay prediction (LOS > 3 days = Extended Stay)
-
-PROTECTED ATTRIBUTES: RACE, SEX, ETHNICITY, AGE
-
-Please:
-1. First, explore the data files to understand their structure
-2. Then run script1_data_preprocessing.py to start the pipeline
-3. Show me the data summary and what protected attributes were found
-
-The scripts are in ./scripts/ folder.
-```
-
----
-
-## 📈 Expected Results
-
-This analysis will produce:
-- **~1.4 million** individual fairness measurements
-- **95% confidence intervals** for all metrics
-- **Heterogeneity statistics** (I²) across hospitals
-- **Convergence curves** showing data requirements
-- **Publication-ready figures** for Q1 journal submission
-
----
-
-## 🎯 Target Venues
-
-- FAccT (ACM Fairness, Accountability, Transparency)
-- CHIL (Conference on Health, Inference, Learning)
-- Nature Machine Intelligence
-- JAMIA
-
----
-
-## 📧 Contact
-
-Md Jannatul Rakib Joy  
+Md Rakibul Islam Joy
 Swinburne University of Technology

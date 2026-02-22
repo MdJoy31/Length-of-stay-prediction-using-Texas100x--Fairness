@@ -38,5 +38,14 @@ Thumbs.db
 # Jupyter
 .ipynb_checkpoints/
 
+# Temporary experiment files
+boost_results*.txt
+boost_accuracy*.py
+generate_notebooks.py
+optimize_50_agents.py
+rerun_failed.py
+find_cell.py
+agent_results/
+
 # Figures (regeneratable, but we keep them)
 # figures/
