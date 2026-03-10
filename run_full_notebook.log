@@ -1,0 +1,11 @@
+2026-03-06 21:28:54,907  Starting execution of RQ1_LOS_Fairness_Complete.ipynb
+2026-03-06 21:28:54,907  Python: D:\Research study\Research question ML\fairness_project_v2\fairness_project_v1\.venv\Scripts\python.exe
+2026-03-06 21:28:54,907  CWD:    D:\Research study\Research question ML\fairness_project_v2\fairness_project_v1
+2026-03-06 21:28:55,433  Total cells: 107, Code cells: 69
+2026-03-06 21:28:55,434  Launching kernel and executing all cells...
+2026-03-06 22:48:41,067  ALL CELLS EXECUTED SUCCESSFULLY in 79.8 minutes
+2026-03-06 22:48:41,228  Notebook saved to RQ1_LOS_Fairness_Complete.ipynb
+2026-03-06 22:48:41,229  Code cells with output: 69/69
+2026-03-06 22:48:41,229  Code cells with images: 42
+2026-03-06 22:48:41,229  Total time: 79.8 minutes
+2026-03-06 22:48:41,229  Done.

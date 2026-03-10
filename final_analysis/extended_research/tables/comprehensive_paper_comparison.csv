@@ -1,0 +1,9 @@
+Study,Year,Dataset,N,Task,Best Model,Accuracy,AUC,F1,Fairness,DI(Race)
+Our Study (Texas-100X),2024,Texas PUDF,"925,128",LOS > 3 days,Gradient Boosting,0.749,0.836,0.740,Yes,0.596
+Jain et al. (2024) - BMC,2024,SPARCS (NY),"2,300,000",LOS (multi-class),CatBoost,0.601,0.784,-,No,-
+Tarek et al. (2025) - CHASE,2025,"MIMIC-III, PIC","46,520",Mortality,DL + FO Synthetic,-,-,0.500,Yes,0.950
+Almeida et al. (2024) - AppSci,2024,Review (12 studies),Review,LOS (review),XGBoost,0.947,-,-,No,-
+Zeleke et al. (2023) - Frontiers,2023,Bologna Hospital,"12,858",LOS > 6 days,Gradient Boosting,0.754,0.754,0.730,No,-
+Poulain et al. (2023) - FAccT,2023,"MIMIC-III, eICU","50,000",Mortality,FairFedAvg (GRU),0.766,-,-,Yes,-
+Mekhaldi et al. (2021) - JISE,2021,Microsoft Open,"100,000",LOS (regression),GBM,-,-,-,No,-
+Jaotombo et al. (2023) - JMAHP,2023,French PMSI,"73,182",LOS > 14 days,Gradient Boosting,-,0.810,-,No,-

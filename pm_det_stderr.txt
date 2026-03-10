@@ -1,0 +1,235 @@
+Input Notebook:  LOS_Prediction_Detailed.ipynb
+Output Notebook: LOS_Prediction_Detailed.ipynb
+Executing:   0%|          | 0/96 [00:00<?, ?cell/s]Executing notebook with kernel: fairness_env
+Executing Cell 1---------------------------------------
+Ending Cell 1------------------------------------------
+Executing:   1%|1         | 1/96 [00:01<01:35,  1.01s/cell]Executing Cell 2---------------------------------------
+Ending Cell 2------------------------------------------
+Executing Cell 3---------------------------------------
+\u2705 All libraries loaded!
+   NumPy 2.4.2 | Pandas 3.0.1
+   XGBoost 3.2.0 | LightGBM 4.6.0
+   PyTorch 2.10.0+cu128
+
+Ending Cell 3------------------------------------------
+Executing:   3%|3         | 3/96 [00:03<01:42,  1.10s/cell]Executing Cell 4---------------------------------------
+Ending Cell 4------------------------------------------
+Executing Cell 5---------------------------------------
+============================================================
+\U0001f5a5\ufe0f  GPU STATUS REPORT
+============================================================
+  \u2705 GPU Found: NVIDIA GeForce RTX 5070 Laptop GPU
+  \u2705 VRAM: 8.5 GB
+  \u2705 CUDA Version: 12.8
+  \u2705 GPU Matmul (5000x5000): 72.2ms
+============================================================
+
+Ending Cell 5------------------------------------------
+Executing:   5%|5         | 5/96 [00:03<00:53,  1.71cell/s]Executing Cell 6---------------------------------------
+Ending Cell 6------------------------------------------
+Executing Cell 7---------------------------------------
+\U0001f4ca Dataset Shape: 925,128 rows × 12 columns
+   Memory: 88.8 MB
+
+
+   THCIC_ID  SEX_CODE  TYPE_OF_ADMISSION  SOURCE_OF_ADMISSION  LENGTH_OF_STAY  \
+0       102         1                  0                    7              12   
+1       102         1                  0                    7              38   
+2       102         0                  0                    7               3   
+3       102         0                  0                    7              15   
+4       102         0                  2                    1              12   
+5       102         0                  2                    1              13   
+6       102         0                  0                    7              59   
+7       102         0                  2                    9              11   
+8       102         0                  2                    2              12   
+9       102         0                  0                    6              15   
+
+   PAT_AGE  PAT_STATUS  RACE  ETHNICITY  TOTAL_CHARGES  ADMITTING_DIAGNOSIS  \
+0       15           9     2          1       57239.53                  414   
+1       12           0     2          1       74721.31                  858   
+2       16           0     2          1       34401.88                 4333   
+3       15           0     3          0       60229.40                  463   
+4       12           0     3          0       49780.73                  859   
+5       12           0     3          1       42970.17                  853   
+6        9           0     3          1      369079.35                 4214   
+7       10           0     3          0       39781.71                  853   
+8       18           2     3          1       51974.09                  859   
+9        7           0     3          0      106545.98                 1859   
+
+   PRINC_SURG_PROC_CODE  
+0                     2  
+1                     2  
+2                     2  
+3                     2  
+4                     2  
+5                     2  
+6                     2  
+7                     2  
+8                     2  
+9                     2  
+Ending Cell 7------------------------------------------
+Executing:   7%|7         | 7/96 [00:03<00:38,  2.34cell/s]Executing Cell 8---------------------------------------
+Ending Cell 8------------------------------------------
+Executing Cell 9---------------------------------------
+\U0001f4cb Column Summary:
+----------------------------------------------------------------------
+  THCIC_ID                       | unique:    441 | nulls: 0 | int64
+  SEX_CODE                       | unique:      2 | nulls: 0 | int64
+  TYPE_OF_ADMISSION              | unique:      5 | nulls: 0 | int64
+  SOURCE_OF_ADMISSION            | unique:     10 | nulls: 0 | int64
+  LENGTH_OF_STAY                 | unique:    221 | nulls: 0 | int64
+  PAT_AGE                        | unique:     22 | nulls: 0 | int64
+  PAT_STATUS                     | unique:     23 | nulls: 0 | int64
+  RACE                           | unique:      5 | nulls: 0 | int64
+  ETHNICITY                      | unique:      2 | nulls: 0 | int64
+  TOTAL_CHARGES                  | unique: 662,833 | nulls: 0 | float64
+  ADMITTING_DIAGNOSIS            | unique:  5,225 | nulls: 0 | int64
+  PRINC_SURG_PROC_CODE           | unique:    100 | nulls: 0 | int64
+
+\U0001f4ca Target: LENGTH_OF_STAY (will binarize at >3 days)
+   Mean LOS: 5.35 days
+   Median LOS: 3 days
+
+Ending Cell 9------------------------------------------
+Executing:   9%|9         | 9/96 [00:04<00:25,  3.46cell/s]Executing Cell 10--------------------------------------
+Ending Cell 10-----------------------------------------
+Executing Cell 11--------------------------------------
+<Figure size 2160x1200 with 6 Axes>
+
+\U0001f4ca Binary Target: Normal=508,401 (55.0%) | Extended=416,727 (45.0%)
+
+Ending Cell 11-----------------------------------------
+Executing:  11%|#1        | 11/96 [00:04<00:27,  3.06cell/s]Executing Cell 12--------------------------------------
+Ending Cell 12-----------------------------------------
+Executing Cell 13--------------------------------------
+<Figure size 1920x600 with 2 Axes>
+Ending Cell 13-----------------------------------------
+Executing:  14%|#3        | 13/96 [00:05<00:21,  3.83cell/s]Executing Cell 14--------------------------------------
+Ending Cell 14-----------------------------------------
+Executing Cell 15--------------------------------------
+\u2705 Protected Attributes (NOT used as model features):
+   RACE: 5 groups \u2192 ['Asian/PI', 'Black', 'Hispanic', 'Other/Unknown', 'White']
+   ETHNICITY: 2 groups \u2192 ['Hispanic', 'Non-Hispanic']
+   SEX: 2 groups \u2192 ['Female', 'Male']
+   AGE_GROUP: 5 groups \u2192 ['Elderly (65+)', 'Middle-aged (45-64)', 'Pediatric (0-17)', 'Unknown', 'Young Adult (18-44)']
+   Hospitals: 441 unique
+
+Ending Cell 15-----------------------------------------
+Executing:  16%|#5        | 15/96 [00:05<00:21,  3.81cell/s]Executing Cell 16--------------------------------------
+Ending Cell 16-----------------------------------------
+Executing Cell 17--------------------------------------
+\u2705 Train/Test Split:
+   Training: 740,102 samples (45.0% positive)
+   Testing:  185,026 samples (45.0% positive)
+
+Ending Cell 17-----------------------------------------
+Executing:  18%|#7        | 17/96 [00:05<00:18,  4.27cell/s]Executing Cell 18--------------------------------------
+Ending Cell 18-----------------------------------------
+Executing Cell 19--------------------------------------
+\u2705 Target Encoding Complete (with Hospital + Interaction features):
+
+   DIAG_TARGET range: [0.011, 0.970]
+   PROC_TARGET range: [0.022, 0.987]
+   HOSP_TARGET range: [0.022, 0.982]
+   PS_TARGET range:   [0.338, 0.931]
+   Unique diagnoses: 5,225
+   Unique procedures: 100
+   Unique hospitals: 441
+   Interaction features: AGE_CHARGE, DIAG_PROC, AGE_DIAG, HOSP_DIAG, HOSP_PROC
+
+Ending Cell 19-----------------------------------------
+Executing:  20%|#9        | 19/96 [00:06<00:14,  5.18cell/s]Executing Cell 20--------------------------------------
+Ending Cell 20-----------------------------------------
+Executing Cell 21--------------------------------------
+\u2705 One-Hot Encoding: 15 dummy columns
+   TYPE_OF_ADMISSION_0
+   TYPE_OF_ADMISSION_1
+   TYPE_OF_ADMISSION_2
+   TYPE_OF_ADMISSION_3
+   TYPE_OF_ADMISSION_4
+   SOURCE_OF_ADMISSION_0
+   SOURCE_OF_ADMISSION_1
+   SOURCE_OF_ADMISSION_2
+   SOURCE_OF_ADMISSION_3
+   SOURCE_OF_ADMISSION_4
+   SOURCE_OF_ADMISSION_5
+   SOURCE_OF_ADMISSION_6
+   SOURCE_OF_ADMISSION_7
+   SOURCE_OF_ADMISSION_8
+   SOURCE_OF_ADMISSION_9
+
+Ending Cell 21-----------------------------------------
+Executing:  22%|##1       | 21/96 [00:06<00:11,  6.57cell/s]Executing Cell 22--------------------------------------
+Ending Cell 22-----------------------------------------
+Executing Cell 23--------------------------------------
+\u2705 Final Feature Matrix: 31 features (up from 22 \u2192 31)
+   Training: (740102, 31)
+   Testing:  (185026, 31)
+
+\U0001f4ca Feature groups:
+   Base numeric:   PAT_AGE, TOTAL_CHARGES, PAT_STATUS
+   Target-encoded: DIAG_TARGET/FREQ, PROC_TARGET/FREQ (diagnosis/procedure codes)
+   Hospital:       HOSP_TARGET, HOSP_FREQ, HOSP_SIZE (hospital-level encoding)
+   PS encoding:    PS_TARGET (patient status target encoding)
+   Interactions:   AGE_CHARGE, DIAG_PROC, AGE_DIAG, HOSP_DIAG, HOSP_PROC
+   One-hot:        TYPE_OF_ADMISSION (5) + SOURCE_OF_ADMISSION (10)
+
+Ending Cell 23-----------------------------------------
+Executing:  24%|##3       | 23/96 [00:06<00:12,  5.63cell/s]Executing Cell 24--------------------------------------
+Ending Cell 24-----------------------------------------
+Executing Cell 25--------------------------------------
+\u2705 Model Configurations (Hyperparameters optimized via 50-agent search):
+   \U0001f4bb CPU Logistic_Regression
+   \U0001f4bb CPU Random_Forest
+   \U0001f4bb CPU Gradient_Boosting
+   \U0001f5a5\ufe0f GPU XGBoost_GPU
+   \U0001f5a5\ufe0f GPU LightGBM_GPU
+   \U0001f5a5\ufe0f GPU PyTorch_DNN (defined separately)
+
+Ending Cell 25-----------------------------------------
+Executing Cell 26--------------------------------------
+Ending Cell 26-----------------------------------------
+Executing Cell 27--------------------------------------
+================================================================================
+\U0001f680 MODEL TRAINING
+================================================================================
+
+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+  \U0001f527 Training: Logistic Regression
+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+
+  \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510
+  \u2502 Metric               \u2502      Train \u2502       Test \u2502      Gap \u2502
+  \u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524
+  \u2502 Accuracy             \u2502     0.8028 \u2502     0.8021 \u2502  +0.0007 \u2502
+  \u2502 AUC-ROC              \u2502     0.8847 \u2502     0.8840 \u2502  +0.0007 \u2502
+  \u2502 F1-Score             \u2502          — \u2502     0.7844 \u2502          \u2502
+  \u2502 Precision            \u2502          — \u2502     0.7701 \u2502          \u2502
+  \u2502 Recall               \u2502          — \u2502     0.7992 \u2502          \u2502
+  \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518
+  \u23f1 Training time: 1.1s
+
+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+  \U0001f527 Training: Random Forest
+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+
+  \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510
+  \u2502 Metric               \u2502      Train \u2502       Test \u2502      Gap \u2502
+  \u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524
+  \u2502 Accuracy             \u2502     0.9238 \u2502     0.8624 \u2502  +0.0614 \u2502
+  \u2502 AUC-ROC              \u2502     0.9813 \u2502     0.9410 \u2502  +0.0404 \u2502
+  \u2502 F1-Score             \u2502          — \u2502     0.8478 \u2502          \u2502
+  \u2502 Precision            \u2502          — \u2502     0.8449 \u2502          \u2502
+  \u2502 Recall               \u2502          — \u2502     0.8508 \u2502          \u2502
+  \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518
+  \u23f1 Training time: 83.1s
+
+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+  \U0001f527 Training: Gradient Boosting
+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+
+forrtl: error (200): program aborting due to window-CLOSE event
+Image              PC                Routine            Line        Source             
+KERNELBASE.dll     00007FFB2185D64D  Unknown               Unknown  Unknown
+KERNEL32.DLL       00007FFB2354E8D7  Unknown               Unknown  Unknown
+ntdll.dll          00007FFB24E0C40C  Unknown               Unknown  Unknown

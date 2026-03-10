@@ -1,0 +1,2885 @@
+
+====================================================================================================
+FILE: 12913_2024_Article_11238.pdf
+====================================================================================================
+
+--- RESULTS SECTION (found 'results' at 35096) ---
+er  researchers  to  rep-
+licate  our  study  and  provide  benchmarks  for  future 
+improvements.
+
+Results
+In  this  section  we  present  the  results  of  applying  the 
+techniques in the Methods section.
+
+Descriptive statistics
+
+We  provide  descriptive  statistics  that  help  the  reader 
+understand the distributions of the variables of interest.
+
+Table  1  summarizes  basic  statistical  properties  of  the 
+
+LoS variable.
+
+Figure 5 shows the distribution of the LoS variable for 
+
+newborns.
+
+Table 2 shows the top 20 APR DRG descriptions based 
+
+on their frequency of occurrence in the dataset.
+
+Figure 6 shows the distribution of the LoS variable for 
+the top 20 most frequently occurring APR DRG descrip-
+tions shown in Table 2.
+
+Feature encoding
+
+We  experimented  with  different  encoding  schemes 
+for  the  categorical  variables  and  for  each  encoding  we 
+examined  different  regression  techniques.  Our  results 
+are  shown  in  Table  3.  We  experimented  with  the  three 
+encoding  schemes  shown  in  the  first  column.  The  last 
+row in the table shows a combination of one-hot encod-
+ing  and  target  encoding,  where  the  number  of  columns 
+in  the  dataset  are  increased  to  accommodate  one-hot 
+encoded feature values for categorical variables.
+
+Feature importance, selection and feature engineering
+
+We  obtained  the  SHAP  plots  using  a  Random  Forest 
+Regressor trained with target-encoded features.
+
+Figures  7  and  8  show  the  SHAP  values  plots  obtained 
+for  the  features  in  the  newborn  partition  of  the  dataset. 
+We find that the features, "APR DRG Code", "APR Sever-
+ity of Illness Code", "Patient Disposition", "CCS Procedure 
+Code", are very useful in predicting the LoS. For instance, 
+high  feature  values  for  "APR  Severity  of  Illness  Code", 
+which  are  encoded  by  red  dots  have  higher  SHAP  val-
+ues than the blue dots, which correspond to low feature 
+values.
+
+A similar interpretation can be applied to the features 
+in  the  non-newborn  partition  of  the  dataset.  We  note 
+that "Operating Certificate Number" is among the top-10 
+most  important  features  in  both  the  newborn  and  non-
+newborn partitions. This finding is discussed in the Dis-
+cussion section.
+
+Table 1  Descriptive statistics regarding the LoS variable
+
+Mean
+
+std. deviation
+
+Minimum
+
+25th percentile
+
+50th percentile
+
+75th percentile
+
+Maximum
+
+5.41
+
+7.97
+
+1
+
+2
+
+3
+
+6
+
+120
+
+ Jain et al. BMC Health Services Research          (2024) 24:860 
+
+Page 10 of 29
+
+Fig. 5  This figure depicts the distribution of the LoS variable for newborns
+
+Table 2  This table depicts the frequency of occurrence of the 
+top 20 APR DRG descriptions in the dataset
+
+APR DRG Description
+
+Neonate birthwt > 2499 g, normal newborn or neonate w 
+other problem
+
+Vaginal delivery
+
+Septicemia & disseminated infections
+
+Cesarean delivery
+
+Heart failure
+
+Other pneumonia
+
+Knee joint replacement
+
+Chronic obstructive pulmonary disease
+
+Schizophrenia
+
+Cellulitis & other skin infections
+
+Hip joint replacement
+
+Cardiac arrhythmia & conduction disorders
+
+Kidney & urinary tract infections
+
+RENAL FAILURE
+
+CVA & precerebral occlusion w infarct
+
+Bipolar disorders
+
+Seizure
+
+Major depressive disorders & other/unspecified psychoses
+
+Percutaneous coronary intervention w/o AMI
+
+Alcohol abuse & dependence
+
+Frequency
+
+195,238
+
+142,275
+
+93,349
+
+74,561
+
+56,708
+
+40,890
+
+39,824
+
+38,023
+
+36,329
+
+33,235
+
+32,888
+
+32,472
+
+29,801
+
+29,118
+
+25,731
+
+25,429
+
+25,290
+
+23,541
+
+22,261
+
+22,151
+
+From  Fig.  9,  we  observe  that  as  the  severity  of  ill-
+ness  code  increases  from  1-4,  there  is  a  corresponding 
+increase in the SHAP values.
+
+To  further  understand  the  relationship  between  the 
+APR  Severity  of  Illness  code  and  the  LoS,  we  created 
+the  plot  in  Fig.  10.  This  shows  that  the  most  frequently 
+occurring APR Severity of Illness code is 1 (Minor), and 
+that the most frequently occurring LoS is 2 days. We pro-
+vide this 2-D projection of the overall distribution of the 
+multi-dimensional  data  as  a  way  of  understanding  the 
+relationship  between  the  input  features  and  the  target 
+variable, LoS.
+
+Similarly,  Fig.  11  shows  the  relationship  between  the 
+birth  weight  and  the  length  of  stay.  The  most  common 
+length of stay is two days.
+
+Classification
+
+We  obtained  a  classification  accuracy  of  46.98%  using 
+Multinomial  Logistic  Regression  with  tenfold  cross-
+validation  in  the  5-class  classification  task  for  non-new-
+born  cases.  The  confusion  matrix  in  Fig.  12  shows  that 
+the  highest  density  of  correctly  classified  samples  is  in 
+or  close  to  the  diagonal  region.  The  regions  where  out 
+model  fails  occurs  between  adjacent  classes  as  can  be 
+inferred from the given confusion matrix.
+
+For  the  newborn  cases,  we  obtained  a  classification 
+accuracy  of  60.08%  using  Random  Forest  Classification 
+model with tenfold cross-validation in the 5-class classi-
+fication task. The confusion matrix in Fig. 13 shows that 
+the majority of data samp
+
+--- CONCLUSION SECTION (found 'conclusion' at 80176) ---
+h-level view of 
+the  operation  of  the  healthcare  system,  which  provides 
+valuable insights.
+
+Conclusion
+There  is  growing  interest  in  using  data  analytics  to 
+increase  government  transparency  and  inform  policy-
+making.  It  is  expected  that  the  meaning  and  insights 
+gained  from  such  evidence-based  analysis  will  translate 
+to better policies and optimal usage of the available infra-
+structure.  This  requires  cooperation  between  computer 
+scientists,  domain  experts,  and  policy  makers.  Open 
+healthcare  data  is  especially  valuable  in  this  context 
+due to its economic significance. This paper presents an 
+open-source analytics system to conduct evidence-based 
+analysis on openly available healthcare data.
+
+The  goal  is  to  develop  interpretable  machine  learning 
+models that identify key drivers and make accurate pre-
+dictions related to healthcare costs and utilization. Such 
+models  can  provide  actionable  insights  to  guide  health-
+care  administrators  and  policy  makers.  A  specific  illus-
+tration is provided via a robust machine learning pipeline 
+that  predicts  hospital  length  of  stay  across  285  disease 
+categories  based  on  2.3  million  de-identified  patient 
+records. The length of stay is directly related to costs.
+
+We focused on the interpretability and explainability of 
+input features and the resulting models. Hence, we devel-
+oped  separate  models  for  newborns  and  non-newborns, 
+given  differences  in  input  features.  The  best  performing 
+
+Jain et al. BMC Health Services Research          (2024) 24:860 
+
+Page 27 of 29
+
+model  for  non-newborn  data  was  catboost  regression, 
+which  used  linear  regression  and  achieved  an   R2  score 
+of  0.43.  The  best  performing  model  for  newborns  and 
+non-newborns  respectively  was  linear  regression,  which 
+achieved  an   R2  score  of  0.82.  Key  newborn  predictors 
+included  birth  weight,  while  non-newborn  models  relied 
+heavily on the diagnostic related group classification. This 
+demonstrates  model  interpretability,  which  is  important 
+for  adoption.  There  is  an  opportunity  to  further  improve 
+performance for specific diseases. If we restrict our analy-
+sis  to  cardiovascular  disease,  we  obtain  an  improved   R2 
+score of 0.62.
+
+The  presented  approach  has  several  desirable  quali-
+ties. Firstly, transparency and reproducibility are enabled 
+through  the  open-source  methodology.  Secondly,  the 
+model  generalizability  facilitates  insights  across  numer-
+ous  disease  states.  Thirdly,  the  technical  framework  can 
+easily  integrate  new  data  while  allowing  modular  exten-
+sions  by  the  research  community.  Lastly,  the  evidence 
+generated  can  readily  inform  multiple  key  stakeholders 
+including  healthcare  administrators  planning  capacity, 
+policy  makers  optimizing  delivery,  and  patients  making 
+medical decisions.
+
+Supplementary Information
+The online version contains supplementary material available at https:// doi. 
+org/ 10. 1186/ s12913- 024
+
+--- LINES WITH METRIC VALUES ---
+  The best  R2 scores achieved are noteworthy: 0.82 for newborns using linear regression and 0.43 for non-newborns
+  R2 score of 0.62. The models not only demonstrate high performance but also provide understandable insights.
+  Fig. 16  Scatter plot showing an instance of a linear regression fit to the data (newborns). The  R2 score is 0.82. The blue line represents an exact fit,
+  Fig. 21  A random forest tree that represents a best-fit model to the data for newborns. With 4 levels of the decision tree, the  R2 score is 0.65
+  other heart disease", we obtain a good  R2 Score of 0.62.
+  with an average AUC of 0.7844. We also note that there
+  achieved  an   R2  score  of  0.82.  Key  newborn  predictors
+
+
+====================================================================================================
+FILE: 3721201.3721373.pdf
+====================================================================================================
+
+--- RESULTS SECTION (found 'results' at 36028) ---
+5)
+.26(.04)
+.26(.04)
+
+.45(.02)
+.49(.01)
+.46(.02)
+
+.48(.04)
+.50(.03)
+.49(.01)
+
+(a) MIMIC-III Dataset Results
+
+Sample Size
+
+Disparate Impact (closer to 1 is better)
+
+WTPR↑
+
+F1-Score↑
+
+Real
+
+Synth R
+
+R+Over
+
+R+Synth R+FairSynth R
+
+R+Over R+Synth R+FairSynth R
+
+R+Over R+Synth R+FairSynth
+
+1,000
+2,500
+5,000
+
+2,500
+2,500
+2,500
+
+2,500
+2,500
+2,500
+
+500
+1,000
+2,000
+
+.87(.51)
+.98(.05)
+.76(.77)
+
+-
+-
+-
+
+1.41(.81)
+.39(.49)
+.95(.18)
+
+1.34(.44)
+.99(.03)
+1.02(.04)
+
+.42(0)
+1.38(.32)
+1.11(.76)
+
+1.3(.52)
+.98(.02)
+.99(.06)
+
+.66(.23)
+.85(.15)
+.80(.14)
+
+.6(0)
+1.28(.42)
+1.03(.44)
+
+.12(.03)
+.06(.05)
+.05(.02)
+
+-
+-
+-
+
+.08(.03)
+.1(.04)
+.15(.13)
+
+.06(.03)
+.13(.11)
+.05(.02)
+
+.13(0)
+.27(.16)
+.19(.17)
+
+.1(.6)
+.04(.01)
+.02(0)
+
+(b) PIC Dataset Results
+
+.29(.09)
+.06(.05)
+.15(.20)
+
+.03(.03)
+.02(.04)
+.13(.16)
+
+.38(.25)
+.36(.25)
+.35(.25)
+
+-
+-
+-
+
+.62(.02)
+.6(.05)
+.57(.01)
+
+.56(.07)
+.57(.06)
+.58(.05)
+
+.14(.12)
+.12(.06)
+.09(.05)
+
+.51(.17)
+.45(.02)
+.41(.02)
+
+.03(.04)
+.10(.07)
+.07(.06)
+
+.06(.06)
+.04(.09)
+.06(.08)
+
+Table 1: Combined Results for Real and Synthetic Samples from MIMIC-III (top) and PIC (bottom) datasets. Mean (SD) values
+are shown. R: Real, Over: Over Sample. Here the bold numbers are the values closest to ideal values. Mean(standard deviation).
+↑: Higher is better
+
+and the Real+FairSynth. The prediction performance is measured
+using the F1-score. From tables 1a and 1b, we can observe the
+f1-scores for the real data and augmented datasets for different
+numbers of real and synthetic samples for both datasets. It can be
+observed that, for both MIMIC-III and PIC datasets, augmenting the
+data with our proposed fairness-optimized synthetic data does not
+increase the predictive performance compared to the other dataset,
+which showcases the trade-off between prediction performance
+and fairness.
+
+5.7 Trade-off Between Fairness and Prediction
+
+Accuracy
+
+In this study, we investigate the trade-off between prediction per-
+formance and fairness metrics by varying the value of the fairness
+weight parameter, 𝜆. This analysis is crucial in understanding how
+different values of 𝜆 impact both the F1-scores and fairness metrics
+such as Disparate Impact (DI) and Weighted True Positive Rate
+(WTPR).
+
+Impact on Prediction Performance. Table 2a illustrates the
+5.7.1
+F1-scores for different values of 𝜆 on the MIMIC-III dataset across
+three different sample sizes (1,000, 2,500, and 5,000). As 𝜆 increases
+from 0.5 to 1.5, there is a noticeable decline in the F1 scores. For
+example, for 5,000 samples, the F1-score reduces from 0.46 ± 0.02 at
+𝜆 = 0.5 to 0.24 ± 0.02 at 𝜆 = 1.5. This trend clearly shows that higher
+values of 𝜆 negatively impact the prediction performance, as the
+declining F1 scores indicate.
+
+Impact on Fairness Metrics. Conversely, Table 2b, 2c, 2e and
+5.7.2
+2f present the DI and WTPR values for the same variations in 𝜆
+
+and sample sizes. Here, a higher value of 𝜆 generally enhances the
+fairness metrics. However, we observe that increasing the 𝜆 too
+much, for example, from 1.2 to 1.5, affects the DI impact positively
+but WTPR negatively, indicating that changing the lambda value
+causes variation in the fairness metrics.
+
+In summary, we have observed a trade-off between accuracy
+(F1-scores) and fairness (DI and WTPR) metrics is a crucial aspect
+of model optimization. Lower values of 𝜆 prioritize prediction per-
+formance, resulting in higher F1 scores but potentially less fair
+outcomes. In contrast, higher values of 𝜆 improve fairness metrics
+at the expense of prediction accuracy.
+
+This trade-off suggests that the specific goals of the application
+should guide the choice of 𝜆. If the priority is to maximize prediction
+accuracy, lower values of 𝜆 may be preferable. However, if fairness is
+a critical objective, higher values of 𝜆 should be considered despite
+the associated decrease in prediction performance. Balancing this
+trade-off is key to developing models that are both effective and
+fair, tailored to the ethical and operational requirements of the
+specific use case. From our experiments, we can safely say that 𝜆 =
+1.2 provides a good trade-off between the fairness and prediction
+performance for both the MIMIC-III and PIC datasets.
+
+5.8 Limitations
+Our proposed pipeline has several limitations. Firstly, while our
+pipeline in the current version is limited to tabular data, it still
+establishes a valuable foundation for generating FO synthetic data
+and has shown good results. Including other modalities like medi-
+cal images or medical notes in future versions might improve the
+pipeline's output.
+
+CHASE '25, June 24-26, 2025, New York, NY, USA
+
+Farhan et al.
+
+# of Real
+Samples
+
+1,000
+2,500
+5,000
+
+# of Real
+Samples
+
+1,000
+2,500
+5,000
+
+# of Real
+Samples
+
+1,000
+2,500
+5,000
+
+F1-scores for MIMIC-III↑
+
+𝜆 = 0.5
+
+𝜆 = 1
+
+𝜆 = 1.2
+
+𝜆 = 1.5
+
+0.55(0.03)
+0.52(0.02)
+0.46(0.02)
+
+0.1(0.09)
+0.13(0.09)
+0.13(0.03)
+(a) F1-scores for different 𝜆
+
+0.45(0.02)
+0.49(0.01)
+0.45(0.03)
+
+0.22(0.08)
+0.24(0.01)
+0.24(0.02)
+
+DI scores for MIMIC-III
+
+𝜆 = 0.5
+
+𝜆 = 1
+
+𝜆 = 1.2
+
+𝜆 = 1.5
+
+1.28(1.21)
+0.99(0.22)
+1.10(0.)
+
+1(0.05)
+1.28(0.42)
+0.99(0.16)
+(b) DI scores for different 𝜆
+
+0.89(0.
+
+--- CONCLUSION SECTION (found 'conclusion' at 43296) ---
+ted by NIH awards, P20GM103446,
+P20GM113125, U54-GM104941 and a gift from Amazon Web Ser-
+vices.
+
+6 Conclusion
+In this study, we presented a new pipeline for mitigating bias in
+clinical downstream tasks with the help of fairness-optimized (FO)
+augmented EHR data. Specifically, we used the FO objective func-
+tion to ensure that combining the real data with the generated syn-
+thetic data can improve the fairness performance of downstream
+predictive models running on the data. Through a series of compre-
+hensive experiments on MIMIC-III and pediatric ICU datasets, we
+showed that adding FO objectives in the generator and augmenting
+real data with FO synthetic data can reduce the biases observed for
+different sensitive attributes in downstream mortality prediction
+tasks. Even though our method solely focuses on data-related meth-
+ods where we try to improve fairness by augmenting, combining
+
+References
+[1] Mahed Abroshan, Mohammad Mahdi Khalili, and Andrew Elliott. 2022. Counter-
+factual fairness in synthetic data generation. In NeurIPS Workshop on Synthetic
+Data for Empowering ML Research.
+
+[2] Mrinal Kanti Baowaly, Chia-Ching Lin, Chao-Lin Liu, and Kuan-Ta Chen. 2019.
+Synthesizing electronic health records using improved generative adversarial
+networks. Journal of the American Medical Informatics Association 26, 3 (2019),
+228-241.
+
+[3] Simon Caton and Christian Haas. 2024. Fairness in Machine Learning: A Survey.
+ACM Comput. Surv. 56, 7, Article 166 (apr 2024), 38 pages. https://doi.org/10.
+1145/3616865
+
+[4] Taha Ceritli, Ghadeer O Ghosheh, Vinod Kumar Chauhan, Tingting Zhu, An-
+drew P Creagh, and David A Clifton. 2023. Synthesizing mixed-type electronic
+health records using diffusion models. arXiv preprint arXiv:2302.14679 (2023).
+[5] Edward Choi, Mohammad Taha Bahadori, Le Song, Walter F Stewart, and Jimeng
+Sun. 2017. GRAM: graph-based attention model for healthcare representation
+learning. In Proceedings of the 23rd ACM SIGKDD international conference on
+
+Fairness-Optimized Synthetic EHR Generation for Arbitrary Downstream Predictive Tasks
+
+CHASE '25, June 24-26, 2025, New York, NY, USA
+
+knowledge discovery and data mining. 787-795.
+
+//doi.org/10.1145/3593013.3594102
+
+[6] Edward Choi, Mohammad Taha Bahadori, Jimeng Sun, Joshua Kulas, Andy
+Schuetz, and Walter Stewart. 2016. Retain: An interpretable predictive model
+for healthcare using reverse time attention mechanism. Advances in neural
+information processing systems 29 (2016).
+
+[7] Edward Choi, Siddharth Biswal, Bradley Malin, Jon Duke, Walter F Stewart,
+and Jimeng Sun. 2017. Generating multi-label discrete patient records using
+generative adversarial networks. In Machine learning for healthcare conference.
+PMLR, 286-305.
+
+[8] Alexandra Chouldechova and Aaron Roth. 2018. The frontiers of fairness in
+
+machine learning. arXiv preprint arXiv:1810.08810 (2018).
+
+[9] Limeng Cui, Siddharth Biswal, Lucas M Glass, Greg Lever, Jimeng Sun, and Cao
+Xiao. 2020. CONAN: complementary pattern augmentation for rare disease
+detection. In Proceedings of the AAAI Conference on Artificial Intelligence, Vol. 34.
+6
+
+
+====================================================================================================
+FILE: applsci-14-10523.pdf
+====================================================================================================
+
+--- RESULTS SECTION (found '5. results' at 46176) ---
+ language models, like GPT-3, show promise for hospital LoS predictions for
+neurosurgery patients.
+
+5. Results
+
+This section provides a comparative analysis of the results obtained from various ML
+algorithms applied to predict hospital admission and hospital LoS outcomes, based on
+a review of 12 selected studies. The comparison focuses on the datasets used, methods
+applied, metrics evaluated, and the performance outcomes achieved.
+
+5.1. Overview of Datasets
+
+The studies analyzed utilized diverse datasets, with varying sizes and features, to
+
+predict hospital LoS. Table 2 summarizes the datasets employed in these studies.
+
+Appl. Sci. 2024, 14, 10523
+
+14 of 20
+
+5.2. Overview of Algorithms Used and Results from Each Article
+
+Different ML algorithms were evaluated across the studies, including regression
+models, neural network, decision trees, and gradient boosting. Table 3 presents the key
+performance metrics reported for each algorithm.
+
+Table 3. Comparation of algorithms and metrics.
+
+Study
+
+[28]
+
+Method
+
+Regression
+
+[29]
+
+Neural Network
+
+[30]
+
+Regression
+
+Algorithm
+
+Logistic Regression
+Ridge Regression
+Lasso Regression
+ElasticNet
+
+Default Parameters
+Grid Search
+Optimization
+Random Search
+Optimization
+
+Random Forest
+XGBoost
+Gradient Boosting
+Algorithm
+Logistic Regression
+K-Nearest
+Neighbors
+
+Various
+
+Metric
+
+MAE
+MAE
+MAE
+MAE
+
+Accuracy
+
+Accuracy
+
+Accuracy
+
+R2 Score
+R2 Score
+
+R2 Score
+
+R2 Score
+
+R2 Score
+
+Concordance
+Index
+
+Accuracy
+
+Accuracy
+
+Survival
+Analysis
+
+[32]
+
+[33]
+
+[34]
+
+Decision Trees
+
+Decision Trees
+
+Regression
+
+Random Forest
+
+Neural Network
+
+Neural Network
+
+Accuracy
+
+[35]
+
+Classification
+
+[36]
+
+Classification
+
+[37]
+
+Regression
+
+Logistic Regression
+Modified Random
+Forest
+Gradient Boosting
+
+Logistic Regression
+Decision Trees
+Neural Network
+Random Forest
+Gradient Boosting
+
+Multiple Linear
+Regression
+
+[38]
+
+Regression
+
+XGBoost
+
+[39]
+
+Classification
+
+Naive Bayes
+Random Forest
+Support Vector
+Machine
+
+[40]
+
+Neural Network
+
+GPT-3
+
+Accuracy
+
+Accuracy
+
+Accuracy
+
+F1 Score
+F1 Score
+F1 Score
+F1 Score
+F1 Score
+
+R2 (Pre-DTAP)
+
+Std. Error (Pre)
+R2 (Post-DTAP)
+Std. Error (Post)
+
+RMSE
+R2
+
+Accuracy
+Accuracy
+
+Accuracy
+
+MAE
+MAE
+MAE
+
+Values
+
+198,379,877,732,011.9
+0.82131
+0.96865
+0.95121
+
+94.66%
+
+94.74%
+
+94.74%
+
+0.7780
+0.7608
+
+0.7651
+
+0.6466
+
+0.7306
+
+0.7
+
+Above 80%
+
+59.78%
+36.57%
+47.52%
+36.67%
+
+80.54%
+
+81.09%
+
+82.41%
+
+0.59705
+0.59273
+0.67248
+0.66797
+0.64848
+
+0.63
+
+3.12
+0.50
+5.08
+
+2.03
+0.89
+
+Not Specified
+Not Specified
+
+Not Specified
+
+2.37 days
+2 days
+1.88 days
+
+Appl. Sci. 2024, 14, 10523
+
+15 of 20
+
+6. Discussion
+
+This section presents a comprehensive comparison of various algorithms and metrics
+employed in different analyzed studies to evaluate their effectiveness and efficiency for
+medical data analysis [41]. Performance analysis is a crucial aspect of assessing the suitabil-
+ity of different methods for specific tasks, as it helps identify the strengths and weaknesses
+of each approach.
+
+•
+
+Regression Models:
+
+-
+
+-
+
+Study [28] demonstrated the superior performance of Ridge Regression (MAE = 0.82131)
+compared to other regression techniques, including logistic regression, Lasso,
+and ElasticNet;
+In [30], random forest achieved the highest R2 score of 0.7780, followed by gradient
+boosting and XGBoost;
+
+- Multiple linear regression models in [37] showed a higher R2 (0.63) before the
+implementation of the diagnostic-therapeutic-assistance pathway compared to
+after (0.50).
+
+• Neural Networks:
+
+•
+
+•
+
+•
+
+- Neural network models in [29] achieved high accuracy rates (94.74%) after opti-
+
+-
+
+mization through grid search and random search;
+Study [40] utilized the GPT-3 language model for hospital LoS predictions, yield-
+ing an MAE of 2.37 days and a median absolute error of 2 days.
+
+Decision Trees and Ensemble Methods:
+
+-
+
+-
+
+The decision tree model in [33] obtained an accuracy value above 80% when
+predicting patient admissions;
+Gradient boosting in [35] outperformed other algorithms, including an accuracy
+value of 82.41%, highlighting its effectiveness when handling complex medi-
+cal data.
+
+Survival Analysis:
+
+-
+
+The survival analysis methods employed in [32] achieved a concordance index of
+approximately 0.7, indicating moderate predictive power using patient information.
+
+Comparation of Advanced Algorithms:
+
+-
+
+-
+
+The XGBoost algorithm in [38] demonstrated high predictive accuracy for total
+hip arthroplasty, with an RMSE of 2.03 and an R2 of 0.89;
+Study [39] found the support vector machine to be the most accurate model
+for predicting patient admissions in emergency departments, although specific
+accuracy metrics were not provided.
+
+Based on the summarized results in Table 4, we can analyze and rank the algorithms
+
+to determine the best-performing methods for predicting the LoS in hospitals.
+
+The XGBoost algorithm stands out as the best-performing method for hospital LoS
+prediction, providing the highest R2 Score of 0.89. The neural network also demonstrates
+high accuracy and robustness across multiple studies, making it highly effective for hospital
+LoS predictions when optimized. Tree-based models, like the gradient boosting 
+
+--- CONCLUSION SECTION (found 'conclusions' at 58380) ---
+d such positive
+results as the neural network algorithm.
+
+Appl. Sci. 2024, 14, 10523
+
+18 of 20
+
+7. Conclusions
+
+In short, this article aims to provide greater knowledge about the prediction of hospital
+admissions and hospital LoSa using ML algorithms, having carried out, as a result, an
+analysis of articles related to the topic. Some ethical questions were raised, particularly
+related to the privacy of patient data and, therefore, it is important that these issues are
+properly considered before implementing any prediction system. Following the method-
+ology and the subsequent comparative study of the selected papers, a critical analysis
+of the different algorithms was performed. It was concluded that the machine learning
+algorithm best suited for predicting hospital admissions and hospital LoSs is the neural
+network, which got the edge over other algorithms because it was the best-performing
+algorithm on the datasets being tested. Overall, the selection of the optimal algorithm
+for hospital LoS prediction depends on the specific characteristics of the dataset and the
+intended application context. Stakeholders should consider a judicious balance between
+accuracy, interpretability, and generalizability to achieve the desired outcomes for patient
+care delivery. Challenges associated with implementing hospital admission and hospital
+LoS prediction systems include the availability of quality data, the consideration of ethical
+issues, as well as data protection.
+
+We also concluded that ethical considerations and potential challenges associated
+with implementing ML algorithms for hospital admission and hospital LoS predictions in
+practice are important, such as:
+•
+
+Bias and fairness. Ensure that ML models do not perpetuate biases present in the
+training data, leading to the unfair treatment of certain patient groups;
+Transparency and accountability. The need for transparency in how models make
+predictions and accountability for decisions made based on ML predictions;
+Patient privacy in protecting patient data and ensuring compliance with the aforemen-
+tioned regulations.
+
+•
+
+•
+
+As future work, we intend to apply these methods and test the fittest models in a real
+
+hospital scenario. We also intend to apply these methods to different datasets.
+
+Author Contributions: Conceptualization, F.B.C. and A.R.B.; methodology, F.B.C., A.R.B. and J.B.;
+validation, F.B.C., A.R.B. and J.B.; formal analysis, F.B.C. and A.R.B.; investigation, G.A.; resources, F.B.C.
+and A.R.B.; data curation, F.B.C. and A.R.B.; writing-original draft preparation, G.A.; writing-review
+and editing, F.B.C., A.R.B. and J.B.; visualization, G.A., F.B.C., A.R.B. and J.B.; supervision, F.B.C. and
+A.R.B.; project administration, F.B.C., A.R.B. and J.B.; funding acquisition, J.B. All authors have read
+and agreed to the published version of the manuscript.
+
+Funding: This research received no external funding.
+
+Institutional Review Board Statement: Not applicable.
+
+Informed Consent Statement: Not applicable.
+
+Data Availability Statement: Not applicable.
+
+Conflicts of Interest: The authors decla
+
+--- LINES WITH METRIC VALUES ---
+  ultimately achieving a high R2 score of 0.78 using patient diagnoses and demographic data
+  fective, boasting an accuracy rate of 74.47%. This surpasses the performance of other
+  Study [28] demonstrated the superior performance of Ridge Regression (MAE = 0.82131)
+  In [30], random forest achieved the highest R2 score of 0.7780, followed by gradient
+  - Multiple linear regression models in [37] showed a higher R2 (0.63) before the
+  - Neural network models in [29] achieved high accuracy rates (94.74%) after opti-
+  hip arthroplasty, with an RMSE of 2.03 and an R2 of 0.89;
+  prediction, providing the highest R2 Score of 0.89. The neural network also demonstrates
+  Similarly, XGBoost showed robust results (R2 = 0.89 in [38]), but it is also computa-
+  - Neural Network: Achieves high accuracy rates (e.g., 94.74% in one study), but
+
+
+====================================================================================================
+FILE: frai-06-1179226.pdf
+====================================================================================================
+
+--- RESULTS SECTION (found '3. results' at 36211) ---
+e ˆyi and yi are the predicted LoS and actual LoS
+
+(cid:16)
+
+n
+
+(cid:17)
+
+P
+for the ith test data.
+
+3. Results
+
+3.1. Patient selection
+
+Figure 1 illustrates a ﬂowchart of patients' eligibility for analysis
+in the emergency department of triaging system. A total of 84,847
+patient visits were recorded at the ED between January 1 and
+October 26, 2022. After ﬁltering for exclusion criteria, 12,858
+patients were available for analysis.
+
+3.2. Descriptive statistics
+
+3.2.1. Patients characteristics summary
+
+Of the 12,858 eligible patients included in the study, 60.88% had
+a prolonged length of stay (LoS). The median age of the patients was
+72 years, and the elderly age groups (50-69 and 70+) had longer
+LoS than the other age groups. The male patients comprised 52.6%
+(6,757/12,858) of the total population. 51.7% of the patients arrived
+at the hospital via ambulance and had a longer stay compared
+to those who arrived by car or on foot. In the triage categories,
+patients with red codes, which indicate an higher severity at the
+ED admission, had a longer LoS, while green and white codes
+showed shorter stays. Light blue codes were also associated with
+prolonged LoS.
+The most
+dyspnea
+
+patients
+were
+and
+fever/hyperpyrexia/hyperthermia (8.5%). The majority of patients
+
+problems
+abdominal
+
+common
+(15.2%),
+
+the
+(9.9%),
+
+among
+pain
+
+were seen by specialists in general medicine (29.2%), geriatrics
+(12.6%), astanteria or casualty department (10.7%), obstetrics and
+gynecology (9.0%), and pediatrics (4.7%). A detailed breakdown
+of patient characteristics can be found in Table 3. The count plots
+for each patient for each specialty and problems are included in
+in Supplementary Figures 1, 2, respectively.The
+the Appendix,
+distribution of length of stay (LoS) for the patients is depicted in a
+histogram in Figure 4. The distribution of LoS values was found to
+be right-skewed, with a majority of patients having an LoS ranging
+from 1 to 20 days. To further explore the impact of diﬀerent factors
+on LoS, a visualization of the dichotomous outcome result for each
+factor is presented in Figure 5, while Figure 6 shows the continuous
+outcome for each factor. By examining these visualizations, we
+can gain insights into which factors may signiﬁcantly impact LoS
+and further investigate the relationships between these factors
+and patient outcomes. Overall, these ﬁgures provide a clear and
+concise way to understand the distribution of LoS values and their
+relationship with diﬀerent factors.
+
+Infectious Diseases, Orthopedics
+
+Figure 7 displays the average LoS for each problem and
+specialty. The highest average LoS was observed in Intensive
+Surgery, Nephrology, General Medicine,
+Care, Vascular
+Gastroenterology,
+and
+Traumatology, Pneumology, Geriatrics, Cardiology, Oncology,
+and the Coronary Unit, respectively. The average LoS was also
+higher for patients experiencing issues such as swollen/edematous
+legs, lower limb pain, generalized weakness, requests for urgent
+specialist advice, altered levels of consciousness, diagnostic tests
+for biochemical exams or images, non-speciﬁc minor disorders,
+dyspnea, lower limb injuries, requests for prescription reﬁlls, and
+pallor/anemia.
+
+3.3. Prediction and model performance
+results: binary outcome
+
+The AUCs for all machine learning methods ranged from
+0.643 for AdaBoost to 0.754 for GB (see Figure 8). GB was the
+best-performing classiﬁer, followed by LoR (AUC = 0.752) and
+
+Frontiers in Artiﬁcial Intelligence
+
+10
+
+frontiersin.org
+
+Zeleke et al.
+
+10.3389/frai.2023.1179226
+
+FIGURE 5
+The results for each factor's dichotomous outcome (0, LoS < 6, without PLoS; 1, LoS ≥ 6, with PLoS).
+
+SVM (AUC = 0.726). The F1-scores ranged from 0.65 (AdaBoost)
+to 0.73 in GB, and 0.74 in LoR (see Table 4),
+indicating a
+high capability of these models to predict the prolonged length
+of stay.
+
+Of the six models, the Gradient Boosting (GB) classiﬁer
+demonstrated the best prediction performance in terms of accuracy
+(75.4%), Area Under the Curve (AUC; 0.754), and Brier score
+(0.181). The Logistic Regression (LoR) model had the second-best
+performance, with an accuracy of 75%, AUC of 0.752, and a Brier
+score of 0.182. Based on these results, GB and LoR were chosen
+as the ﬁnal models due to their better performance. However,
+
+the Ada Boost model showed poor performance with the highest
+Brier score,
+lowest accuracy, and lowest AUC values. Despite
+attempting hyperparameter optimization, the model's accuracy did
+not signiﬁcantly improve.
+
+The calibration plots for each model are displayed in Figure 9.
+The graph shows that GB and LoR have an almost
+ideal
+calibration or optimal ﬁt. The Random Forest (RF) and K-
+Nearest Neighbor (KNN) models are well-calibrated but tend to
+overestimate the probabilities of a prolonged length of stay (PLoS)
+for most patients. Conversely, the Ada Boost and Support Vector
+Machine (SVM) models are poorly calibrated, with Ada Boost
+
+Frontiers in Artiﬁcial Intelligence
+
+11
+
+frontiersin.org
+
+Zeleke et al.
+
+10.3389/frai.2023.1179226
+
+FIGURE 6
+Boxplots of length of stay (LoS) on demographic factors, separated into tw
+
+--- CONCLUSION SECTION (found 'conclusions' at 53236) ---
+ks
+such as Length of Stay (LoS) after surgeries and utilization of critical
+hospital resources.
+
+5. Conclusions
+
+As a result of our research, we have found that ML models
+are eﬀective in predicting outcomes. Our ﬁndings showed that
+the GB classiﬁer performed best, followed by LoR. These models
+can be utilized as a decision-support tool to inform healthcare
+decisions and predict new patient hospitalizations. Additionally,
+for continuous outcomes, Ridge regression and XGBoost regression
+displayed the best prediction performance with the lowest total
+prediction error. Healthcare providers can utilize our models to
+predict the hospitalization of new patients or to drive quality
+improvement initiatives. It is worth mentioning that this study is
+the ﬁrst of its kind conducted in this hospital and can serve as a
+reference for future similar studies and provide valuable insights
+for informed decision-making.
+
+Author contributions
+
+AZ: methodology, formal analysis, data curation, and writing-
+original draft preparation. PP: methodology, data curation, and
+writing-review and editing. PT: data curation and writing-review
+and editing. RM: methodology, supervision, and writing-review
+and editing. LC: conceptualization, methodology, supervision, and
+writing-review and editing. All authors have read and agreed to
+the published version of the manuscript.
+
+Funding
+
+This research was partly supported by Policlinico Sant'Orsola-
+
+Malpighi through funding of the Ph.D. scholarship of AZ.
+
+Acknowledgments
+
+We wish to express our gratitude to all the individuals who are
+engaged in data organization activities at Policlinico Sant'Orsola-
+Malpighi, including nurses, physicians, and other administrative
+staﬀ members.
+
+Conﬂict of interest
+
+The authors declare that the research was conducted in the
+absence of any commercial or ﬁnancial relationships that could be
+construed as a potential conﬂict of interest.
+
+Data availability statement
+
+Publisher's note
+
+The data presented in this article are not publicly available due
+to ethical restrictions. Requests to access the data should be directed
+to the corresponding author.
+
+Ethics statement
+
+The studies involving human participants were reviewed
+and ethically approved by the Bioethics Committee of
+the
+University of Bologna, Italy (approval number: 0058022, February
+24, 2023). Written informed consent
+from the participants'
+legal guardian/next of kin was not required to participate in
+this study in accordance with the national legislation and the
+institutional requirements.
+
+References
+
+are
+
+article
+
+claims
+
+expressed in this
+
+aﬃliated organizations, or
+
+All
+the authors and do not necessarily represent
+
+solely those
+those of
+of
+the publisher,
+their
+the editors and the reviewers. Any product
+that may be
+evaluated in this article, or claim that may be made by
+its manufacturer,
+endorsed by the
+is not guaranteed or
+publisher.
+
+those of
+
+Supplementary material
+
+The Supplementary Material for this article can be found
+online at: https://www.frontiersin.org/articles/10.3389/frai.2023.
+1179226/full#supplementary-material
+
+Ackroyd-Stol
+
+--- LINES WITH METRIC VALUES ---
+  60.88% had a PloS. The GB classiﬁer best predicted PloS (accuracy 75%, AUC
+  75.4%, Brier score 0.181), followed by LoR classiﬁer (accuracy 75%, AUC 75.2%,
+  (0.80), accuracy (0.80), and
+  85% and F1-score of 0.88 for
+  best-performing classiﬁer, followed by LoR (AUC = 0.752) and
+  SVM (AUC = 0.726). The F1-scores ranged from 0.65 (AdaBoost)
+  (75.4%), Area Under the Curve (AUC; 0.754), and Brier score
+  performance, with an accuracy of 75%, AUC of 0.752, and a Brier
+  accuracy, AUC, and Brier score ranging from 75.3 to 82.9%, 0.74
+  (2022), RF achieved high accuracy, AUC, and Brier scores of 0.822,
+
+
+====================================================================================================
+FILE: nihms-1911125.pdf
+====================================================================================================
+
+--- RESULTS SECTION (found 'results' at 27641) ---
+ we report 
+the metrics collectively for all clients (as if the testing sets were centralized).
+
+5  RESULTS
+
+Table 2 shows the Accuracy, TPSD, Worst TPR, and APSD scores for all methods on 
+all datasets when using adversarial debiasing. The proposed method is able to achieve 
+competitive performance with an accuracy that remains close to the one achievable using 
+FedAvg (i.e., without any fairness mitigation, other than the adversarial debiasing) while 
+demonstrating better group fairness than all baselines tested for all but one metric (Worst 
+TPR). Notably, our method achieves comparable accuracy to FairFed while reducing the 
+parity-based metrics on all cohorts. Though FairFed seemed to outperform our proposed 
+method for the minimax group fairness metric (Worst TPR), the results remain very close 
+to each other. It is also worth noting that, as expected, using FL allows for both better 
+predictive performance and fairer predictions, as shown by the poorer scores achieved with 
+the local training.
+
+Impact of fairness reward:
+
+Similar to FairFed, we have implemented a fairness budget β for the calculation of the 
+clients' weights in the aggregation process. We study the impact of β both on the fairness of 
+the resulting predictions and the overall accuracy (Fig. 3). We only report the results related 
+to the MIMIC-III IID cohort, though we found similar results in other cohorts throughout 
+our experiments. Specifically, we have set β to different values (0, 0.25, 0.5, 1, 2.5, 5). β = 0
+corresponds to FedAvg, thus without a fair aggregation process.
+
+As expected, increasing the fairness budget provides better fairness guarantees as shown 
+by the differences in the fairness metrics when β ranges from 0 to 2.5. One can notice a 
+decrease in TPSD and APSD from 0.051 and 3.75 to 0.030 and 2.78, respectively, while 
+the Worst TPR increased from 0.689 to 0.738. Note that for the parity-based measures 
+(TPSD/APSD), a lower value is better while a higher value reflects better results for the 
+accuracy and Worst TPR. Additionally, though it is hardly perceptible in the figure, the 
+accuracy also decreases from 76.59 to 76.22. However, when β = 5, the method shows poor 
+performance, both for the fairness metrics and the accuracy. This is most likely due to the 
+fact that the fairness budget becomes too important in the aggregation process, making the 
+clients' weights change drastically from one round to the other, and making the optimization 
+process less stable.
+
+FAccT 23 (2023). Author manuscript; available in PMC 2023 November 21.
+
+ 
+ 
+ 
+ 
+A
+u
+t
+h
+o
+r
+
+M
+a
+n
+u
+s
+c
+r
+i
+p
+t
+
+A
+u
+t
+h
+o
+r
+
+M
+a
+n
+u
+s
+c
+r
+i
+p
+t
+
+A
+u
+t
+h
+o
+r
+
+M
+a
+n
+u
+s
+c
+r
+i
+p
+t
+
+A
+u
+t
+h
+o
+r
+
+M
+a
+n
+u
+s
+c
+r
+i
+p
+t
+
+Poulain et al.
+
+Page 11
+
+6  RELATED WORK
+
+While there exists a wide range of studies related to our work, here, we discuss a non-
+exhaustive group of studies that are closely related to ours, including the applications of FL 
+on EHRs, the studies investigating group fairness in predictive modeling with EHRs, and the 
+works on predictive models under an FL setting focusing on improving group fairness.
+
+Federated Learning with EHRs:
+
+FL has been gaining significant attention in the healthcare sector, especially for its privacy-
+preserving nature and ability to work on decentralized data [10, 33, 50]. FL has been 
+applied to EHRs in various applications, with one of the earliest being in-hospital mortality 
+prediction within patients admitted to the ICU (i.e., the prediction task used in our 
+experiments). Multiple studies [36, 44] investigated the use of different machine learning 
+models such as logistic regression, multi-layer perception (MLP), and feed-forward neural 
+networks on the MIMIC-III [21] and eICU [38] EHR datasets. These studies aimed to utilize 
+FL to improve the accuracy of models while protecting patient privacy. To name a few 
+of such studies, consider the autoencoder-based architecture proposed to cluster patients 
+for mortality prediction [20] using the eICU dataset. Another work investigated MLP and 
+LASSO logistic regression in an FL setting to predict 7-day mortality for hospitalized 
+COVID-19 patients with EHR data [45]. While these studies have demonstrated the potential 
+of FL in healthcare, the underlying AI models remain fairly simple and the possible fairness 
+concerns are not investigated. To mitigate those concerns, recent studies proposed to use FL 
+for improving fairness by increasing the dataset diversity [8] (without developing the idea 
+further).
+
+Improving Group Fairness on EHRs:
+
+Though group fairness remains to be investigated in FL with EHRs, bias mitigation 
+techniques on EHRs have been studied for centralized models in a few studies [14]. Notably, 
+Pfohl et al. [35] proposed to use adversarial learning to debias a model to predict the risk 
+of cardiovascular diseases from EHRs. A similar idea has been applied to disease prediction 
+using chest X-ray [9]. Intra-processing techniques such as fine-tuning and pruning of pre-
+trained networks have also been proposed for chest X-rays [28]. Additionally, reg
+
+
+====================================================================================================
+FILE: Rachda_Naila_Mekhaldi_Journal_Information_Science_Engineering_2021.pdf
+====================================================================================================
+
+--- RESULTS SECTION (found 'results and discussion' at 21314) ---
+ected from
+each tree to the next [31]. All the chosen parameters are interrelated.
+
+4. EXPERIMENTAL RESULTS AND DISCUSSION
+
+In this section, the experimental results and model evaluation are presented. In any
+ML process, the last step is model evaluation. This step tests a model with different
+parameters and saves the best model. Python programming language is used in the im-
+plementation phase and a PC with an Intel(R) Core(TM) i7-8650U processor with 8 GB
+of RAM. Regression metrics such as MAE, R2, and Adjusted R2 are used to evaluate the
+performance of the system. MAE represents the absolute difference between the pre-
+dicted and observed values and its robustness to outliers in the dataset. R2 and Adjusted
+R2 highlight how well the target variable explains the variability in the attributes.
+
+The results of all the metrics used in the model evaluation (MAE, R2, Adjusted R2)
+are presented in Table 2 for both datasets used (with and without SMOTER). Also, the
+time taken to run the experiments is given in seconds. A discussion of results is then
+presented.
+
+Table 2. Machine learning model evaluation.
+
+Datasets
+Metrics
+Multiple Linear Regression
+Support Vector Machines
+Random Forests
+Gradient Boosting Model
+
+Dataset without SMOTER
+
+Dataset with SMOTER
+
+MAE
+0.88
+0.54
+0.7
+0.44
+
+R2
+0.76
+0.89
+0.85
+0.94
+
+Adj R2
+0.76
+0.89
+0.85
+0.94
+
+Time
+3.09
+2683.03
+896.43
+250.37
+
+MAE
+0.97
+0.54
+0.72
+0.45
+
+R2
+0.71
+0.89
+0.84
+0.93
+
+Adj R2
+0.71
+0.89
+0.84
+0.93
+
+Time
+3.75
+2283.29
+697.35
+171.37
+
+Analyzing the results from Table 2 regarding the performance of the models, GBM
+outperformed all the other with the lowest value of MAE equal to 0.44 and an R2 and an
+adjusted R2 close to 1 with a value of 0.94. We consider these results to be good. As both
+GBM and RF are ensemble methods based on DT and apply respectively boosting and
+bagging algorithms, we noticed that the boosting method is more suitable to the dataset
+used than the bagging one. As boosting does more to reduce bias which is highly present
+in our dataset than variance which is corrected in the preprocessing step. Even the fact that
+in GBM the trees are built sequentially in opposite to RF where they are built in parallel,
+the time execution required by GBM is less than the one required by the RF. In fact, for
+the RF, a large number of trees may make the algorithm slow for real time prediction.
+
+Comparing the SVM algorithm which is supporting linear and non linear regression
+and the MLR algorithm, SVM performed slightly better than the MLR (MAE = 0.54
+against 0.88 and R2 and adjusted R2 = 0.89 against 0.76). As MLR is simple to be im-
+plemented and attends to minimize the error between prediction and target, unlike the
+SVM that makes sure the errors do not exceed a threshold, the time execution for SVM is
+broadly larger than in MLR. This is due to the number of parameter tuned for MLR which
+is less than the one tuned for SVM. Another remark is that the SVM surpassed the RF as
+the output of the RF is simply the mean of all trees output generated by the algorithm.
+
+DOI : 10.6688/JISE.202109_37(5).00038SVM always takes a longer time execution as it requires a lot of time for training the
+model.
+
+Concerning the results of ML models applied on dataset without SMOTER, the re-
+sults are not improved and are very close comparing the evaluation metrics used. The
+behavior of all algorithms is not changed with the application of SMOTER method.
+SMOTER method, thus, is not enough to overcome the problem of unbalanced data. As
+mentioned in [33] this technique is most useful when the target values are known by a
+domain expert. In our case, these values are just obtained based on outliers values.
+
+To further analyze the output of the best trained model, we plot the histogram rep-
+resenting the percentage of deviations between the predicted values and the target values.
+A perfect prediction is with a deviation equal to 0. Almost half of the predicted values
+are correct. Also, 43% of deviations values are equal to 1 day error. In terms of hospital
+management, this gap can be acceptable. Thus, the developed tool can attend 92% of
+correct predicted values. Only 3% of difference values are greater or equal to 3 days. In
+most cases, this percentage corresponds to the target belonging to minority values.
+
+Fig. 6. Difference between output and target values.
+
+From the experiments, GBM outperformed MLR, SVM, and RF in all the metrics
+cited above. Furthermore, the execution time for the GBM is shorter than for the other
+algorithms. For a real case study, if LoS needs to be predicted in real time, GBM is a good
+algorithm regarding to the variables used in this study. We had to ﬁnd a good compromise
+between the two constraints in our design which are a minimum error in predictions and
+less time execution. The best models have been saved and will be trained on a real dataset
+later. All implemented ML methods proved their efﬁciency in past studies [10, 11, 15,
+18] and in this study. Regarding the factors used to predict the LoS, previous research
+suggest to employ variables related to a speciﬁc unit. In 
+
+--- CONCLUSION SECTION (found 'conclusion' at 27417) ---
+e of the study must be deﬁned before
+choosing the ML method (e.g. real time prediction or not).
+
+5. CONCLUSION
+
+In this paper, we compared different Machine Learning algorithms for predicting the
+Length of Stay (LoS). We ﬁrst investigated the factors impacting the LoS and the most
+common ML methods in the literature. The open source Microsoft dataset for predicting
+LoS is used to develop the models. The preprocessing step involves data transforma-
+tion, data standardization, and categorical data encoding. The Synthetic Minority Over
+Sampling Technique for Regression is tested to handle the problem of unbalanced data.
+Several ML algorithms are explored: Multiple Linear Regression, Support Vector Ma-
+chines, Random Forests, and Gradient Boosting Model. A hyperparameter tuning phase
+is carried out using the Random search method. The results show that the GBM outper-
+formed other algorithms used in this study with an MAE lower than 0.44 and an R2 and
+Adjusted R2 greater than 0.94 when the SMOTER technique is not used.The implementa-
+tion of SMOTER method did not improved the results as its application requires medical
+expert to deﬁne the rare values. We consider that the results are satisfactory with regard
+to the nature of the dataset we used.
+
+One potential limitation of our study is the necessity to conduct an additional study
+on a real dataset to conﬁrm the results. We had to use the Microsoft dataset as an example
+due to the requirements in anonymizing the data in a real case study. This dataset allows
+us to highlight the complexity of medical data. For better results, large real datasets can be
+used and a more sophisticated technique to transform the target variable can be employed.
+
+ACKNOWLEDGMENTS
+
+The authors would like to thank the European Regional Development Funds of
+Hauts-de-France Region (ERDF) and Alicante company (https://www.alicante.fr/) for the
+funding and their support and contributions.
+
+REFERENCES
+
+1. O. Khosravizadeh, S. Vatankhah, P. Bastani, R. Kalhor, S. Alirezaei, and F. Doosty,
+"Factors affecting length of stay in teaching hospitals of a midOPodle-income coun-
+try," Electronic Physician, Vol. 8, 2016, pp. 3042-3047.
+
+2. F´ed´eration Hospitali`ere de France, "Le PMSI : des objectifs et une standardisation
+des donnees pour le service public hospitalier et les e tablissements prives de soin,"
+2019, pp. 1.
+
+DOI : 10.6688/JISE.202109_37(5).0003103. E. M. Carter and H. W. Potts, "Predicting length of stay from an electronic patient
+record system: A primary total knee replacement example," BMC Medical Informat-
+ics and Decision Making, Vol. 14, 2014, pp. 1-13.
+
+4. L. Turgeman, J. H. May, and R. Sciulli, "Insights from a machine learning model
+for predicting the hospital Length of Stay (LOS) at the time of admission," Expert
+Systems with Applications, Vol. 78, 2017, pp. 376-385.
+
+5. S. Shea, R. V. Sideli, W. Dumouchel, G. Pulver, R. R. Arons, and P. D. Clay-
+ton, "Computer-generated informational messages directed to physicians: Effect on
+length of hospital stay," Journal of the American Medical Informatics Association,
+Vol. 2
+
+--- LINES WITH METRIC VALUES ---
+  adjusted R2 close to 1 with a value of 0.94. We consider these results to be good. As both
+  against 0.88 and R2 and adjusted R2 = 0.89 against 0.76). As MLR is simple to be im-
+  Adjusted R2 greater than 0.94 when the SMOTER technique is not used.The implementa-
+
+
+====================================================================================================
+FILE: ZJMA_11_2149318.pdf
+====================================================================================================
+
+--- RESULTS SECTION (found 'results' at 19316) ---
+ implemented  in  Python  3.7  [40] 
+
+with  Sci  Kit  Learn  0.24.1  [41]  and  Keras  2.4.0  [42]
+
+Results
+
+Characteristics  of  the  population
+
+The initial dataset of the 2015 cohorts contains 118,650 
+admissions.  After  exclusion  of  non-adult  stays  with 
+death and hospitalizations for ambulatory and obstetri-
+cal  care,  73,182  hospitalizations  were  retained.  The 
+most common diseases were digestive disease and ner-
+vous  system  conditions.  In  total,  7341  (10.03%)  hospi-
+talizations  resulted  in  PLOS.  The  characteristics  of  the 
+sample  are  presented  in  Table  1.
+
+Factors  associated  with  LOS
+
+Based on  the  Cohen's  d  standardized  difference in  pro-
+portions,  the  destination  of  discharge  to  other  institu-
+tions shows a significant and sizeable higher proportion 
+of PLOS than to home (d = 0.727 p-value <0.0001). Next 
+comes  those  who  are  admitted  for  Chemotherapy  and 
+Radiotherapy  who  display  a  sizeable  and  significant 
+lower  level  of  PLOS  (d  =  −0.390,  p-value  <0.0001), 
+followed  by  the  origin  of  patient  where  other  institu-
+tions  are  associated  to  higher  proportion  of  PLOS 
+(d  =  0.294,  p-value  <0.0001).  Table  1  displays  all  the 
+significant difference in proportion of LOS for which the 
+size  effect  is  at  least  equal  to  0.2  (small  effect).
+
+Predictive  model  performance
+
+The predictive performance of each model is presented 
+in  Table  2,  and  the  comparison  of  each  model's  AUC  is 
+presented  in  Table  3.  The  GB  classifier  was  the  most 
+performant  model  with  the  highest  AUC  (0.810),  super-
+ior  to  all  the  other  models  (all  p-values  <0.0001).  The 
+performance of the RF, GB and NN models (AUC ranged 
+from  0.808  to  0.810)  was  superior  to  that  of  the  LR 
+model  (AUC  =  0.795);  all  p-values  <0.0001.  In  contrast, 
+LR  was  superior  to  CART  (AUC  =  0.786),  p  <  0.0001.  As 
+the  values  are  close,  the  size  effects  are  also  provided 
+by the Cohen's d, which confirms small effects between 
+GB  and  RF  or  NN  but  large  effects  between  all  others. 
+Thus,  the  seemingly  small  difference  in  value  between 
+the  AUC  of  LR  and  the  other  classifiers,  when  account-
+ing  for  their  standard  errors  are  in  fact  very  large  ones. 
+However,  the  performance  of  NN  and  RF  are  identical. 
+The ROC curve for the best model (i.e., GB) is presented 
+in  Figure  1.
+
+Variable  importance
+
+The  variable  importance  of  the  best  model  (i.e.,  GB)  is 
+presented in Figure 2. In the GB classifier as well as in all 
+the  others,  the  variable  most  predictive  of  the  catego-
+rical LOS was the destination of the patient after hospi-
+talization.  Destination  to  other  institutions  but  not 
+home  was  associated  to  PLOS.  The  typical  clinical  pro-
+file  of  these  patients  (17.5%  of  the  sample)  was  the 
+elderly  patient,  admitted  in  emergency,  for  a  trauma, 
+a  neurological  or  a  cardiovascular  pathology,  more 
+often  institutionalized,  with  more  comorbidities,  nota-
+bly dementia  and hemiplegia  (supplementary  file  #1). 
+This  is  coherent  with  the  bivariate  analysis.  Two  of  the 
+other  most  important  variables  were  also  identified  in 
+the  bivariate  analysis:  the  origin  of  the  patient  from
+
+JOURNAL  OF  MARKET  ACCESS  &  HEALTH  POLICY
+
+5
+
+d
+
+s
+'
+n
+e
+h
+o
+C
+
+-
+
+g
+n
+o
+l
+(
+
+)
+t
+r
+o
+h
+s
+
+y
+t
+i
+l
+
+a
+d
+o
+m
+
+l
+
+e
+u
+a
+v
+-
+p
+
+4
+0
+1
+0
+
+,
+
+4
+0
+1
+0
+-
+
+,
+
+7
+1
+0
+0
+-
+
+,
+
+7
+1
+0
+0
+
+,
+
+4
+3
+0
+0
+
+,
+
+4
+3
+0
+0
+-
+
+,
+
+8
+8
+1
+0
+-
+
+,
+
+8
+8
+1
+0
+
+,
+
+4
+9
+2
+0
+-
+
+,
+
+4
+9
+2
+0
+
+,
+
+3
+2
+2
+0
+-
+
+,
+
+3
+2
+2
+0
+
+,
+
+7
+2
+7
+0
+-
+
+,
+
+7
+2
+7
+0
+
+,
+
+9
+7
+0
+0
+-
+
+,
+
+1
+5
+0
+0
+-
+
+,
+
+9
+6
+1
+0
+
+,
+
+3
+5
+2
+0
+-
+
+,
+
+6
+8
+0
+0
+-
+
+,
+
+7
+7
+1
+0
+
+,
+
+3
+6
+1
+0
+
+,
+
+8
+7
+0
+0
+
+,
+
+1
+4
+1
+0
+-
+
+,
+
+1
+6
+1
+0
+
+,
+
+9
+0
+0
+0
+
+,
+
+7
+0
+2
+0
+
+,
+
+8
+2
+1
+0
+-
+
+,
+
+2
+3
+2
+0
+
+,
+
+0
+5
+0
+0
+
+,
+
+8
+6
+1
+0
+-
+
+,
+
+8
+3
+1
+0
+-
+
+,
+
+4
+8
+1
+0
+-
+
+,
+
+9
+9
+0
+0
+-
+
+,
+
+0
+6
+0
+0
+
+,
+
+0
+9
+3
+0
+-
+
+,
+
+4
+5
+0
+0
+
+,
+
+2
+5
+1
+0
+-
+
+,
+
+7
+0
+0
+0
+-
+
+,
+
+3
+8
+0
+0
+
+,
+
+7
+9
+0
+0
+
+,
+
+2
+3
+0
+0
+-
+
+,
+
+3
+2
+0
+0
+-
+
+,
+
+4
+3
+2
+0
+
+,
+
+8
+1
+0
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+1
+6
+1
+0
+
+,
+
+1
+6
+1
+0
+
+,
+
+7
+0
+0
+0
+
+,
+
+7
+0
+0
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+0
+4
+4
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+8
+7
+5
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+4
+1
+0
+0
+
+,
+
+7
+9
+0
+0
+
+,
+
+0
+0
+0
+0
+
+,
+
+7
+4
+1
+0
+
+,
+
+)
+d
+e
+u
+n
+i
+t
+n
+o
+C
+(
+
+3
+0
+0
+1
+
+.
+
+3
+0
+8
+5
+
+,
+
+7
+9
+1
+4
+
+,
+
+5
+7
+8
+9
+
+,
+
+5
+2
+1
+
+,
+
+7
+3
+2
+9
+
+,
+
+3
+6
+7
+
+,
+
+2
+3
+2
+5
+
+,
+
+8
+6
+7
+4
+
+,
+
+9
+8
+4
+8
+
+,
+
+1
+1
+5
+1
+
+,
+
+7
+2
+2
+6
+
+,
+
+3
+7
+7
+3
+
+,
+
+8
+3
+4
+5
+
+,
+
+2
+6
+5
+4
+
+,
+
+1
+5
+5
+5
+
+,
+
+7
+4
+5
+2
+
+,
+
+2
+0
+9
+1
+
+,
+
+3
+2
+3
+1
+
+,
+
+9
+8
+9
+2
+
+,
+
+7
+6
+3
+4
+
+,
+
+1
+2
+3
+1
+
+,
+
+3
+8
+3
+1
+
+,
+
+7
+9
+4
+
+,
+
+6
+7
+1
+
+,
+
+7
+4
+3
+
+,
+
+0
+4
+8
+1
+
+,
+
+0
+2
+5
+
+,
+
+7
+2
+5
+1
+
+,
+
+4
+5
+9
+
+,
+
+3
+5
+1
+
+,
+
+6
+4
+0
+
+,
+
+6
+4
+0
+
+,
+
+6
+5
+4
+
+,
+
+3
+7
+3
+
+,
+
+1
+4
+0
+
+,
+
+3
+6
+1
+
+,
+
+8
+3
+2
+
+,
+
+6
+1
+3
+
+,
+
+4
+7
+0
+
+,
+
+1
+8
+1
+
+,
+
+4
+6
+0
+
+,
+
+5
+0
+0
+
+,
+
+7
+7
+2
+
+,
+
+1
+2
+
+--- CONCLUSION SECTION (found 'conclusion' at 45352) ---
+s 
+the  deterioration  of  the  patients'  experience  or  the 
+efficiency  of  bed  management  .
+
+Conclusion
+
+The  integration  of  ML,  particularly  the  GB  algorithm, 
+may  be  useful  for  health-care  professionals  and  plan-
+ners  to  better  identify  patients  at  risk  of  PLOS.  These 
+findings  underscore  the  need  to  strengthen  hospitals 
+through  targeted  allocation  to  meet  the  needs  of  an 
+aging  population.
+
+Disclosure  statement
+
+No  potential  conflict  of  interest  was  reported  by  the  authors.
+
+References
+
+[1]  Direction  de  la  Recherche,  des  Études,  de  l'Évaluation  et 
+des  Statistiques,  "Les  depenses  de  sante  en  2019  - 
+Resultats  des  comptes  de  la  sante  -  Édition  2020,"  Vie 
+publique.fr.  cited  2022  Jan  11  Available  from  https:// 
+www.vie-publique.fr/rapport/276352-les-depenses-de- 
+sante-en-2019-resultats-des-comptes-de-la-sante
+
+[2]  Baumann  A,  Wyss  K.  The  shift  from  inpatient  care  to 
+outpatient  care  in  Switzerland  since  2017:  policy  pro-
+cesses  and  the  role  of  evidence.  Health  Policy.  2021 
+Apr;125(4):512-519.
+
+[3]  Exertier  Les 
+
+inadequations  hospitalieres  en  France : 
+frequence,  causes  et  impact  economique  ,  et  al.  In:  Le 
+panorama  des  etablissements  de  sante  (Paris:  DREES)  . 
+2011.  33-45.
+
+[4] Rojas-García A, Turner S, Pizzo E, et al. Impact and experi-
+ences  of  delayed  discharge:  a  mixed-studies  systematic 
+review.  Health  Expect.  2018  Feb;21(1):41-56.
+
+[5] Marfil-Garza  BA,  et  al.  Risk  factors  associated  with  pro-
+longed  hospital 
+length-of-stay:  18-year  retrospective 
+study  of  hospitalizations  in  a  tertiary  healthcare  center 
+in  Mexico.  PLoS  One.  2018;13(11):e0207203.
+
+[6]  Tefera  GM,  Feyisa  BB,  Umeta  GT,  et  al.  Predictors  of 
+prolonged  length  of  hospital  stay  and  in-hospital  mor-
+tality among adult patients admitted at the surgical ward 
+of Jimma University medical center, Ethiopia: prospective 
+observational study. J Pharm Policy Pract. 2020Jun;13:24.
+[7]  Acion  L,  Kelmansky  D,  van  der  Laan  M,  et  al.  Use  of 
+a  machine  learning  framework  to  predict  substance  use 
+disorder  treatment  success.  PLOS  ONE.  2017  Apr;12(4): 
+e0175383.
+
+[8]  Ahn JM, Kim S, Ahn K-S, et al. A deep learning model for 
+the  detection  of  both  advanced  and  early  glaucoma 
+using  fundus  photography.  PLOS  ONE.  2018  Nov;13(11): 
+e0207982.
+
+[9]  Chekroud  AM,  et  al.  Cross-trial  prediction  of  treatment 
+outcome  in  depression:  a  machine  learning  approach. 
+Lancet  Psychiatry.  2016  Mar;3(3):243-250.
+
+[10]  Gholipour  C,  Rahim  F,  Fakhree  A,  et  al.  Using  an  artificial 
+neural  networks  (ANNs)  model  for  prediction  of  intensive 
+
+care  unit  (ICU)  Outcome  and  length  of  stay  at  hospital  in 
+traumatic  patients.  J  Clin  Diagn  Res.  2015  Apr;9(4):OC19- 
+OC23.
+
+[11]  Kuhn  M,  Johnson  K,  Applied  Predictive  Modeling. 
+New  York:  Springer-Verlag,  2013.  cited  2018  Sep  05. 
+[Online].  Available  from:  //www.springer.com/us/book/ 
+9781461468
+
+--- LINES WITH METRIC VALUES ---
+  classifier  was  the  most  performant  model  with  the  highest  AUC  (0.810),  superior  to  all  the  other
+  0.808  to  0.810)  was  superior  to  that  of  the  LR  model  (AUC  =  0.795);  all  p-values  <0.0001.  In
+  contrast, LR was  superior to CART (AUC = 0.786), p  < 0.0001. The variable most predictive of the
+  performant  model  with  the  highest  AUC  (0.810),  super-
+  model  (AUC  =  0.795);  all  p-values  <0.0001.  In  contrast,
+  LR  was  superior  to  CART  (AUC  =  0.786),  p  <  0.0001.  As
+
+DONE

@@ -1,0 +1,9 @@
+Study,Dataset,N_Records,Task,Best_Model,Key_Metric,AUC,Accuracy,Fairness,N_Features
+Jain et al. 2024,NY SPARCS,2.3M,Regression,CatBoost,R²=0.82 (newborn),,,Not measured,20
+Tarek et al. 2025,Texas PUDF,1M,Binary (>3d),XGBoost,AUC=0.84,0.84,0.78,DI reported,12
+Almeida et al. 2024,MIMIC-IV,73K,Binary (>3d),XGBoost,AUC=0.84,0.84,0.77,Eq. odds reported,28
+Zeleke et al. 2023,Ethiopia,13K,5-class,Random Forest,Acc=92.1%,,0.921,Not measured,15
+Poulain et al. 2024,MIMIC-IV,50K,Binary,Multi-task NN,DI=0.92,0.76,0.71,DI=0.92 (binary),35
+Mekhaldi et al. 2021,Algeria,5K,4-class,Deep Learning,Acc=70.6%,,0.706,Not measured,8
+Jaotombo et al. 2023,MIMIC-IV,50K,4-class,XGBoost,Acc=68.4%,,0.684,Not measured,31
+Ours (2025),Texas 100×,0.9M,Binary (>3d),LGB+XGB Ensemble + AFCE,AUC=0.95,0.9536,0.8786,"DI=0.951 (RACE), 3/4 fair",42

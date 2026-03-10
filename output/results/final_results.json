@@ -1,0 +1,79 @@
+{
+  "dataset": {
+    "name": "Texas 100\u00d7 PUDF",
+    "records": 925128,
+    "features": 42,
+    "target": "LOS_BINARY (LOS > 3 days)",
+    "positive_rate": 0.4504533426725815
+  },
+  "best_model": {
+    "name": "LGB_XGB_Blend",
+    "accuracy": 0.8786332731616098,
+    "auc": 0.9535995268687688,
+    "f1": 0.863858474894814
+  },
+  "afce": {
+    "accuracy": 0.8678996465361625,
+    "auc": 0.953043140117761,
+    "f1": 0.849827967559597,
+    "fairness": {
+      "RACE": {
+        "Disparate_Impact": 0.9499956180835456,
+        "SPD": 0.022349065010071056,
+        "EOD": 0.18680370236549548,
+        "Equalized_Odds": 0.18680370236549548,
+        "PPV_Ratio": 0.7558538287972895,
+        "WTPR": 0.9737988674123583,
+        "Calibration_Diff": 0.16212873375142822,
+        "Treatment_Equality": 0.028261871830336564
+      },
+      "SEX": {
+        "Disparate_Impact": 0.9515325005771933,
+        "SPD": 0.021461188453837376,
+        "EOD": 0.07808453360685064,
+        "Equalized_Odds": 0.07808453360685064,
+        "PPV_Ratio": 0.9131234589719996,
+        "WTPR": 0.9637317918580944,
+        "Calibration_Diff": 0.04971919015559145,
+        "Treatment_Equality": 0.263694881652264
+      },
+      "ETHNICITY": {
+        "Disparate_Impact": 0.9500058759786715,
+        "SPD": 0.021755585781432163,
+        "EOD": 0.043047742574080394,
+        "Equalized_Odds": 0.043047742574080394,
+        "PPV_Ratio": 0.9394264795940527,
+        "WTPR": 0.9828784065581745,
+        "Calibration_Diff": 0.03946653100013253,
+        "Treatment_Equality": 0.4636832957023662
+      },
+      "AGE_GROUP": {
+        "Disparate_Impact": 0.5528260874965585,
+        "SPD": 0.29933498798404606,
+        "EOD": 0.10196226587096979,
+        "Equalized_Odds": 0.12219806598477846,
+        "PPV_Ratio": 0.9600189430154041,
+        "WTPR": 0.9676676591548127,
+        "Calibration_Diff": 0.02477349533479678,
+        "Treatment_Equality": 0.6081109826825774
+      }
+    },
+    "fair_attributes_count": 3
+  },
+  "stability": {
+    "n_subsets": 20,
+    "accuracy_mean": 0.8831583273161611,
+    "accuracy_std": 0.008005982230424561,
+    "auc_mean": 0.9557097958405414,
+    "auc_std": 0.00394941950133147
+  },
+  "models_evaluated": 12,
+  "fairness_metrics_count": 8,
+  "visualizations_count": 25,
+  "protected_attributes": [
+    "RACE",
+    "SEX",
+    "ETHNICITY",
+    "AGE_GROUP"
+  ]
+}

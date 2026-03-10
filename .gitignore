@@ -13,8 +13,10 @@ venv/
 env/
 
 # Data files (too large for git)
-data/*.p
-data/*.csv
+data/
+**/data/*.csv
+**/data/*.p
+final_analysis/data/
 
 # Model files
 models/*.pkl
@@ -23,6 +25,7 @@ models/*.pt
 
 # Results (regeneratable)
 results/*.pkl
+**/*.pkl
 processed_data/
 
 # IDE
@@ -46,6 +49,8 @@ optimize_50_agents.py
 rerun_failed.py
 find_cell.py
 agent_results/
+catboost_info/
+**/catboost_info/
 
 # Figures (regeneratable, but we keep them)
 # figures/

@@ -1,0 +1,16 @@
+{
+  "timestamp": "2026-02-19T11:07:23.777074",
+  "models": [
+    "Logistic_Regression",
+    "Random_Forest",
+    "Gradient_Boosting",
+    "Neural_Network"
+  ],
+  "attributes": [
+    "RACE",
+    "ETHNICITY",
+    "SEX",
+    "AGE_GROUP"
+  ],
+  "fairness_threshold": 0.8
+}

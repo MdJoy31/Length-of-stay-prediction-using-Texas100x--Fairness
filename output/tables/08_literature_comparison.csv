@@ -1,0 +1,9 @@
+Study,Year,Dataset,N_Records,Task,Best_Model,AUC,Accuracy,Fairness,Notes
+Jain et al. [1],2024,NY SPARCS,2.3M,LOS (regression + binary),CatBoost / RF,0.784,,Not measured,"R2=0.82 (newborns), DOI:10.1186/s12913-024-11238-y"
+Tarek et al. [2],2025,"MIMIC-III, PIC",46.5K,Mortality,DL + Synthetic EHR,,,DI~0.95 (lambda=1.2),"Fairness-optimized synthetic EHR, DOI:10.1145/3721201.3721373"
+Mekhaldi et al. [3],2021,Microsoft Open,100K,LOS (regression),GBM,,,Not measured,"R2=0.94, MAE=0.44, DOI:10.6688/JISE.202109_37(5).0003"
+Jaotombo et al. [4],2023,French PMSI,73K,LOS > 14 days,Gradient Boosting,0.81,,Not measured,"AUC best metric, DOI:10.1080/20016689.2022.2149318"
+Almeida et al. [5],2024,Literature Review (12 studies),Review,LOS (review),XGBoost / NN,,0.9474,Not measured,"Review paper, XGBoost R2=0.89, DOI:10.3390/app142210523"
+Zeleke et al. [6],2023,Bologna ED,12.9K,LOS > 6 days,Gradient Boosting,0.754,0.754,Not measured,"ED admissions, Brier=0.181, DOI:10.3389/frai.2023.1179226"
+Poulain et al. [7],2023,"MIMIC-III, eICU",50K,Mortality,FairFedAvg (GRU),,0.766,TPSD=0.030 (beta=2.5),"Federated learning, DOI:10.1145/3593013.3594102"
+Ours (2025),2025,Texas 100x PUDF,0.9M,LOS > 3 days (binary),LGB_XGB_Blend + AFCE,0.9536,0.8786,DI>=0.80 for 3/4 attrs,"12 models, 42 features, AFCE framework"

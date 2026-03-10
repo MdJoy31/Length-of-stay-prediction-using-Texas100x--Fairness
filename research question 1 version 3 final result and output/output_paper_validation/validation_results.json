@@ -1,0 +1,89 @@
+{
+  "paper_claim_validation": {
+    "models": {
+      "claimed": [
+        "LR",
+        "DT",
+        "RF",
+        "XGBoost",
+        "LightGBM",
+        "CatBoost"
+      ],
+      "implemented": [
+        "LR",
+        "DT",
+        "RF",
+        "XGBoost",
+        "LightGBM",
+        "CatBoost"
+      ],
+      "status": "MATCH"
+    },
+    "fairness_metrics": {
+      "claimed": [
+        "DI",
+        "SPD",
+        "EOD",
+        "EOPP",
+        "TI",
+        "PP",
+        "Calibration"
+      ],
+      "implemented": [
+        "DI",
+        "SPD",
+        "EOD",
+        "EOPP",
+        "TI",
+        "PP",
+        "Calibration"
+      ],
+      "status": "MATCH"
+    },
+    "protected_attributes": {
+      "claimed": [
+        "race",
+        "sex",
+        "age",
+        "payer"
+      ],
+      "implemented": [
+        "RACE",
+        "SEX",
+        "ETHNICITY",
+        "AGE_GROUP"
+      ],
+      "claimed_subgroups": 14,
+      "actual_subgroups": 11,
+      "status": "PARTIAL -- no payer column in dataset"
+    },
+    "reliability": {
+      "K_resampling": {
+        "claimed": 30,
+        "implemented": 30,
+        "status": "MATCH"
+      },
+      "sample_size_range": {
+        "claimed": "1K-925K",
+        "implemented": "1K-925,128",
+        "status": "MATCH"
+      },
+      "max_cv_percent": 31.74,
+      "min_n_for_cv_lt_5pct": 500000
+    },
+    "cross_hospital": {
+      "K_groupkfold": {
+        "claimed": 20,
+        "implemented": 20,
+        "status": "MATCH"
+      },
+      "race_di_swing": 0.5350757227993139,
+      "hospitals_analyzed": 370
+    }
+  },
+  "best_model": {
+    "name": "LightGBM",
+    "auc": 0.9518346988008413,
+    "accuracy": 0.8773091349323879
+  }
+}

@@ -1,0 +1,44 @@
+======================================================================
+RQ1 ANALYSIS SUMMARY
+Generated: 2026-02-23T00:47:56.393013
+======================================================================
+
+VERIFICATION MODEL (Logistic Regression, CPU, 5 features)
+--------------------------------------------------
+  accuracy       : 0.7550
+  f1             : 0.7240
+  precision      : 0.7348
+  recall         : 0.7136
+  auc            : 0.8290
+  brier          : 0.1686
+  ece            : 0.0359
+
+FAIRNESS METRICS
+--------------------------------------------------
+  RACE:
+    DI=0.828  WTPR=0.692  EOD=0.058  EqOdds=0.064
+  SEX:
+    DI=0.673  WTPR=0.682  EOD=0.074  EqOdds=0.176
+  ETHNICITY:
+    DI=0.745  WTPR=0.663  EOD=0.067  EqOdds=0.096
+  AGE_GROUP:
+    DI=0.149  WTPR=0.340  EOD=0.493  EqOdds=0.493
+
+NOTEBOOK RESULTS (from executed GPU notebooks)
+--------------------------------------------------
+  Best model: LightGBM GPU
+  Best F1: 0.8639
+  AFCE best (a=0.1):
+    Acc=0.8662  F1=0.8497  AUC=0.9534
+    RACE DI=0.999  SEX DI=1.0  ETH DI=0.916
+
+CROSS-HOSPITAL VARIANCE
+--------------------------------------------------
+  DI range: [0.189, 1.000]
+  DI std: 0.215
+
+INTERSECTIONAL AUDIT (RACE x SEX)
+--------------------------------------------------
+  Intersectional DI: 0.485
+
+Analysis completed in 31.7s

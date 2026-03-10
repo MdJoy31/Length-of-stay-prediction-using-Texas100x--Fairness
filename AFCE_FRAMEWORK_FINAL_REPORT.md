@@ -115,13 +115,13 @@ Where:
 | **ETH** | Both | 0.480 | 65.5% | Nearly uniform |
 | **AGE** | Pediatric | 0.2205 | 87.3% | α=0.0 optimum |
 | AGE | Young Adult | 0.050 | 99.8% | Extreme: low base rate |
-| AGE | Middle-aged | 0.3657 | 78.4% | 
+| AGE | Middle-aged | 0.3657 | 78.4% |
 | AGE | Elderly | 0.5030 | 60.1% | Normal/high base rate |
 | AGE | Unknown | 0.8337 | 0.05% | Rare group |
 
 **Result at α=0.0 (selected):**
 - RACE DI: 0.801 ✓ FAIR
-- SEX DI: 0.804 ✓ FAIR  
+- SEX DI: 0.804 ✓ FAIR
 - ETH DI: 0.835 ✓  FAIR
 - AGE DI: 0.259 (limited, AGE groups have real 3:1 outcome gap)
 - Accuracy: 0.8783
@@ -151,7 +151,7 @@ Because young adults have ~25% extended-stay rate vs elderly at ~60%, perfect fa
 | 0.70 | 0.8517 | 0.8299 | 0.849 | 0.841 | 0.867 | 0.553 | 4/4 ✓ |
 | **1.00** | 0.8282 | 0.8004 | 0.851 | 0.843 | 0.868 | 0.622 | 4/4 ✓ |
 
-**Recommendation:** 
+**Recommendation:**
 - **α = 0.0** (selected): Maximum accuracy (87.83%), 3/4 attributes fair
 - **α = 0.50**: Balanced (86.58% accuracy), all 4 attributes fair (DI ≥ 0.80)
 - **α = 1.0**: Aggressive fairness (82.82% accuracy), strongest AGE_GROUP correction
@@ -223,7 +223,7 @@ sex_counts = df['SEX_CODE'].map(SEX_MAP_VIZ).value_counts()
 # Result: Female=36.6%, Male=63.4% (correct distribution)
 ```
 
-**Fix Applied:** 
+**Fix Applied:**
 - ✅ LOS_Prediction_Standard.ipynb (EDA cell #VSC-a22d7759)
 - ✅ LOS_Prediction_Detailed.ipynb (EDA cell #VSC-80eee4e0)
 

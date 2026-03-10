@@ -1,0 +1,2210 @@
+Found 7 PDFs
+
+========================================================================================================================
+FILE: 12913_2024_Article_11238.pdf
+========================================================================================================================
+  Extracted 99961 characters
+
+--- FIRST 6000 CHARS (Title/Authors/Abstract) ---
+Jain et al. BMC Health Services Research          (2024) 24:860  
+https://doi.org/10.1186/s12913-024-11238-y
+
+BMC Health Services Research
+
+RESEARCH
+
+Open Access
+
+Predicting hospital length of stay using 
+machine learning on a large open health 
+dataset
+Raunak Jain1, Mrityunjai Singh1, A. Ravishankar Rao2* and Rahul Garg1 
+
+Abstract 
+Background  Governments worldwide are facing growing pressure to increase transparency, as citizens demand 
+greater insight into decision-making processes and public spending. An example is the release of open healthcare 
+data to researchers, as healthcare is one of the top economic sectors. Significant information systems development 
+and computational experimentation are required to extract meaning and value from these datasets. We use a large 
+open health dataset provided by the New York State Statewide Planning and Research Cooperative System (SPARCS) 
+containing 2.3 million de-identified patient records. One of the fields in these records is a patient's length of stay (LoS) 
+in a hospital, which is crucial in estimating healthcare costs and planning hospital capacity for future needs. Hence it 
+would be very beneficial for hospitals to be able to predict the LoS early. The area of machine learning offers a poten-
+tial solution, which is the focus of the current paper.
+
+Methods  We investigated multiple machine learning techniques including feature engineering, regression, and clas-
+sification trees to predict the length of stay (LoS) of all the hospital procedures currently available in the dataset. 
+Whereas many researchers focus on LoS prediction for a specific disease, a unique feature of our model is its ability 
+to simultaneously handle 285 diagnosis codes from the Clinical Classification System (CCS). We focused on the inter-
+pretability and explainability of input features and the resulting models. We developed separate models for newborns 
+and non-newborns.
+
+Results  The study yields promising results, demonstrating the effectiveness of machine learning in predicting LoS. 
+The best  R2 scores achieved are noteworthy: 0.82 for newborns using linear regression and 0.43 for non-newborns 
+using catboost regression. Focusing on cardiovascular disease refines the predictive capability, achieving an improved 
+ R2 score of 0.62. The models not only demonstrate high performance but also provide understandable insights. 
+For instance, birth-weight is employed for predicting LoS in newborns, while diagnostic-related group classification 
+proves valuable for non-newborns.
+
+Conclusion  Our study showcases the practical utility of machine learning models in predicting LoS during patient 
+admittance. The emphasis on interpretability ensures that the models can be easily comprehended and replicated 
+by other researchers. Healthcare stakeholders, including providers, administrators, and patients, stand to benefit 
+
+*Correspondence:
+A. Ravishankar Rao
+ravirao@fdu.edu
+Full list of author information is available at the end of the article
+
+(c) The Author(s) 2024. Open Access  This article is licensed under a Creative Commons Attribution 4.0 International License, which 
+permits use, sharing, adaptation, distribution and reproduction in any medium or format, as long as you give appropriate credit to the 
+original author(s) and the source, provide a link to the Creative Commons licence, and indicate if changes were made. The images or 
+other third party material in this article are included in the article's Creative Commons licence, unless indicated otherwise in a credit line 
+to the material. If material is not included in the article's Creative Commons licence and your intended use is not permitted by statutory 
+regulation or exceeds the permitted use, you will need to obtain permission directly from the copyright holder. To view a copy of this 
+licence, visit http:// creat iveco mmons. org/ licen ses/ by/4. 0/. The Creative Commons Public Domain Dedication waiver (http:// creat iveco 
+mmons. org/ publi cdoma in/ zero/1. 0/) applies to the data made available in this article, unless otherwise stated in a credit line to the data.
+
+Jain et al. BMC Health Services Research          (2024) 24:860 
+
+Page 2 of 29
+
+significantly. The findings offer valuable insights for cost estimation and capacity planning, contributing to the overall 
+enhancement of healthcare management and delivery.
+
+Keywords  Machine learning, Artificial intelligence, Health informatics, Open data, Open-source software, Healthcare 
+analytics
+
+Introduction
+Democratic  governments  worldwide  are  placing  an 
+increasing  importance  on  transparency,  as  this  leads  to 
+better  governance,  market  efficiency,  improvement,  and 
+acceptance of government policies. This is highlighted by 
+reports  from  the  Organization  for  Economic  Co-opera-
+tion  and  Development  (OECD)  an  international  organi-
+zation  whose  mission  it  is  to  shape  policies  that  foster 
+prosperity,  equality,  opportunity  and  well-being  for  all 
+[1].  Openness  and  transparency  have  been  recognized 
+as  pillars  for  democracy,  and  also  for  fostering  sustain-
+able development goals [2], which is a major focus of the 
+United  Nations  (https:// susta inabl edeve lopme nt. un. org/ 
+sdg16).
+
+An  important  government  function  is  to  provide  for 
+the healthcare needs of its citizens. The U.S. spends about 
+$3.6  trillion  a  year  on  healthcare,  which  represents  18% 
+of  its  GDP  [3].  Other  developed  nations  spend  around 
+10% of their GDP on healthcare. The percentage of GDP 
+spent  on  healthcare  is  rising  as  populations  age.  Conse-
+quently,  research  on  healthcare  expenditure  and  patient 
+outcomes  is  crucial  to  maintain  viable  national  econo-
+mies. It is advantageous for nations to combine investiga-
+tions by the private sector, government sector, non-profit 
+agencies,  and  universities  to  find  the  best  solutions.  A 
+promising path is to make health data open, which a
+
+--- END FIRST 6000 ---
+
+--- KEY METRICS SEARCH ---
+AUC mentions:
+  auc
+  auc  measures  reported  in
+  auc scores for the three different classifiers we used, logistic regression, random forest and catboost. this is
+  auc over the previous columns
+  auc
+  auc scores for the three different classifiers we used, logistic regression, random forest and catboost. this is
+  auc over the previous columns
+  auc
+  aucs generated by two models at a time. for each model, measured the performance of binary classifiers, designated as "one
+  auc for the first
+  auc for the second model
+  aucs
+Accuracy mentions:
+  accuracy  and  control  over-fitting".  the  random  for-
+  accuracy as
+  accuracy  of  46.98%  using
+  accuracy  of  60.08%  using  random  forest  classification
+  accuracy as
+  accuracy of the classifier when class
+  accuracy is computed by dividing the total num-
+  accuracy
+  accuracy
+Precision/Recall/Sensitivity/Specificity mentions:
+  specificity.  our
+  recall  and  precision,  and  the  resulting  f1  score.  the
+  precision
+  recall
+
+--- FAIRNESS KEYWORDS ---
+  biased news
+  bias based on race, gender or ethnicity. for
+  bias.
+  bias is an impor-
+  bias in the process of sentencing
+  bias is reinforced through any algorithms that
+  bias  in  the  los,  the
+  biased  open  data  source  such  as  new  york  state
+  disparities in 30-day readmission rates among
+  biased boosting with categorical features," arxiv preprint
+  bias: there's software
+  biased
+
+--- DATASET MENTIONS ---
+  dataset
+  datasets. we use a large
+  dataset provided by the new york state statewide planning and research cooperative system (sparcs)
+  dataset.
+  dataset
+  dataset  and  the
+  dataset
+  dataset  columns
+  dataset  sourced  from  the  new  york  state  sparcs
+  datasets  exclusively  composed  of  medicare/medicaid
+
+--- MODEL MENTIONS ---
+  catboost regression. focusing on cardiovascular disease refines the predictive capabilit
+  decision tree methods to predict los in 11,206
+  neural networks to build
+  logistic regression, random forests,
+  random forest classifier is also an ensemble learn-
+  decision trees
+  decision tree to make a prediction.
+  random forest regressor [56, 57] and random
+  random forest classifier/
+  logistic regression model [59], we used only one-
+  random forest regression.
+  random forest regressor where we target-encoded all fea-
+  logistic regression
+  random forest classifier
+  catboost classifier [62].
+  logistic regression model [59]
+  random forest classifier model trained and
+  catboost  classifier  model  trained
+  catboost regression
+  random forest regression
+
+--- LOS / MORTALITY ---
+  length of stay (los)
+  los early. the area of machine learning offers a poten-
+  length of stay (los) of all the hospital procedures currently available in the dataset.
+  los prediction for a specific disease, a unique feature of our model is its ability
+  los in newborns, while diagnostic-related group classification
+  los during patient
+  length of stay for
+  los is an important variable in determining health-
+  los is expected to increase due to the aging
+  los for a variety of diseases from available patient data.
+
+--- RESULTS/CONCLUSION SECTION ---
+
+[Found 'conclusion' at position 2549]
+lassification 
+proves valuable for non-newborns.
+
+Conclusion  Our study showcases the practical utility of machine learning models in predicting LoS during patient 
+admittance. The emphasis on interpretability ensures that the models can be easily comprehended and replicated 
+by other researchers. Healthcare stakeholders, including providers, administrators, and patients, stand to benefit 
+
+*Correspondence:
+A. Ravishankar Rao
+ravirao@fdu.edu
+Full list of author information is available at the end of the article
+
+(c) The Author(s) 2024. Open Access  This article is licensed under a Creative Commons Attribution 4.0 International License, which 
+permits use, sharing, adaptation, distribution and reproduction in any medium or format, as long as you give appropriate credit to the 
+original author(s) and the source, provide a link to the Creative Commons licence, and indicate if changes were made. The images or 
+other third party material in this article are included in the article's Creative Commons licence, unless indicated otherwise in a credit line 
+to the material. If material is not included in the article's Creative Commons licence and your intended use is not permitted by statutory 
+regulation or exceeds the permitted use, you will need to obtain permission directly from the copyright holder. To view a copy of this 
+licence, visit http:// creat iveco mmons. org/ licen ses/ by/4. 0/. The Creative Commons Public Domain Dedication waiver (http:// creat iveco 
+mmons. org/ publi cdoma in/ zero/1. 0/) applies to the data made available in this article, unless otherwise stated in a credit line to the data.
+
+Jain et al. BMC Health Services Research          (2024) 24:860 
+
+Page 2 of 29
+
+significantly. The findings offer valuable insights for cost estimation and capacity planning, contributing to the overall 
+enhancement of healthcare management and delivery.
+
+Keywords  Machine learning, Artificial intelligence, Health informatics, Open data, Open-source software, Healthcare 
+analytics
+
+Introduction
+Democratic  governments  worldwide  are  placing  an 
+increasing  importance  on  transparency,  as  this  leads  to 
+better  governance,  market  efficiency,  improvement,  and 
+acceptance of government policies. This is highlighted by 
+reports  from  the  Organization  for  Economic  Co-opera-
+tion  and  Development  (OECD)  an  international  organi-
+zation  whose  mission  it  is  to  shape  policies  that  foster 
+prosperity,  equality,  opportunity  and  well-being  for  all 
+[1].  Openness  and  transparency  have  been  recognized 
+as  pillars  for  democracy,  and  also  for  fostering  sustain-
+able development goals [2], which is a major focus of the 
+United  Nations  (https:// susta inabl edeve lopme nt. un. org/ 
+sdg16).
+
+An  important  government  function  is  to  provide  for 
+the healthcare needs of its citizens. The U.S. spends about 
+$3.6  trillion  a  year  on  healthcare,  which  represents  18% 
+of  its  GDP  [3].  Other  developed  nati
+
+--- NUMERIC METRIC VALUES ---
+Extracted values:
+  46.98%
+  60.08%
+  0.605
+  0.606
+  0.7844
+Table-like metric lines:
+  accuracy  of  46.98%
+  accuracy  of  60.08
+  auc of 0.7844
+
+
+
+========================================================================================================================
+FILE: 3721201.3721373.pdf
+========================================================================================================================
+  Extracted 61925 characters
+
+--- FIRST 6000 CHARS (Title/Authors/Abstract) ---
+Latest updates: hps://dl.acm.org/doi/10.1145/3721201.3721373
+
+RESEARCH-ARTICLE
+Fairness-Optimized Synthetic EHR Generation for Arbitrary
+Downstream Predictive Tasks
+
+MIRZA FARHAN BIN TAREK, University of Delaware, Newark, DE, United States
+
+RAPHAEL POULAIN, University of Delaware, Newark, DE, United States
+
+RAHMATOLLAH BEHESHTI, University of Delaware, Newark, DE, United States
+
+Open Access Support provided by:
+
+University of Delaware
+
+PDF Download
+3721201.3721373.pdf
+18 February 2026
+Total Citations: 0
+Total Downloads: 216
+
+Published: 24 June 2025
+
+Citation in BibTeX format
+
+CHASE '25: ACM/IEEE International
+Conference on Connected Health:
+Applications, Systems and Engineering
+Technologies
+June 24 - 26, 2025
+NY, New York, USA
+
+Conference Sponsors:
+SIGBED
+
+.
+
+CHASE '25: Proceedings of the ACM/IEEE International Conference on Connected Health: Applications, Systems and Engineering Technologies (June 2025)
+hps://doi.org/10.1145/3721201.3721373
+ISBN: 9798400715396
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+Fairness-Optimized Synthetic EHR Generation for Arbitrary
+Downstream Predictive Tasks
+Raphael Poulain
+University of Delaware
+Newark, DE, USA
+rpoulain@udel.edu
+
+Mirza Farhan Bin Tarek
+University of Delaware
+Newark, DE, USA
+mfarhan@udel.edu
+
+Rahmatollah Beheshti
+University of Delaware
+Newark, DE, USA
+rbi@udel.edu
+
+Abstract
+Among various aspects of ensuring the responsible design of AI
+tools for healthcare applications, addressing fairness concerns has
+been a key focus area. Specifically, given the wide spread of elec-
+tronic health record (EHR) data and their huge potential to inform
+a wide range of clinical decision support tasks, improving fairness
+in this category of health AI tools is of key importance. While
+such a broad problem (mitigating fairness in EHR-based AI models)
+has been tackled using various methods, task- and model-agnostic
+methods are rare. In this study, we aimed to target this gap by pre-
+senting a new pipeline that generates synthetic EHR data, which
+is not only consistent with (faithful to) the real EHR data but also
+can reduce the fairness concerns (defined by the end-user) in the
+downstream tasks, when combined with the real data. We demon-
+strate the effectiveness of our proposed pipeline across various
+downstream tasks and two different EHR datasets. Our proposed
+pipeline can add a widely applicable and complementary tool to
+the existing toolbox of methods to address fairness in health AI
+applications, such as those modifying the design of a downstream
+model.1.
+
+CCS Concepts
+* Computing methodologies → Machine learning; * Applied
+computing → Health informatics.
+
+Keywords
+Synthetic Data Generation, Fairness, Machine Learning
+
+ACM Reference Format:
+Mirza Farhan Bin Tarek, Raphael Poulain, and Rahmatollah Beheshti. 2025.
+Fairness-Optimized Synthetic EHR Generation for Arbitrary Downstream
+Predictive Tasks. In ACM/IEEE International Conference on Connected Health:
+Applications, Systems and Engineering Technologies (CHASE '25), June 24-
+26, 2025, New York, NY, USA. ACM, New York, NY, USA, 11 pages. https:
+//doi.org/10.1145/3721201.3721373
+
+1 Introduction
+Integrating ML and AI tools into healthcare has become increas-
+ingly feasible with the widespread adoption of large-scale electronic
+health record (EHR) systems, which contain rich information re-
+lated to various medical concepts, including diagnoses, procedures,
+
+1The codebase for our project is available at https://github.com/healthylaife/FairSynth
+
+This work is licensed under a Creative Commons Attribution 4.0 International License.
+CHASE '25, June 24-26, 2025, New York, NY, USA
+(c) 2025 Copyright held by the owner/author(s).
+ACM ISBN 979-8-4007-1539-6/2025/06
+https://doi.org/10.1145/3721201.3721373
+
+medications, and lab measurements. Different ML models are help-
+ing in various aspects of healthcare, for example, clinical predictive
+modeling [5, 6, 17, 31], subtyping patients [23] and treatment sug-
+gestions [34, 35, 41]. These models present both opportunities and
+challenges in healthcare systems. For example, while ML models
+can help with more effective diagnosis and treatment, they also
+risk exacerbating health inequities among historically marginalized
+groups, if they are not carefully designed[12, 14], or the data used
+for training has inherent bias [1].
+
+To achieve fairness in clinical ML applications, the literature has
+presented a diverse array of fairness notions and corresponding
+methodologies for the user to make the model output fair according
+to the desired characterization of fairness [22]. Synthetic data gen-
+eration techniques present a novel opportunity to address fairness
+considerations at the data level, especially in the case of underrepre-
+sented populations. This approach enables the creation of datasets
+that inherently embody fairness properties, potentially ensuring
+that subsequent models trained on these data will exhibit fair be-
+havior in arbitrary downstream tasks. The primary objective of fair
+synthetic data generation is to produce a dataset that closely ap-
+proximates the original data distribution while simultaneously mit-
+igating or eliminating discriminatory biases present in the source
+data. It is important to note that this process of fairness-aware
+synthetic data generation inevitably alters the underlying data
+distribution. Consequently, models trained on such synthetically
+generated fair datasets may experience a degree of performance
+degradation compared to those trained on the original, unmodified
+data. One alternative option to using only synthetic data or naively
+adding synthetic data to the existing data (e.g., for oversampling)
+for fairness mitigation is generating customized synthetic data that
+especially targets addressing fairness when augmented to (merged
+with) the existing data.
+
+This study aims to propose an end-to-end pipeline for the above
+purpose, which is generating on-demand synthetic data to mitigate
+fairness concerns in arbitrary downstream tasks using EHR da
+
+--- END FIRST 6000 ---
+
+--- KEY METRICS SEARCH ---
+Accuracy mentions:
+  accuracy of
+  accuracy
+  accuracy
+  accuracy.
+  accuracy, lower values of 𝜆 may be preferable. however, if fairness is
+  accuracy, fairness, and limits of predicting
+  accuracy in diagnosing type 2 diabetes
+F1 mentions:
+  f1-score↑
+  f1-score↑
+  f1-score. from tables 1a and 1b, we can observe the
+  f1-scores for the real data and augmented datasets for different
+  f1-scores and fairness metrics
+  f1-scores for different values of 𝜆 on the mimic-iii dataset across
+  f1 scores. for
+  f1-score reduces from 0.46 ± 0.02 at
+  f1 scores indicate.
+  f1-scores) and fairness (di and wtpr) metrics is a crucial aspect
+  f1 scores but potentially less fair
+  f1-scores for mimic-iii↑
+
+--- FAIRNESS KEYWORDS ---
+  fairness-optimized synthetic ehr generation for arbitrary
+  fairness-optimized synthetic ehr generation for arbitrary
+  fairness concerns has
+  fairness
+  fairness in ehr-based ai models)
+  fairness concerns (defined by the end-user) in the
+  fairness in health ai
+  fairness, machine learning
+  fairness-optimized synthetic ehr generation for arbitrary downstream
+  equities among historically marginalized
+  bias [1].
+  fairness in clinical ml applications, the literature has
+
+--- DATASET MENTIONS ---
+  ehr generation for arbitrary
+  ehr generation for arbitrary
+  ehr) data and their huge potential to inform
+  ehr-based ai models)
+  ehr data, which
+  ehr data but also
+  ehr datasets. our proposed
+  ehr generation for arbitrary downstream
+  ehr) systems, which contain rich information re-
+  datasets
+
+--- MODEL MENTIONS ---
+  deep learning approach with
+  deep learning: a field guide for the uninitiated. journal of artificial intelligence
+  neural network for dynamic treatment recom-
+
+--- LOS / MORTALITY ---
+  mortality prediction.
+  mortality
+  icu stay dataset. it contains 46,520 patients with
+  mortality
+  mortality in a patient's next visit based on the current visit.
+  mortality prediction
+  mortality prediction
+  mortality prediction
+  los alamitos, ca, usa, 1401-1406. https://doi.org/10.1109/bigdata47090.2019.
+
+--- RESULTS/CONCLUSION SECTION ---
+
+[Found 'conclusion' at position 43296]
+M104941 and a gift from Amazon Web Ser-
+vices.
+
+6 Conclusion
+In this study, we presented a new pipeline for mitigating bias in
+clinical downstream tasks with the help of fairness-optimized (FO)
+augmented EHR data. Specifically, we used the FO objective func-
+tion to ensure that combining the real data with the generated syn-
+thetic data can improve the fairness performance of downstream
+predictive models running on the data. Through a series of compre-
+hensive experiments on MIMIC-III and pediatric ICU datasets, we
+showed that adding FO objectives in the generator and augmenting
+real data with FO synthetic data can reduce the biases observed for
+different sensitive attributes in downstream mortality prediction
+tasks. Even though our method solely focuses on data-related meth-
+ods where we try to improve fairness by augmenting, combining
+
+References
+[1] Mahed Abroshan, Mohammad Mahdi Khalili, and Andrew Elliott. 2022. Counter-
+factual fairness in synthetic data generation. In NeurIPS Workshop on Synthetic
+Data for Empowering ML Research.
+
+[2] Mrinal Kanti Baowaly, Chia-Ching Lin, Chao-Lin Liu, and Kuan-Ta Chen. 2019.
+Synthesizing electronic health records using improved generative adversarial
+networks. Journal of the American Medical Informatics Association 26, 3 (2019),
+228-241.
+
+[3] Simon Caton and Christian Haas. 2024. Fairness in Machine Learning: A Survey.
+ACM Comput. Surv. 56, 7, Article 166 (apr 2024), 38 pages. https://doi.org/10.
+1145/3616865
+
+[4] Taha Ceritli, Ghadeer O Ghosheh, Vinod Kumar Chauhan, Tingting Zhu, An-
+drew P Creagh, and David A Clifton. 2023. Synthesizing mixed-type electronic
+health records using diffusion models. arXiv preprint arXiv:2302.14679 (2023).
+[5] Edward Choi, Mohammad Taha Bahadori, Le Song, Walter F Stewart, and Jimeng
+Sun. 2017. GRAM: graph-based attention model for healthcare representation
+learning. In Proceedings of the 23rd ACM SIGKDD international conference on
+
+Fairness-Optimized Synthetic EHR Generation for Arbitrary Downstream Predictive Tasks
+
+CHASE '25, June 24-26, 2025, New York, NY, USA
+
+knowledge discovery and data mining. 787-795.
+
+//doi.org/10.1145/3593013.3594102
+
+[6] Edward Choi, Mohammad Taha Bahadori, Jimeng Sun, Joshua Kulas, Andy
+Schuetz, and Walter Stewart. 2016. Retain: An interpretable predictive model
+for healthcare using reverse time attention mechanism. Advances in neural
+information processing systems 29 (2016).
+
+[7] Edward Choi, Siddharth Biswal, Bradley Malin, Jon Duke, Walter F Stewart,
+and Jimeng Sun. 2017. Generating multi-label discrete patient records using
+generative adversarial networks. In Machine learning for healthcare conference.
+PMLR, 286-305.
+
+[8] Alexandra Chouldechova and Aaron Roth. 2018. The frontiers of fairness in
+
+machine learning. arXiv preprint arXiv:1810.08810 (2018).
+
+[9] Limeng Cui, Siddharth Biswal, Lucas M Glass, Greg Lever, Jimeng Sun, and Cao
+Xiao. 2020. CONAN: complementary pattern augmentation for rare disease
+detection. In Proceedings of the AAAI
+
+--- NUMERIC METRIC VALUES ---
+Table-like metric lines:
+  f1-score reduces from 0.46 ± 0.02
+
+
+
+========================================================================================================================
+FILE: applsci-14-10523.pdf
+========================================================================================================================
+  Extracted 70491 characters
+
+--- FIRST 6000 CHARS (Title/Authors/Abstract) ---
+Review
+Hospital Length-of-Stay Prediction Using Machine Learning
+Algorithms-A Literature Review
+
+Guilherme Almeida 1
+
+, Fernanda Brito Correia 1
+
+, Ana Rosa Borges 1
+
+and Jorge Bernardino 1,2,*
+
+1 Coimbra Institute of Engineering-ISEC, Polytechnic University of Coimbra, Rua da Misericórdia,
+Lagar dos Cortiços, S. Martinho do Bispo, 3045-093 Coimbra, Portugal; a2022112861@isec.pt (G.A.);
+fernanda@isec.pt (F.B.C.); arborges@isec.pt (A.R.B.)
+
+2 Centre for Informatics and Systems of the University of Coimbra, Polo II, Pinhal de Marrocos,
+
+3030-290 Coimbra, Portugal
+* Correspondence: jorge@isec.pt
+
+Abstract: Predicting hospital length of stay is critical for efficient hospital management, enabling
+proactive resource allocation, the optimization of bed availability, and optimal patient care. This
+paper explores the potential of machine learning algorithms to revolutionize hospital length-of-
+stay predictions, contributing to healthcare efficiency and patient care. The main objective is to
+identify the most effective machine learning algorithm for building a predictive model capable of
+predicting hospital length of stay. The bibliographic search of the existing literature on machine
+learning algorithms applied to hospital length of stay predictions highlighted the most relevant
+papers within this area of research. The papers were analyzed in terms of model types and metrics
+that contributed to the considerable impact on healthcare decision making. We also discuss the
+challenges and limitations of machine learning algorithms for predicting length of stay, and the
+importance of data quality and ethical considerations.
+
+Keywords: hospital length of stay; prediction models; machine learning algorithms
+
+Citation: Almeida, G.; Brito Correia,
+
+F.; Borges, A.R.; Bernardino, J.
+
+Hospital Length-of-Stay Prediction
+
+Using Machine Learning
+
+Algorithms-A Literature Review.
+
+Appl. Sci. 2024, 14, 10523. https://
+
+doi.org/10.3390/app142210523
+
+Academic Editor: Maria Rizzi
+
+Received: 25 September 2024
+
+Revised: 7 November 2024
+
+Accepted: 11 November 2024
+
+Published: 15 November 2024
+
+Copyright: (c) 2024 by the authors.
+
+Licensee MDPI, Basel, Switzerland.
+
+This article is an open access article
+
+distributed under the terms and
+
+conditions of the Creative Commons
+
+Attribution (CC BY) license (https://
+
+creativecommons.org/licenses/by/
+
+4.0/).
+
+1. Introduction
+
+This paper offers a comprehensive overview of machine learning (ML) algorithms and
+their applications in the healthcare industry, with an emphasis on hospital length of stay
+(LoS) prediction. The main objective of this study is to analyze which ML algorithms are
+the most effective to build a predictive model capable of predicting hospital LoS.
+
+Initially, different types of ML algorithms are explored, detailing their characteristics
+and the importance of the most relevant features used for predicting hospital admissions
+and hospital LoSs. Afterwards, we analyze how these algorithms are used to improve
+outcomes and efficiency in healthcare. Ethical considerations, such as patient privacy, data
+management frameworks, and bias mitigation are important for these types of studies,
+so they are also addressed. These topics provide an overview of the complexities and
+responsibilities involved in integrating ML into healthcare, ensuring that technologies are
+not only effective, but also equitable and respectful of patients' rights.
+
+Hospital admissions and hospital LoSs are multifaceted challenges that involve a com-
+plex interplay of patient health, resource availability, and healthcare policies. Accurately
+predicting admissions or LoSs is notoriously difficult, yet it holds immense potential for
+improving healthcare system efficiency, reducing costs, and ultimately improving patient
+outcomes. This article delves into the intricate world of hospital LoS prediction with the
+goal of providing readers with a thorough understanding of the subject. Among the myriad
+issues addressed are inaccurate predictions, data complexity, resource constraints, patient
+variability, and ethical considerations.
+
+Appl. Sci. 2024, 14, 10523. https://doi.org/10.3390/app142210523
+
+https://www.mdpi.com/journal/applsci
+
+Appl. Sci. 2024, 14, 10523
+
+2 of 20
+
+The contributions offered by this review paper include improved prediction accu-
+racy, enhanced decision support, cost reduction initiatives, and the development of an
+ethical framework.
+
+This article focuses on the use of ML algorithms to predict hospital LoS. Therefore,
+
+four research questions (RQ) were formulated:
+*
+*
+*
+
+RQ1: What are the key factors that significantly influence hospital LoS?
+RQ2: What types of ML algorithms have been employed for hospital LoS predictions?
+RQ3: How do these algorithms compare in terms of performance metrics to predict
+hospital LoSs?
+RQ4: What are the potential benefits and limitations of using ML for hospital LoS
+predictions in healthcare settings?
+
+*
+
+This paper is a review on the prediction of hospital LoS using ML algorithms. Section 2
+starts with a brief overview of ML algorithms and their use in healthcare systems, followed
+by their use for hospital LoS predictions. Section 3 describes the ethical considerations we
+must pay attention to when using these types of data, and also when using ML algorithms.
+Section 4 describes the Kitchenham's methodology used and the work developed using
+it, up to an analysis of twelve selected research articles relevant to the topic using this
+methodology. It includes a detailed outline of the research protocol, covering the data
+source, search string, prerequisites, and inclusion and exclusion criteria. Section 5 presents
+the results provided by each study. Section 6 provides an analysis and discussion of
+the results. Finally, Section 7 concludes the article by summarizing and highlighting
+the potential of leveraging ML applied to hospital LoS prediction, ultimately promoting
+improved healthcare delivery. Through this review, the paper aims to provide readers with
+a 
+
+--- END FIRST 6000 ---
+
+--- KEY METRICS SEARCH ---
+Accuracy mentions:
+  accuracy than traditional
+  accuracy: accurate and complete data are essential for both privacy
+  accuracy and applicability of the retrieved
+  accuracy, precision, recall, and usability.
+  accuracy, precision, recall, and usability. the following table 1 shows the most commonly used algorithms in healthcare. table 1
+  accuracy
+  accuracy to the practical impact on healthcare opera-
+  accuracy-a fundamental metric used to evaluate the performance of classification
+  accuracy can be adapted to
+  accuracy of a classification model is defined as:
+  accuracy = (tp + tn)/(tp + tn + fp + fn),
+  accuracy of predictions, but also their practical implications in healthcare settings.
+F1 mentions:
+  f1 score-a metric used to evaluate the performance of classification models, especially
+  f1 score is:
+  f1 score = 2 ×
+  f1 score
+  f1 score
+  f1 score
+  f1 score
+  f1 score
+  f1 score
+Precision/Recall/Sensitivity/Specificity mentions:
+  precision, recall, and usability.
+  precision, recall, and usability. the following table 1 shows the most commonly used algorithms in healthcare
+  precision and recall,
+  precision ∗ recall
+  precision + recall
+
+--- FAIRNESS KEYWORDS ---
+  bias mitigation are important for these types of studies,
+  equitable and respectful of patients' rights.
+  bias is present in ml;
+  fairness and bias mitigation, informed consent, and data us-
+  fairness and bias mitigation, as ml algorithms
+  biases present in training data, leading to unequal
+  fairness and bias mitigation
+  fairness and reducing bias in ml models is essential for equitable healthcare
+  bias. detect biases in ml models and data:
+  bias audits (utilize
+  equal opportunity or data analysis);
+  bias. reduce identified biases in ml models:
+
+--- DATASET MENTIONS ---
+  datasets to train the algorithms.
+  datasets and can handle outliers more efficiently. a comparative study of these
+  datasets. without such measures,
+  datasets, helping them to uncover valuable insights useful for the process of
+  mimic-ii dataset (table 1), the authors compared the performance of several
+  datasets.
+  dataset from upt
+  datasets from other hospitals
+  mimic-iii database, which
+  dataset overview.
+
+--- MODEL MENTIONS ---
+  random forest, and
+  support vector machine [5]. these algorithms are among the most used for healthcare
+  random forest and support vector machine. this is due in part to their robustness and
+  random forest is particularly effective because of
+  support vector machine, on the other hand, excels at classification tasks with
+  random forest,
+  support vector machine, and other algorithms are still very competitive when applied to
+  neural network algorithms.
+  decision trees, random forest, and logistic regression. for
+  logistic regression can effectively handle binary outcomes, making it suitable
+  logistic regression,
+  elasticnet regression, and support vector regression. these models consider a mul-
+  logistic regression
+  decision trees
+  random forest
+  k-nearest neighbors
+  support vector
+  naive bayes
+  logistic regression supervised (classiﬁcation) high binary classiﬁcation, medical diagnostics decis
+  elasticnet, outperform simple linear regression in
+
+--- LOS / MORTALITY ---
+  length of stay is critical for efficient hospital management, enabling
+  length of stay. the bibliographic search of the existing literature on machine
+  length of stay predictions highlighted the most relevant
+  length of stay, and the
+  length of stay; prediction models; machine learning algorithms
+  length of stay
+  los prediction with the
+  los predictions?
+  los using ml algorithms. section 2
+  los predictions. section 3 describes the ethical considerations we
+
+--- RESULTS/CONCLUSION SECTION ---
+
+[Found 'conclusion' at position 38254]
+patient overcrowding in emergency departments.
+In conclusion, the proposed ML model offers a promising approach to enhance emer-
+gency department management and patient care. Future directions include the further
+refinement of the model with additional features, such as predicting diseases admissions,
+
+Appl. Sci. 2024, 14, 10523
+
+12 of 20
+
+and exploring alternative algorithms to enhance performance and address evolving health-
+care challenges effectively.
+
+In [34], the short research paper outlines an ML approach to predict patient consulta-
+tion length in emergency departments, crucial for anticipating operational bottlenecks and
+improving service provision. With emergency departments facing challenges like increased
+patient volumes and resource shortages, accurately estimating consultation times becomes
+essential to mitigate overcrowding and waiting times. Leveraging factors, such as patient
+demographics, vital signs, arrival time, and triage severity levels, the study proposes two
+ML models, random forest and neural network, to forecast consultation lengths. By training
+on a dataset spanning nearly a decade with over 350,000 entries, the models demonstrate
+improved accuracy when incorporating additional features beyond triage levels, such as
+patient symptoms, age, doctor's ID, and registration details.
+
+Although this research does not perform hospital LoS predictions and focuses on
+predicting consultation lengths, it is considered important because of the most-used ML
+algorithms in healthcare subjects and matters.
+
+In [35], the authors showed a significant advancement in healthcare analytics, par-
+ticularly in emergency department management. By harnessing the power of ML algo-
+rithms, like logistic regression, modified random forest, and gradient boosting, the study
+demonstrates the potential to accurately predict whether a patient will require an inpatient
+admission at the time of the triage. This predictive capability has far-reaching implications,
+enabling healthcare providers to optimize resource allocation, streamline patient flow, and
+ultimately enhance the quality of care delivered in emergency settings.
+
+Moreover, the comparison of different ML algorithms provides valuable insights into
+their relative performance in predicting hospital admissions. The superior performance of
+the gradient boosting algorithm underscores its effectiveness in handling complex medical
+data and extracting meaningful patterns.
+
+In [36], the critical task of predicting whether patients require inpatient or outpatient
+treatment is addressed, particularly focusing on hospital intensive patients. By leveraging
+various ML techniques, such as logistic regression, decision trees, random forest, and
+gradient boosting, and, notably, neural network, the research aims to identify the most
+accurate predictive model. The methodology includes three key stages: data collection, data
+preprocessing, and data modeling. Through the utilization of the Electronic Health Record
+
+
+--- NUMERIC METRIC VALUES ---
+Extracted values:
+  1
+  1
+  1
+  94.74%
+  0.82131
+  2.37
+  2.03
+  0.89
+  0.89
+Table-like metric lines:
+  accuracy rate of 74.47%
+  accuracy rates (94.74%
+  accuracy rates (e.g., 94.74%
+
+
+
+========================================================================================================================
+FILE: frai-06-1179226.pdf
+========================================================================================================================
+  Extracted 75492 characters
+
+--- FIRST 6000 CHARS (Title/Authors/Abstract) ---
+OPEN ACCESS
+
+EDITED BY
+Farah Kidwai-Khan,
+Yale University, United States
+
+REVIEWED BY
+Joao Sousa,
+University of Lisbon, Portugal
+Rixin Wang,
+Yale University School of Medicine,
+United States
+
+*CORRESPONDENCE
+Addisu Jember Zeleke
+
+addisu.zeleke2@unibo.it
+
+RECEIVED 06 March 2023
+ACCEPTED 10 July 2023
+PUBLISHED 28 July 2023
+
+CITATION
+Zeleke AJ, Palumbo P, Tubertini P, Miglio R and
+Chiari L (2023) Machine learning-based
+prediction of hospital prolonged length of stay
+admission at emergency department: a
+Gradient Boosting algorithm analysis.
+Front. Artif. Intell. 6:1179226.
+doi: 10.3389/frai.2023.1179226
+
+COPYRIGHT
+(c) 2023 Zeleke, Palumbo, Tubertini, Miglio and
+Chiari. This is an open-access article distributed
+under the terms of the Creative Commons
+Attribution License (CC BY). The use,
+distribution or reproduction in other forums is
+permitted, provided the original author(s) and
+the copyright owner(s) are credited and that
+the original publication in this journal is cited, in
+accordance with accepted academic practice.
+No use, distribution or reproduction is
+permitted which does not comply with these
+terms.
+
+TYPE Original Research
+PUBLISHED 28 July 2023
+DOI 10.3389/frai.2023.1179226
+
+Machine learning-based
+prediction of hospital prolonged
+length of stay admission at
+emergency department: a
+Gradient Boosting algorithm
+analysis
+
+Addisu Jember Zeleke1*, Pierpaolo Palumbo1, Paolo Tubertini2,
+Rossella Miglio3 and Lorenzo Chiari1,4
+
+1Department of Electrical, Electronic, and Information Engineering Guglielmo Marconi, University of
+Bologna, Bologna, Italy, 2Enterprise Information Systems for Integrated Care and Research Data
+Management, Istituto di Ricovero e Cura a Carattere Scientiﬁco (IRCCS) Azienda
+Ospedaliero-Universitaria di Bologna, Bologna, Italy, 3Department of Statistical Sciences, University of
+Bologna, Bologna, Italy, 4Health Sciences and Technologies Interdepartmental Center for Industrial
+Research (CIRI SDV), University of Bologna, Bologna, Italy
+
+Objective: This study aims to develop and compare different models to predict the
+Length of Stay (LoS) and the Prolonged Length of Stay (PLoS) of inpatients admitted
+through the emergency department (ED) in general patient settings. This aim is not
+only to promote any speciﬁc model but rather to suggest a decision-supporting
+tool (i.e., a prediction framework).
+
+Methods: We analyzed a dataset of patients admitted through the ED to the
+"Sant"Orsola Malpighi University Hospital of Bologna, Italy, between January 1 and
+October 26, 2022. PLoS was deﬁned as any hospitalization with LoS longer than
+6 days. We deployed six classiﬁcation algorithms for predicting PLoS: Random
+Forest (RF), Support Vector Machines (SVM), Gradient Boosting (GB), AdaBoost,
+K-Nearest Neighbors (KNN), and logistic regression (LoR). We evaluated the
+performance of these models with the Brier score, the area under the ROC curve
+(AUC), accuracy, sensitivity (recall), speciﬁcity, precision, and F1-score. We further
+developed eight regression models for LoS prediction: Linear Regression (LR),
+including the penalized linear models Least Absolute Shrinkage and Selection
+Operator (LASSO), Ridge and Elastic-net regression, Support vector regression, RF
+regression, KNN, and eXtreme Gradient Boosting (XGBoost) regression. The model
+performances were measured by their mean square error, mean absolute error,
+and mean relative error. The dataset was randomly split into a training set (70%)
+and a validation set (30%).
+
+Results: A total of 12,858 eligible patients were included in our study, of whom
+60.88% had a PloS. The GB classiﬁer best predicted PloS (accuracy 75%, AUC
+75.4%, Brier score 0.181), followed by LoR classiﬁer (accuracy 75%, AUC 75.2%,
+Brier score 0.182). These models also showed to be adequately calibrated. Ridge
+and XGBoost regressions best predicted LoS, with the smallest total prediction
+error. The overall prediction error is between 6 and 7 days, meaning there is a 6-7
+day mean difference between actual and predicted LoS.
+
+Conclusion: Our results demonstrate the potential of machine learning-based
+methods to predict LoS and provide valuable insights into the risks behind
+prolonged hospitalizations. In addition to physicians' clinical expertise, the results
+of these models can be utilized as input to make informed decisions, such as
+
+Frontiers in Artiﬁcial Intelligence
+
+01
+
+frontiersin.org
+
+Zeleke et al.
+
+10.3389/frai.2023.1179226
+
+predicting hospitalizations and enhancing the overall performance of a public
+healthcare system.
+
+KEYWORDS
+
+emergency department, prolonged length of stay, machine learning, prediction,
+classiﬁcation, regression
+
+1. Introduction
+
+1.1. Importance of addressing
+hospitalization LoS after an emergency
+department visit
+
+the quality of hospital services,
+
+The Length of Stay (LoS) measures the time a patient spends
+in a hospital, from admission to discharge. It is a key indicator
+of
+including the speed and
+eﬃciency of patient treatment, the prevention of hospital-acquired
+infections, the ability to anticipate prolonged stays due to pre-
+existing medical conditions, resource utilization, and the cost
+of inpatient care. LoS can also be used to evaluate the success
+of surgical procedures and patient outcomes. With an in-depth
+understanding of LoS and potential adverse events, hospitals can
+make informed decisions and improve patients' overall quality of
+care. Accurate LoS prediction enables the eﬃcient use of medical
+resources, better clinical decision-making, and provision of useful
+prognostic information. In hospital management, LoS is critical in
+determining hospital costs and patient satisfaction. Furthermore,
+it is associated with disease severity and mortality (Paterson et al.,
+2006). During an ED visit, some predictors of hospital LoS were
+known before admission to the hospital. Prior studies have shown
+that patients in EDs have a longer LoS (Krochmal and Riley,
+1994; Liew et al., 2003). It has been demonstrated that extended
+hospital stays ne
+
+--- END FIRST 6000 ---
+
+--- KEY METRICS SEARCH ---
+AUC mentions:
+  auc), accuracy, sensitivity (recall), speciﬁcity, precision, and f1-score. we further
+  auc
+  auc 75.2%,
+  auroc (0.94).
+  auc, accuracy,
+  auc). calibration is crucial in
+  aucs for all machine learning methods ranged from
+  auc = 0.752) and
+  auc = 0.726). the f1-scores ranged from 0.65 (adaboost)
+  auc; 0.754), and brier score
+  auc of 0.752, and a brier
+  auc values. despite
+Accuracy mentions:
+  accuracy, sensitivity (recall), speciﬁcity, precision, and f1-score. we further
+  accuracy 75%, auc
+  accuracy 75%, auc 75.2%,
+  accuracy (0.80), and
+  accuracy of
+  accuracy
+  accuracy of
+  accuracy,
+  accuracy is important. various metrics were used to assess
+  accuracy, including the brier score, auc, accuracy,
+  accuracy of a predicted probability score (i.e., mean squared error
+  accuracy calculates the proportion
+F1 mentions:
+  f1-score. we further
+  f1-score of 0.88 for
+  f1-score balances precision and recall by taking the harmonic
+  f1-scores ranged from 0.65 (adaboost)
+  f1-score
+Precision/Recall/Sensitivity/Specificity mentions:
+  sensitivity (recall), speciﬁcity, precision, and f1-score. we further
+  sensitivity
+  sensitivity, speciﬁcity, precision, and f1-measure (steyerberg et al.,
+  sensitivity or recall reﬂects the number of
+  recall
+  precision and recall by taking the harmonic
+  precision
+  recall
+  sensitivity, speciﬁcity, receiver-operating characteristic
+
+--- FAIRNESS KEYWORDS ---
+  bias of
+  bias,
+  biased toward other normative
+
+--- DATASET MENTIONS ---
+  dataset of patients admitted through the ed to the
+  dataset was randomly split into a training set (70%)
+  electronic health records (ehrs; yu et al., 2018). in other clinical
+  dataset. then, the algorithm ﬁnds the
+  dataset, or its "nearest neighbors"
+  datasets, it is crucial to properly select and
+  datasets.
+  dataset. such eﬀorts
+  dataset to ensure accurate
+  dataset
+
+--- MODEL MENTIONS ---
+  gradient boosting algorithm analysis.
+  gradient boosting algorithm
+  support vector machines (svm), gradient boosting (gb), adaboost,
+  k-nearest neighbors (knn), and logistic regression (lor). we evaluated the
+  lasso), ridge and elastic-net regression, support vector regression, rf
+  knn, and extreme gradient boosting (xgboost) regression. the model
+  ridge
+  xgboost regressions best predicted los, with the smallest total prediction
+  random forest (rf), gradient boosting (gb),
+  k-nearest neighbors (knn), support vector machine (svm),
+  decision tree (dt), and artiﬁcial neural networks (ann; hachesu
+  svm, rf, multivariate
+  decision tree
+  neural network (nn), and support vector machine (svm)
+  adaboost)
+  svm,
+  svm, bn
+  svm, knn,
+  svm
+  svm) with
+
+--- LOS / MORTALITY ---
+  length of stay
+  length of stay admission at
+  length of stay (los) and the prolonged length of stay (plos) of inpatients admitted
+  los was deﬁned as any hospitalization with los longer than
+  los prediction: linear regression (lr),
+  los (accuracy 75%, auc
+  los and provide valuable insights into the risks behind
+  length of stay, machine learning, prediction,
+  los after an emergency
+  length of stay (los) measures the time a patient spends
+
+--- RESULTS/CONCLUSION SECTION ---
+
+[Found 'conclusion' at position 4017]
+ean difference between actual and predicted LoS.
+
+Conclusion: Our results demonstrate the potential of machine learning-based
+methods to predict LoS and provide valuable insights into the risks behind
+prolonged hospitalizations. In addition to physicians' clinical expertise, the results
+of these models can be utilized as input to make informed decisions, such as
+
+Frontiers in Artiﬁcial Intelligence
+
+01
+
+frontiersin.org
+
+Zeleke et al.
+
+10.3389/frai.2023.1179226
+
+predicting hospitalizations and enhancing the overall performance of a public
+healthcare system.
+
+KEYWORDS
+
+emergency department, prolonged length of stay, machine learning, prediction,
+classiﬁcation, regression
+
+1. Introduction
+
+1.1. Importance of addressing
+hospitalization LoS after an emergency
+department visit
+
+the quality of hospital services,
+
+The Length of Stay (LoS) measures the time a patient spends
+in a hospital, from admission to discharge. It is a key indicator
+of
+including the speed and
+eﬃciency of patient treatment, the prevention of hospital-acquired
+infections, the ability to anticipate prolonged stays due to pre-
+existing medical conditions, resource utilization, and the cost
+of inpatient care. LoS can also be used to evaluate the success
+of surgical procedures and patient outcomes. With an in-depth
+understanding of LoS and potential adverse events, hospitals can
+make informed decisions and improve patients' overall quality of
+care. Accurate LoS prediction enables the eﬃcient use of medical
+resources, better clinical decision-making, and provision of useful
+prognostic information. In hospital management, LoS is critical in
+determining hospital costs and patient satisfaction. Furthermore,
+it is associated with disease severity and mortality (Paterson et al.,
+2006). During an ED visit, some predictors of hospital LoS were
+known before admission to the hospital. Prior studies have shown
+that patients in EDs have a longer LoS (Krochmal and Riley,
+1994; Liew et al., 2003). It has been demonstrated that extended
+hospital stays negatively aﬀect clinical outcomes: according to Sud
+et al. (2017), long LoS is associated with increased mortality and
+readmission rates; the results of Bo et al. (2016) indicated that PLoS
+is associated with cognitive impairment, functional limitations, and
+higher burdens of comorbidity; the results of Emori and Gaynes
+(1993) also indicated that PLoS increased the risk of hospital-
+acquired infections. Patients are prioritized based on their level of
+medical need in a triage plan to enhance healthcare and reduce
+mortality. Models that predict patient-related outcome measures
+and LoS are useful tools for maximizing healthcare utilization
+(Gellman, 1974). As a result, policymakers and clinicians could
+determine how to allocate resources among diﬀerent approaches by
+comparing treatments across disciplines.
+
+1.2. Methodological review/predictive
+modeling of PLoS
+
+Machine learning (ML) provides innovative methods in data
+predictions that are widely used. Num
+
+--- NUMERIC METRIC VALUES ---
+Extracted values:
+  75%
+  75.4%
+  75%
+  75.2%
+  85%
+  0.752
+  0.726
+  75%
+  0.752
+  0.182
+  107.045
+  10.346
+  6.671
+Table-like metric lines:
+  accuracy 75%, auc 75.2%
+  accuracy (0.80
+  auroc (0.94
+  f1-score of 0.88
+  auc = 0.752
+  auc = 0.726). the f1-scores ranged from 0.65
+  auc; 0.754
+  accuracy of 75%, auc of 0.752
+  aucs > 0.7
+  accuracy, auc, and brier score ranging from 75.3 to 82.9%, 0.74
+  accuracy, auc, and brier scores of 0.822
+
+
+
+========================================================================================================================
+FILE: nihms-1911125.pdf
+========================================================================================================================
+  Extracted 61968 characters
+
+--- FIRST 6000 CHARS (Title/Authors/Abstract) ---
+A
+u
+t
+h
+o
+r
+
+M
+a
+n
+u
+s
+c
+r
+i
+p
+t
+
+A
+u
+t
+h
+o
+r
+
+M
+a
+n
+u
+s
+c
+r
+i
+p
+t
+
+A
+u
+t
+h
+o
+r
+
+M
+a
+n
+u
+s
+c
+r
+i
+p
+t
+
+A
+u
+t
+h
+o
+r
+
+M
+a
+n
+u
+s
+c
+r
+i
+p
+t
+
+HHS Public Access
+Author manuscript
+FAccT 23 (2023). Author manuscript; available in PMC 2023 November 21.
+
+Published in final edited form as:
+
+FAccT 23 (2023). 2023 June ; 2023: 1599-1608. doi:10.1145/3593013.3594102.
+
+Improving Fairness in AI Models on Electronic Health Records: 
+The Case for Federated Learning Methods
+
+Raphael Poulain,
+University of Delaware USA
+
+Mirza Farhan Bin Tarek,
+University of Delaware USA
+
+Rahmatollah Beheshti
+University of Delaware USA
+
+Abstract
+
+Developing AI tools that preserve fairness is of critical importance, specifically in high-stakes 
+applications such as those in healthcare. However, health AI models' overall prediction 
+performance is often prioritized over the possible biases such models could have. In this study, we 
+show one possible approach to mitigate bias concerns by having healthcare institutions collaborate 
+through a federated learning paradigm (FL; which is a popular choice in healthcare settings). 
+While FL methods with an emphasis on fairness have been previously proposed, their underlying 
+model and local implementation techniques, as well as their possible applications to the healthcare 
+domain remain widely underinvestigated. Therefore, we propose a comprehensive FL approach 
+with adversarial debiasing and a fair aggregation method, suitable to various fairness metrics, in 
+the healthcare domain where electronic health records are used. Not only our approach explicitly 
+mitigates bias as part of the optimization process, but an FL-based paradigm would also implicitly 
+help with addressing data imbalance and increasing the data size, offering a practical solution 
+for healthcare applications. We empirically demonstrate our method's superior performance 
+on multiple experiments simulating large-scale real-world scenarios and compare it to several 
+baselines. Our method has achieved promising fairness performance with the lowest impact 
+on overall discrimination performance (accuracy). Our code is available at https://github.com/
+healthylaife/FairFedAvg.
+
+Keywords
+
+Federated Learning; Algorithmic Fairness; Adversarial Fairness
+
+1 
+
+INTRODUCTION
+
+The growing availability of electronic health records (EHRs, referring to the digitized 
+collections of individuals' health information) offers great hopes in developing effective 
+
+rpoulain@udel.edu . 
+1FedAvg is one of the most popular FL aggregation algorithms.
+
+ 
+ 
+ 
+ 
+A
+u
+t
+h
+o
+r
+
+M
+a
+n
+u
+s
+c
+r
+i
+p
+t
+
+A
+u
+t
+h
+o
+r
+
+M
+a
+n
+u
+s
+c
+r
+i
+p
+t
+
+A
+u
+t
+h
+o
+r
+
+M
+a
+n
+u
+s
+c
+r
+i
+p
+t
+
+A
+u
+t
+h
+o
+r
+
+M
+a
+n
+u
+s
+c
+r
+i
+p
+t
+
+Poulain et al.
+
+Page 2
+
+tools to inform prevention and treatment interventions across healthcare. The challenges 
+of working with EHRs (such as large-scale, temporality, and missingness [49]) present 
+a ripe context for using machine learning (ML) methods dedicated to working with this 
+special type of datasets. Similar to other types of human-generated and observational data, 
+EHRs can also carry and be a source of various types of biases (especially historical and 
+systematic ones) [6]. In current healthcare ecosystems already dealing with longstanding 
+concerns about health disparities (especially in places such as the US [32]), AI models that 
+are created using EHRs can act as double-edged swords. While having huge potential to 
+benefit some individuals; if not designed carefully, they can also unfairly impact others, 
+especially underrepresented populations [42]. Although studying justice (including fairness) 
+in healthcare relates to a vast field, and a growing body of studies have looked at the fairness 
+implications of AI models recently, dedicated studies to AI models in healthcare are limited 
+[3, 40]. The present study aims at presenting customized methods capable of addressing 
+fairness in an important subset of AI health models.
+
+As imbalanced training data is generally considered one of the primary roots of unfairness in 
+AI models [30], having access to a larger dataset containing more samples from the smaller 
+classes is an ideal way to achieve better learning opportunities for minority groups and thus 
+improve fairness (broadly defined). In fact, existing studies targeting fairness mitigation in 
+AI health models commonly assume having access to large datasets [9, 14, 35]. However, 
+access to such data remains very limited in the case of EHRs, and sharing data across 
+different sites faces numerous concerns about data privacy, security, and interoperability 
+[23]. Distributed learning paradigms, commonly referred to by federated learning (FL), are 
+among the most popular choices in healthcare that can provide an adequate solution to 
+alleviate such concerns. FL allows multiple healthcare sites to train a common large-scale 
+model without sharing their local datasets. Investigating the fairness aspects of FL methods 
+in EHR-based predictive models is the primary subset of AI health models that our study 
+focuses on.
+
+In a general FL setting, each site shares a common large-scale model without sharing its 
+respective dataset. This design allows healthcare institutions to collaborate and jointly train 
+a better model. While training on larger data accessible through multiple sites can help 
+improve fairness (by increasing the number of samples in the minority groups), the non-IID 
+data (IID: independent and identically distributed) across sites can lead to newer fairness 
+issues. Some studies have addressed fairness in FL settings through local debiasing [16] 
+and fairer aggregation strategies [13], but the presented methods are often limited in several 
+ways. First, fairness mitigation methods for FL settings often solely focus on the aggregation 
+method on the server side [13], leaving the local debiasing part to the discretion of each 
+client (and unknown to the ML practitioners). Though this would allow for more flexibility 
+on the client s
+
+--- END FIRST 6000 ---
+
+--- KEY METRICS SEARCH ---
+Accuracy mentions:
+  accuracy). our code is available at https://github.com/
+  accuracy parities, and the worst-performing tpr.
+  accuracy parity does not differentiate the positive and
+  accuracy should be independent
+  accuracy parity standard deviation (apsd),
+  accuracy. let us first note a ∈ [[1, n]] as
+  accuracy across all groups. for the case of minimax group
+  accuracy, tpsd, worst tpr, and apsd (as
+  accuracy, tpsd, worst tpr, and apsd scores for all methods on
+  accuracy that remains close to the one achievable using
+  accuracy to fairfed while reducing the
+  accuracy (fig. 3). we only report the results related
+
+--- FAIRNESS KEYWORDS ---
+  fairness in ai models on electronic health records:
+  fairness is of critical importance, specifically in high-stakes
+  biases such models could have. in this study, we
+  bias concerns by having healthcare institutions collaborate
+  fairness have been previously proposed, their underlying
+  biasing and a fair aggregation method, suitable to various fairness metrics, in
+  bias as part of the optimization process, but an fl-based paradigm would also implicitly
+  fairness performance with the lowest impact
+  fairness; adversarial fairness
+  biases (especially historical and
+  disparities (especially in places such as the us [32]), ai models that
+  fairness)
+
+--- DATASET MENTIONS ---
+  electronic health records:
+  electronic health records are used. not only our approach explicitly
+  electronic health records (ehrs, referring to the digitized
+  ehrs (such as large-scale, temporality, and missingness [49]) present
+  datasets. similar to other types of human-generated and observational data,
+  ehrs can also carry and be a source of various types of biases (especially historical and
+  ehrs can act as double-edged swords. while having huge potential to
+  dataset containing more samples from the smaller
+  datasets [9, 14, 35]. however,
+  ehrs, and sharing data across
+
+--- MODEL MENTIONS ---
+  gru, and an attention layer. we provide a
+  gru, where the input data is processed in a forward and
+  gru vt, ℎt − 1 , where ℎt − 1 is the previous hidden state, and  ℎt ∈ ℝℎ,
+  gru layer for visit t in the forward and
+  gru's hidden states. we define the
+  logistic regression, multi-layer perception (mlp), and feed-forward neural
+  lasso logistic regression in an fl setting to predict 7-day mortality for hospitalize
+  deep learning
+
+--- LOS / MORTALITY ---
+  mortality prediction task following an in-patient (hospital) visit. we present
+  mortality of patients
+  mortality
+  mortality prediction [20] using the eicu dataset. another work investigated mlp and
+  mortality for hospitalized
+  mortality prediction model for patients who have been discharged
+  mortality of patients admitted to
+  icu stay,
+  length of stay in the icu. because mimic-iii is composed of
+  mortality and hospital stay time using distributed electronic medical
+
+--- RESULTS/CONCLUSION SECTION ---
+
+[Found 'results' at position 14482]
+emographic data, medical history, laboratory test results, and imaging reports. Without loss 
+of generality, we present our method centered on a common subset that includes conditions, 
+medications, and procedure codes in patients' health records. We note C, M, P with sizes |C|, 
+|M|, |P |, respectively as the set of the aforementioned codes. We also refer to E = C + M + P
+as the set of all possible medical codes. Throughout this paper, we represent each patient 
+p ∈ P as a sequence of visits x1
+p , where nv is the maximum number of visits and 
+p ∈ 0, 1 |E| is a one-hot encoded vector representing the medical codes assigned to the tth
+xt
+visit for patient p.
+
+p, ..., xnv
+
+p, x2
+
+We train a Dipole-based model with adversarial debiasing to learn sensitive information-free 
+temporal representations. Accordingly, our model is composed of the following three main 
+components: visit embeddings, bidirectional GRU, and an attention layer. We provide a 
+visual representation of the entire architecture in Fig. 2. For each visit, the one-hot encoded 
+vector xt is fed to a Linear Layer with a rectified linear unit activation function (ReLU) 
+to create the visit embeddings vt ∈ ℝm as vt = ReLU wvxt + b , where m is the embedding 
+size, W v ∈ ℝm ∗ | E| is a weight matrix, and b ∈ ℝm the bias vector. The visit embeddings 
+are then fed to a bidirectional GRU, where the input data is processed in a forward and 
+backward manner:  ℎt , ℎt = GRU vt, ℎt − 1 , where ℎt − 1 is the previous hidden state, and  ℎt ∈ ℝℎ, 
+and  ℎt ∈ ℝℎ are the hidden states produces by the GRU layer for visit t in the forward and 
+backward direction, respectively, and ℎ is the size of the GRU's hidden states. We define the 
+
+FAccT 23 (2023). Author manuscript; available in PMC 2023 November 21.
+
+ 
+ 
+ 
+ 
+A
+u
+t
+h
+o
+r
+
+M
+a
+n
+u
+s
+c
+r
+i
+p
+t
+
+A
+u
+t
+h
+o
+r
+
+M
+a
+n
+u
+s
+c
+r
+i
+p
+t
+
+A
+u
+t
+h
+o
+r
+
+M
+a
+n
+u
+s
+c
+r
+i
+p
+t
+
+A
+u
+t
+h
+o
+r
+
+M
+a
+n
+u
+s
+c
+r
+i
+p
+t
+
+Poulain et al.
+
+Page 6
+
+tth temporal visit representation as ℎt ∈ ℝ2ℎ derived from ℎt = ℎt , ℎt . We also note H to be 
+
+the vector containing all the temporal representations.
+
+Additionally, we adopt the general attention mechanism described in Dipole's original paper 
+[27]. This attention layer is trained to create a context vector ct ∈ ℝ2p for the tth visit from the 
+temporal visit representations H : ct = Attention ℎt, H . To depict an accurate representation of 
+patient p at the tth visit, the hidden state ℎt and the context vector ct are concatenated and fed 
+into a Linear Layer with a tanℎ activation function: rt = tanℎ W r ℎt, ct .
+
+We use this representation to perform two tasks: a (binary) outcome prediction task, and 
+an adversarial debiasing following the ideas proposed in [12]. Specifically, we train two 
+classifiers where one would perform the binary prediction task and the second predict the 
+patients' respective sensitive attributes from rt. We refer to the first classifier by "out" and 
+the second by "sens." The Dipole-based network introduce
+
+--- NUMERIC METRIC VALUES ---
+Table-like metric lines:
+  accuracy also decreases from 76.59 to 76.22
+
+
+
+========================================================================================================================
+FILE: Rachda_Naila_Mekhaldi_Journal_Information_Science_Engineering_2021.pdf
+========================================================================================================================
+  Extracted 36020 characters
+
+--- FIRST 6000 CHARS (Title/Authors/Abstract) ---
+A Comparative Study of Machine Learning Models for
+Predicting Length of Stay in Hospitals
+Rachda Naila Mekhaldi, Patrice Caulier, Sondes Chaabane, Abdelahad
+
+Chraibi, Sylvain Piechowiak
+
+To cite this version:
+
+Rachda Naila Mekhaldi, Patrice Caulier, Sondes Chaabane, Abdelahad Chraibi, Sylvain Piechowiak. A
+Comparative Study of Machine Learning Models for Predicting Length of Stay in Hospitals. Journal of
+Information Science and Engineering, 2021, 37 (5), pp.1025-1038. ￿10.6688/JISE.202109_37(5).0003￿.
+￿hal-03395940￿
+
+HAL Id: hal-03395940
+
+https://uphf.hal.science/hal-03395940v1
+
+Submitted on 18 Nov 2024
+
+HAL is a multi-disciplinary open access
+archive for the deposit and dissemination of sci-
+entific research documents, whether they are pub-
+lished or not. The documents may come from
+teaching and research institutions in France or
+abroad, or from public or private research centers.
+
+L'archive ouverte pluridisciplinaire HAL, est
+destinee au depôt et a la diffusion de documents
+scientifiques de niveau recherche, publies ou non,
+emanant des etablissements d'enseignement et de
+recherche français ou etrangers, des laboratoires
+publics ou prives.
+
+HAL Authorization
+
+JOURNAL OF INFORMATION SCIENCE AND ENGINEERING 37, 1025-1038 (2021) 
+
+A Comparative Study of Machine Learning Models
+for Predicting Length of Stay in Hospitals
+
+RACHDA  NAILA  MEKHALDI1 , PATRICE  CAULIER1 , SONDES  CHAABANE1 , 
+ABDELAHAD  CHRAIBI2  AND  SYLVAIN  PIECHOWIAK1
+1Laboratory of Industrial and Human Automation Control
+Mechanical Engineering and Computer Science
+Polytechnic University of Hauts-de-France
+Valenciennes CEDEX 9, 59313 France
+E-mail: {rachdanaila.mekhaldi; patrice.caulier; sondes.chaabane; sylvain.piechowiak}@uphf.fr
+2Alicante Company
+Seclin, 59113 France
+E-mail: abdelahad.chraibi@alicante.fr
+
+There has been a growing interest in recent years in correctly predicting the Length of
+Stay (LoS) in a hospital setting.  Estimating the LoS on patient' admission helps hospitals
+in planning, controlling costs and, providing better services. In this paper, we consider pre-
+dicting  the  LoS  as  a  regression  problem  for  which  we  implement  and  compare  different 
+Machine  Learning  (ML)  algorithms.  Multiple  Linear  Regression  (MLR),  Support  Vector 
+Machines (SVM), Random Forests (RF), and Gradient Boosting model (GBM) are imple-
+mented using an open-source dataset. The methodological process involves a preprocessing
+step  combining  data  transformation,  data  standardization,  and  categorical  data  encoding. 
+Moreover, the Synthetic Minority Over Sampling Technique for Regression (SMOTER) is
+applied  to  handle  unbalanced  data.  Then,  ML  algorithms  are  employed,  with  a  hyperpa-
+rameter tuning phase to obtain optimal coefﬁcients. Finally, Mean Absolute Error (MAE),
+R-squared (R2), and Adjusted R-squared (Adjusted R2) metrics are selected to evaluate the
+model with parameters.
+
+Keywords:  length  of  stay  in  hospitals,  data  preprocessing,  machine  learning,  unbalanced
+data, parameters tuning
+
+1.
+
+INTRODUCTION
+
+The growth in the population worldwide in recent years, results in health-care insti-
+tutions lacking resources.  Healthcare institutions, academics, and companies in different 
+areas have pooled their efforts to optimize hospital resources while maintaining the qual-
+ity  of  services.  Patient's  Length  of  Stay  (LoS)  is  an  important  indicator  for  assessing 
+health-care services. Hence, interest in predicting the LoS in hospitals is grown. The LoS 
+is deﬁned as the interval between patient admission and his discharge from the hospital 
+[1].  Predicting LoS contributes to the organization and scheduling of care activities by 
+estimating the date of the patient's discharge and thus can be used to predict patient in-
+ﬂows. This helps to reduce the patient waiting times and the workload of the health-care 
+professionals. The main purpose of predicting the LoS is to optimize the use of resources
+
+DOI : 10.6688/JISE.202109_37(5).00031and manage budget constraints in hospitals. In all public and private French hospitals,
+a special program called the "Information Systems Medicalization Program" (ISMP) (In
+French PMSI) is implemented to calculate the correct amount of funds to be allocated to
+each hospital department to reduce the disparity in resources between health institutions
+[2]. As mentioned in [3], predicting the LoS aims to force hospitals to comply with budget
+constraints and to facilitate reimbursement.
+
+In the context of predicting LoS, an essential step is to study the factors impacting
+this indicator in various medical units. According to [5], LoS is considered as a com-
+plex variable that can comprise the clinical and social contexts of patients and their care.
+This complexity is a characteristic of medical data, as medical datasets contain heteroge-
+neous information (numerical, categorical, textual, images, etc.) that comes from multiple
+sources. Health databases for hospital stays are often large and contain incomplete and
+biased data. Furthermore, conﬁdentiality must be ensured for all medical data and access
+must be restricted [7]. A large amount of medical data is stored in healthcare institu-
+tions, therefore, Data Mining (DM) methods are widely employed to determine factors
+inﬂuencing the LoS and Machine Learning (ML) models to predict it [16].
+
+This paper aims to propose a solution for predicting the Length of Stay based on
+Artiﬁcial Intelligence methods including DM and ML methods. First, a review of the
+literature is presented to deﬁne a representation characterizing the LoS. This is a cru-
+cial step as it provides the input for the prediction algorithm. A classiﬁcation process
+starting with data preprocessing, followed by machine learning and model evaluation is
+developed. SMOTE for Regression is used to address the problem of unbalanced data.
+Several machine learning models for regression are compared: Random Forests (RF),
+Gradient Boosting Model (GBM), 
+
+--- END FIRST 6000 ---
+
+--- KEY METRICS SEARCH ---
+Accuracy mentions:
+  accuracy of ann is approximately
+  accuracy is obtained
+
+--- FAIRNESS KEYWORDS ---
+  disparity in resources between health institutions
+  biased data. furthermore, conﬁdentiality must be ensured for all medical data and access
+  bias towards solutions that are not
+  bias which is highly present
+
+--- DATASET MENTIONS ---
+  dataset. the methodological process involves a preprocessing
+  datasets contain heteroge-
+  mimic) is used to predict long los [34]. this database includes patient' admission,
+  dataset
+  dataset and machine learning process
+  dataset is described, and our methodological process is de-
+  dataset description
+  dataset is still being prepared due to administrative procedures
+  dataset for pre-
+  dataset offers similar variables describing the los
+
+--- MODEL MENTIONS ---
+  svm), random forests (rf), and gradient boosting model (gbm) are imple-
+  random forests (rf),
+  gradient boosting model (gbm), support vector machines (svm), and multiple linear
+  neural network (ann) model is then applied to predict
+  decision trees (dt), support vector machines (svm), and artiﬁcial neural
+  svm is the best ﬁt. once more these algorithms use variables
+  random forests (rf), and svm. the rf outperformed all the algorithms tested.
+  naive bayes (nb), and k-nearest neighbors are applied in [16] for
+  svm and dt,
+  neural networks, decision trees, multiple linear
+  support vector machines, and random forests are the most cited algorithms.
+  svm. second, we test ensemble models based on dt such as rf and gbm.
+  support vector machines (svm) [28], random forests (rf) [25], and
+  gradient boosting models (gbm) [26] are compared and approved to obtain the best
+  svm) which are sensitive to
+  svm, the kernel
+  support vector machines
+  random forests
+  gradient boosting model
+  svm algorithm which is supporting linear and non linear regression
+
+--- LOS / MORTALITY ---
+  length of stay in hospitals
+  length of stay in hospitals. journal of
+  length of stay in hospitals
+  los on patient' admission helps hospitals
+  los  as  a  regression  problem  for  which  we  implement  and  compare  different
+  los in hospitals is grown. the los
+  los contributes to the organization and scheduling of care activities by
+  los is to optimize the use of resources
+  los aims to force hospitals to comply with budget
+  los is considered as a com-
+
+--- RESULTS/CONCLUSION SECTION ---
+
+[Found 'conclusion' at position 6125]
+y, the results are given and discussed. Also, the conclusion and
+prospects are presented.
+
+2. LITERATURE REVIEW
+
+It is essential to understand what are the factors inﬂuencing the LoS because they
+are the key inputs of ML models. In [8], M. Rigal shows that Los is strongly linked to
+medical unit. Indeed, LoS models in an emergency or walk-in unit differ from those in
+other departments. In emergency departments, the patient's stay is measured in hours
+whereas in the cardiac department, for example, it is calculated in days. In this section,
+we present researches on factors impacting the LoS in most cited medical units and ML
+algorithms used to predict it.
+
+In [9], R. J. Lafaro et al. use speciﬁc variables for predicting LoS in Cardiac Inten-
+sive Care Units (CICU) such as O2 delivery levels, hematocrit levels, serum creatinine,
+and blood gas analysis. These variables are selected using the ALM method (Asset Liabil-
+ity Management). An Artiﬁcial Neural Network (ANN) model is then applied to predict
+the LoS. Moreover, in a cardiac unit, authors in [10] implement and compare different
+algorithms: Decision Trees (DT), Support Vector Machines (SVM), and Artiﬁcial Neural
+Networks (ANN) to predict the LoS of patients suffering from Coronary Artery Disease.
+The results show that SVM is the best ﬁt. Once more these algorithms use variables
+related to the unit specialty such as: diastolic blood pressure, hemoglobin, cholesterol,
+
+DOI : 10.6688/JISE.202109_37(5).00032and associated comorbidities. Tsai et al. [11] explore factors affecting the LoS for pa-
+tients with one of the three primary diseases: coronary atherosclerosis, heart failure, and
+acute myocardial infarction in a cardiovascular unit. The study includes the patient's
+address, diagnosis, comorbidities, and method of reimbursement. Multiple Linear Re-
+gression (MLR) and ANN are used for prediction. ANN produced the best results. For
+all the studies in the cardiac unit, the patient's age and gender are considered as basic
+variables impacting the LoS.
+
+Several studies have focused on predicting the LoS in Intensive Care Units (ICU).In
+the study conducted by [13], the Medical Information Mart for Intensive Care database
+(MIMIC) is used to predict long LoS [34]. This database includes patient' admission,
+transfer, and discharge, as well as, medical examinations, laboratory test results, and di-
+agnostic and demographic variables. The prediction accuracy of ANN is approximately
+80% and outperformed linear models. The researchers in [14] identify demographic vari-
+ables, patient medical history (cardiac, renal, and pulmonary diseases), creatinine levels,
+heartbeat, etc. as a part of relevant variables. They then compare ANN with an Adaptive
+Neuro fuzzy System for predicting LoS. The Adaptive Neuro-fuzzy System performed
+better as it considers the expert's knowledge.
+
+In surgery units, predicting the LoS is effective in the pre-operative or post-operation
+phase. The survey in [15] shows that some factors
+
+--- NUMERIC METRIC VALUES ---
+Extracted values:
+  0.88
+  0.76
+  0.76
+  0.97
+  0.71
+  0.71
+  0.54
+  0.89
+
+
+
+========================================================================================================================
+FILE: ZJMA_11_2149318.pdf
+========================================================================================================================
+  Extracted 57892 characters
+
+--- FIRST 6000 CHARS (Title/Authors/Abstract) ---
+JOURNAL  OF  MARKET  ACCESS  &  HEALTH  POLICY
+2023,  VOL.  11,  2149318
+https://doi.org/10.1080/20016689.2022.2149318
+
+ORIGINAL  RESEARCH  ARTICLE
+
+Machine-learning  prediction  for  hospital  length  of  stay  using  a  French 
+medico-administrative  database
+
+Franck  Jaotomboa,b,c,  Vanessa  Paulya,d,  Guillaume  Fonda,  Veronica  Orleansd,  Pascal  Auquiera,  Badih  Ghattasb 
+and  Laurent  Boyera,d
+
+aAix-Marseille  University,  EA  3279  -  Public  Health,  Chronic  Diseases  and  Quality  of  Life  -  Research  Unit,  La  Timone  Medical  University, 
+Marseille, France;  bI2M, CNRS, UMR, Aix-Marseille University, Marseille, France;  cOperations Data and Artificial Intelligence, EM Lyon Business 
+School,  Ecully,  France;  dService  d'Information  Medicale,  Public  Health  Department,  La  Conception  Hospital,  Assistance  Publique  -  Hôpitaux 
+de  Marseille,  Marseille,  France
+
+ARTICLE  HISTORY
+Received  18  February  2022  
+Revised  17  October  2022  
+Accepted 16 November 2022  
+
+KEYWORDS 
+Machine  learning;  neural 
+network;  prediction;  health 
+services  research;  public 
+health
+
+ABSTRACT
+Introduction:  Prolonged Hospital Length of Stay (PLOS) is an indicator of deteriorated efficiency 
+in  Quality  of  Care.  One  goal  of  public  health  management  is  to  reduce  PLOS  by  identifying  its 
+most relevant predictors. The objective of this study is to explore Machine Learning (ML) models 
+that  best  predict  PLOS. 
+Methods:  Our  dataset  was  collected  from  the  French  Medico-Administrative  database  (PMSI)  as 
+a retrospective cohort study  of all  discharges in  the year 2015 from a large  university hospital in 
+France  (APHM).  The  study  outcomes  were  LOS  transformed  into  a  binary  variable  (long  vs.  short 
+LOS) according to the 90th  percentile (14 days). Logistic regression (LR), classification and regres-
+sion  trees  (CART),  random  forest  (RF),  gradient  boosting  (GB)  and  neural  networks  (NN)  were 
+applied to the collected data. The predictive performance of the models was evaluated using the 
+area  under  the  ROC  curve  (AUC). 
+Results: Our analysis included 73,182 hospitalizations, of which 7,341 (10.0%) led to PLOS. The GB 
+classifier  was  the  most  performant  model  with  the  highest  AUC  (0.810),  superior  to  all  the  other 
+models  (all p-values <0.0001).  The performance of the  RF, GB and  NN models  (AUC ranged  from 
+0.808  to  0.810)  was  superior  to  that  of  the  LR  model  (AUC  =  0.795);  all  p-values  <0.0001.  In 
+contrast, LR was  superior to CART (AUC = 0.786), p  < 0.0001. The variable most predictive of the 
+PLOS  was  the  destination  of  the  patient  after  hospitalization  to  other  institutions.  The  typical 
+clinical  profile  of  these  patients  (17.5%  of  the  sample)  was  the  elderly  patient,  admitted  in 
+emergency,  for  a  trauma,  a  neurological  or  a  cardiovascular  pathology,  more  often  institutiona-
+lized,  with  more  comorbidities  notably  mental  health  problems,  dementia  and  hemiplegia. 
+Discussion:  The  integration  of  ML,  particularly  the  GB  algorithm,  may  be  useful  for  health-care 
+professionals  and  bed  managers  to  better  identify  patients  at  risk  of  PLOS.  These  findings 
+underscore  the  need  to  strengthen  hospitals  through  targeted  allocation  to  meet  the  needs  of 
+an  aging  population.
+
+Introduction
+
+In  2019,  healthcare  expenditure  (consumption  of  care 
+and medical goods, CSBM) amounted to €208 billion in 
+France,  of  which  €97  billion  was  for  hospital  care 
+(46.7%)  [1].  In  addition  to  being  the  largest  contributor 
+to  health-care  spending,  hospital  expenditure  acceler-
+ated  in  2019  (+2.4%)  to  the  point  of  increasing  faster 
+than the CSBM [1]. In France, as in other Western coun-
+tries, strategies to control health expenditure are similar 
+and  are  notably  based  on  the  reduction  in  length  of 
+stay (LOS) [2]. Numerous studies show that some of the 
+
+beds  occupied  in  hospitals  in  France  are  inadequately 
+occupied,  with  approximately  10%  of  medical  and  sur-
+gical beds being inadequately occupied on a given day 
+(5%  in  surgery,  17.5%  in  medicine)  [3].  LOS,  defined  as 
+the interval time between admission and discharge (i.e., 
+total  bed-days  occupied  by  a  patient),  is  thus  consid-
+ered  as  an  important  indicator  to  evaluate  quality  of 
+care and hospital performance. Prolonged LOS (PLOS) is 
+associated  with  more  consumption  of  hospital 
+resources  and  costs,  more  complications  (e.g.,  hospital- 
+increased  mortality  and
+acquired 
+
+infection, 
+
+falls), 
+
+CONTACT Laurent Boyer 
+Recherche  sur  les  Services  de  Sante  et  la  Qualite  de  vie,  27  Boulevard  Jean  Moulin,  13005  Marseille,  France 
+
+laurent.boyer@ap-hm.fr 
+
+Faculte de Medecine - Secteur Timone, Aix-Marseille Univ, EA 3279: CEReSS -Centre d'Etude et de 
+
+Category:  Observational  Study
+
+Supplemental  data  for  this  article  can  be  accessed  online  at  https://doi.org/10.1080/20016689.2022.2149318
+
+(c)  2022  The  Author(s).  Published  by  Informa  UK  Limited,  trading  as  Taylor  &  Francis  Group. 
+This  is  an  Open  Access  article  distributed  under  the  terms  of  the  Creative  Commons  Attribution-NonCommercial  License  (http://creativecommons.org/licenses/by-nc/4.0/),  which 
+permits  unrestricted  non-commercial  use,  distribution,  and  reproduction  in  any  medium,  provided  the  original  work  is  properly  cited.
+
+2
+
+F.  JAOTOMBO  ET  AL.
+
+deteriorated  patient  experience  [4,5].  In  addition,  PLOS 
+may  impact  negatively  on  admission  of  critically  ill 
+patients  and  denies  timely  access  to  treatment  [6].  For 
+all these reasons, we need to better identify patients at 
+high  risk  of  PLOS  to  improve  the  quality  of  care  and 
+reduce  associated  health-care  costs.
+
+Over  the  last  years,  machine  learning  (ML)  methods 
+
+
+--- END FIRST 6000 ---
+
+--- KEY METRICS SEARCH ---
+AUC mentions:
+  auc).
+  auc  (0.810),  superior  to  all  the  other
+  auc ranged  from
+  auc  =  0.795);  all  p-values  <0.0001.  in
+  auc = 0.786), p  < 0.0001. the variable most predictive of the
+  auc).  indeed,  given  that  our  out-
+  auc  is
+  auc  (0.810),  super-
+  auc ranged
+  auc  =  0.795);  all  p-values  <0.0001.  in  contrast,
+  auc  =  0.786),  p  <  0.0001.  as
+  auc  of  lr  and  the  other  classifiers,  when  account-
+Accuracy mentions:
+  accuracy  or  the  f1  are  less
+  accuracy  in  evaluating
+
+--- FAIRNESS KEYWORDS ---
+  bias
+  biased  boosting  with  categorical
+
+--- DATASET MENTIONS ---
+  dataset  was  collected  from  the  french  medico-administrative  database  (pmsi)  as
+  dataset  [13].  last,  bacchi  et  al.  applied  neural
+  datasets,  or  only  to  a  few  models.
+  dataset collected from the french hospital data-
+  dataset  collected  from  the  pmsi  used  27  predictor
+  data  set.  each  tree  in  the  forest
+  dataset  was  split  into  80%
+  dataset of the 2015 cohorts contains 118,650
+  datasets
+  dataset  and  for  each
+
+--- MODEL MENTIONS ---
+  logistic regression (lr), classification and regres-
+  decision tree (dt) method that
+  deep learning (dl) models, yet it
+  xgboost,  light  gbm  and
+  catboost  have  proven  to  be  superior  to  the  traditional
+  deep learning model for
+  ridge  dictionary  of  sta-
+  ridge  uk   new  york:  cambridge
+  ridge ma: a bradford book; 1995.
+  xgboost:  a  scalable  tree  boosting
+  lightgbm:  a  highly  efficient  gradient  boosting
+  catboost:  unbiased  boosting  with  categorical
+
+--- LOS / MORTALITY ---
+  length of stay (plos) is an indicator of deteriorated efficiency
+  los  by  identifying  its
+  los  transformed  into  a  binary  variable  (long  vs.  short
+  los  was  the  destination  of  the  patient  after  hospitalization  to  other  institutions.  the  typical
+  los (plos) is
+  mortality  and
+  los
+  los  to  improve  the  quality  of  care  and
+  los in patients hospitalized for covid-19
+  los
+
+--- RESULTS/CONCLUSION SECTION ---
+
+[Found 'conclusion' at position 45352]
+nce  or  the 
+efficiency  of  bed  management  .
+
+Conclusion
+
+The  integration  of  ML,  particularly  the  GB  algorithm, 
+may  be  useful  for  health-care  professionals  and  plan-
+ners  to  better  identify  patients  at  risk  of  PLOS.  These 
+findings  underscore  the  need  to  strengthen  hospitals 
+through  targeted  allocation  to  meet  the  needs  of  an 
+aging  population.
+
+Disclosure  statement
+
+No  potential  conflict  of  interest  was  reported  by  the  authors.
+
+References
+
+[1]  Direction  de  la  Recherche,  des  Études,  de  l'Évaluation  et 
+des  Statistiques,  "Les  depenses  de  sante  en  2019  - 
+Resultats  des  comptes  de  la  sante  -  Édition  2020,"  Vie 
+publique.fr.  cited  2022  Jan  11  Available  from  https:// 
+www.vie-publique.fr/rapport/276352-les-depenses-de- 
+sante-en-2019-resultats-des-comptes-de-la-sante
+
+[2]  Baumann  A,  Wyss  K.  The  shift  from  inpatient  care  to 
+outpatient  care  in  Switzerland  since  2017:  policy  pro-
+cesses  and  the  role  of  evidence.  Health  Policy.  2021 
+Apr;125(4):512-519.
+
+[3]  Exertier  Les 
+
+inadequations  hospitalieres  en  France : 
+frequence,  causes  et  impact  economique  ,  et  al.  In:  Le 
+panorama  des  etablissements  de  sante  (Paris:  DREES)  . 
+2011.  33-45.
+
+[4] Rojas-García A, Turner S, Pizzo E, et al. Impact and experi-
+ences  of  delayed  discharge:  a  mixed-studies  systematic 
+review.  Health  Expect.  2018  Feb;21(1):41-56.
+
+[5] Marfil-Garza  BA,  et  al.  Risk  factors  associated  with  pro-
+longed  hospital 
+length-of-stay:  18-year  retrospective 
+study  of  hospitalizations  in  a  tertiary  healthcare  center 
+in  Mexico.  PLoS  One.  2018;13(11):e0207203.
+
+[6]  Tefera  GM,  Feyisa  BB,  Umeta  GT,  et  al.  Predictors  of 
+prolonged  length  of  hospital  stay  and  in-hospital  mor-
+tality among adult patients admitted at the surgical ward 
+of Jimma University medical center, Ethiopia: prospective 
+observational study. J Pharm Policy Pract. 2020Jun;13:24.
+[7]  Acion  L,  Kelmansky  D,  van  der  Laan  M,  et  al.  Use  of 
+a  machine  learning  framework  to  predict  substance  use 
+disorder  treatment  success.  PLOS  ONE.  2017  Apr;12(4): 
+e0175383.
+
+[8]  Ahn JM, Kim S, Ahn K-S, et al. A deep learning model for 
+the  detection  of  both  advanced  and  early  glaucoma 
+using  fundus  photography.  PLOS  ONE.  2018  Nov;13(11): 
+e0207982.
+
+[9]  Chekroud  AM,  et  al.  Cross-trial  prediction  of  treatment 
+outcome  in  depression:  a  machine  learning  approach. 
+Lancet  Psychiatry.  2016  Mar;3(3):243-250.
+
+[10]  Gholipour  C,  Rahim  F,  Fakhree  A,  et  al.  Using  an  artificial 
+neural  networks  (ANNs)  model  for  prediction  of  intensive 
+
+care  unit  (ICU)  Outcome  and  length  of  stay  at  hospital  in 
+traumatic  patients.  J  Clin  Diagn  Res.  2015  Apr;9(4):OC19- 
+OC23.
+
+[11]  Kuhn  M,  Johnson  K,  Applied  Predictive  Modeling. 
+New  York:  Springer-Verlag,  2013.  cited  2018  Sep  05. 
+[Online].  Availab
+
+--- NUMERIC METRIC VALUES ---
+Extracted values:
+  0.795
+  0.786
+  0.795
+  0.786
+  0
+Table-like metric lines:
+  auc  (0.810
+  auc  =  0.795);  all  p-values  <0.0001
+  auc = 0.786), p  < 0.0001
+  auc  (0.810
+  auc  =  0.795);  all  p-values  <0.0001
+  auc  =  0.786),  p  <  0.0001
+
+
+
+EXTRACTION COMPLETE

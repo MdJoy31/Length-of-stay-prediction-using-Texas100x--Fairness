@@ -1,0 +1,569 @@
+{
+  "run_header": {
+    "timestamp": "2026-02-23T00:47:56.393013",
+    "python_version": "3.11.9",
+    "numpy_version": "2.4.2",
+    "sklearn_version": "1.8.0",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "random_seed": 42,
+    "torch_version": "2.10.0+cu128",
+    "cuda_available": true,
+    "gpu": "NVIDIA GeForce RTX 5070 Laptop GPU",
+    "xgboost_version": "3.2.0",
+    "lightgbm_version": "4.6.0"
+  },
+  "notebook_metrics": {
+    "Logistic_Regression_train_acc": 0.8028,
+    "Logistic_Regression_test_acc": 0.8021,
+    "Logistic_Regression_gap": 0.0007,
+    "Logistic_Regression_test_auc": 0.884,
+    "Logistic_Regression_test_f1": 0.7844,
+    "Random_Forest_train_acc": 0.8028,
+    "Random_Forest_test_acc": 0.8021,
+    "Random_Forest_gap": 0.0007,
+    "Random_Forest_test_auc": 0.884,
+    "Random_Forest_test_f1": 0.7844,
+    "Gradient_Boosting_train_acc": 0.8028,
+    "Gradient_Boosting_test_acc": 0.8021,
+    "Gradient_Boosting_gap": 0.0007,
+    "Gradient_Boosting_test_auc": 0.884,
+    "Gradient_Boosting_test_f1": 0.7844,
+    "XGBoost_GPU_train_acc": 0.8028,
+    "XGBoost_GPU_test_acc": 0.8021,
+    "XGBoost_GPU_gap": 0.0007,
+    "XGBoost_GPU_test_auc": 0.884,
+    "XGBoost_GPU_test_f1": 0.7844,
+    "LightGBM_GPU_train_acc": 0.8028,
+    "LightGBM_GPU_test_acc": 0.8021,
+    "LightGBM_GPU_gap": 0.0007,
+    "LightGBM_GPU_test_auc": 0.884,
+    "LightGBM_GPU_test_f1": 0.7844,
+    "PyTorch_DNN_train_acc": 0.8598,
+    "PyTorch_DNN_test_acc": 0.8556,
+    "PyTorch_DNN_gap": 0.0043,
+    "PyTorch_DNN_test_auc": 0.9375,
+    "PyTorch_DNN_test_f1": 0.8428,
+    "best_model": "LightGBM GPU",
+    "best_f1": 0.8639,
+    "fair_acc": 0.8738,
+    "fair_f1": 0.8541,
+    "fair_auc": 0.9516,
+    "std_race_di": 0.6415,
+    "fair_race_di": 0.751,
+    "std_sex_di": 0.7623,
+    "fair_sex_di": 0.7564,
+    "std_ethnicity_di": 0.8285,
+    "fair_ethnicity_di": 0.8443,
+    "std_age_group_di": 0.2539,
+    "fair_age_group_di": 0.2394,
+    "std_race_wtpr": 0.8268,
+    "fair_race_wtpr": 0.8195,
+    "std_sex_wtpr": 0.8409,
+    "fair_sex_wtpr": 0.8047,
+    "std_race_eod": 0.0375,
+    "fair_race_eod": 0.003,
+    "std_sex_eod": 0.0325,
+    "fair_sex_eod": 0.037,
+    "our_f1_vs_paper": "0.864 vs 0.550",
+    "afce_a0.0_acc": 0.866,
+    "afce_a0.0_f1": 0.8495,
+    "afce_a0.0_auc": 0.9533,
+    "afce_a0.0_race": 0.995,
+    "afce_a0.0_sex": 1.0,
+    "afce_a0.0_eth": 0.916,
+    "afce_a0.0_age": 0.273,
+    "afce_a0.0_fair": "Y",
+    "afce_a0.1_acc": 0.8662,
+    "afce_a0.1_f1": 0.8497,
+    "afce_a0.1_auc": 0.9534,
+    "afce_a0.1_race": 0.999,
+    "afce_a0.1_sex": 1.0,
+    "afce_a0.1_eth": 0.916,
+    "afce_a0.1_age": 0.274,
+    "afce_a0.1_fair": "Y",
+    "afce_a0.2_acc": 0.866,
+    "afce_a0.2_f1": 0.8495,
+    "afce_a0.2_auc": 0.9534,
+    "afce_a0.2_race": 0.999,
+    "afce_a0.2_sex": 1.0,
+    "afce_a0.2_eth": 0.916,
+    "afce_a0.2_age": 0.274,
+    "afce_a0.2_fair": "Y",
+    "afce_a0.3_acc": 0.8659,
+    "afce_a0.3_f1": 0.8494,
+    "afce_a0.3_auc": 0.9533,
+    "afce_a0.3_race": 0.997,
+    "afce_a0.3_sex": 1.0,
+    "afce_a0.3_eth": 0.917,
+    "afce_a0.3_age": 0.275,
+    "afce_a0.3_fair": "Y",
+    "afce_a0.4_acc": 0.8658,
+    "afce_a0.4_f1": 0.8493,
+    "afce_a0.4_auc": 0.9532,
+    "afce_a0.4_race": 0.997,
+    "afce_a0.4_sex": 1.0,
+    "afce_a0.4_eth": 0.917,
+    "afce_a0.4_age": 0.276,
+    "afce_a0.4_fair": "Y",
+    "afce_a0.5_acc": 0.8657,
+    "afce_a0.5_f1": 0.8491,
+    "afce_a0.5_auc": 0.9531,
+    "afce_a0.5_race": 0.999,
+    "afce_a0.5_sex": 1.0,
+    "afce_a0.5_eth": 0.917,
+    "afce_a0.5_age": 0.277,
+    "afce_a0.5_fair": "Y",
+    "afce_a0.6_acc": 0.8655,
+    "afce_a0.6_f1": 0.8488,
+    "afce_a0.6_auc": 0.9529,
+    "afce_a0.6_race": 0.999,
+    "afce_a0.6_sex": 1.0,
+    "afce_a0.6_eth": 0.917,
+    "afce_a0.6_age": 0.277,
+    "afce_a0.6_fair": "Y",
+    "afce_a0.7_acc": 0.8652,
+    "afce_a0.7_f1": 0.8486,
+    "afce_a0.7_auc": 0.9526,
+    "afce_a0.7_race": 1.0,
+    "afce_a0.7_sex": 1.0,
+    "afce_a0.7_eth": 0.917,
+    "afce_a0.7_age": 0.277,
+    "afce_a0.7_fair": "Y",
+    "afce_a0.8_acc": 0.865,
+    "afce_a0.8_f1": 0.8483,
+    "afce_a0.8_auc": 0.9523,
+    "afce_a0.8_race": 0.996,
+    "afce_a0.8_sex": 1.0,
+    "afce_a0.8_eth": 0.917,
+    "afce_a0.8_age": 0.277,
+    "afce_a0.8_fair": "Y",
+    "afce_a0.9_acc": 0.8645,
+    "afce_a0.9_f1": 0.8478,
+    "afce_a0.9_auc": 0.952,
+    "afce_a0.9_race": 0.996,
+    "afce_a0.9_sex": 1.0,
+    "afce_a0.9_eth": 0.918,
+    "afce_a0.9_age": 0.278,
+    "afce_a0.9_fair": "Y",
+    "afce_a1.0_acc": 0.8643,
+    "afce_a1.0_f1": 0.8475,
+    "afce_a1.0_auc": 0.9516,
+    "afce_a1.0_race": 0.997,
+    "afce_a1.0_sex": 1.0,
+    "afce_a1.0_eth": 0.917,
+    "afce_a1.0_age": 0.278,
+    "afce_a1.0_fair": "Y",
+    "afce_best_alpha": 0.1,
+    "afce_best_acc": 0.8662,
+    "afce_best_f1": 0.8497,
+    "afce_best_auc": 0.9534,
+    "afce_best_race_di": 0.999,
+    "afce_best_sex_di": 1.0,
+    "afce_best_eth_di": 0.916,
+    "afce_cost_pct": 0.0
+  },
+  "verification_model": {
+    "model": "LogisticRegression",
+    "metrics": {
+      "accuracy": 0.75495876255229,
+      "f1": 0.7240323572198112,
+      "precision": 0.7347705231947619,
+      "recall": 0.713603532263096,
+      "auc": 0.829046549263615,
+      "brier": 0.1686492429263284,
+      "ece": 0.0358666816073521
+    }
+  },
+  "fairness": {
+    "RACE": {
+      "DI": 0.8283,
+      "SPD": 0.0787,
+      "EOD": 0.0577,
+      "WTPR": 0.6921,
+      "PPV_Ratio": 0.8937,
+      "FPR_diff": 0.0638,
+      "EqOdds_proxy": 0.0638,
+      "per_group_tpr": {
+        "Asian/PI": 0.6921,
+        "Black": 0.7063,
+        "Other/Unknown": 0.7202,
+        "White": 0.7498
+      },
+      "per_group_fpr": {
+        "Asian/PI": 0.1671,
+        "Black": 0.1872,
+        "Other/Unknown": 0.2309,
+        "White": 0.1685
+      },
+      "per_group_sr": {
+        "Asian/PI": 0.38,
+        "Black": 0.4587,
+        "Other/Unknown": 0.4519,
+        "White": 0.405
+      }
+    },
+    "SEX": {
+      "DI": 0.6729,
+      "SPD": 0.1805,
+      "EOD": 0.0744,
+      "WTPR": 0.6822,
+      "PPV_Ratio": 0.9443,
+      "FPR_diff": 0.1757,
+      "EqOdds_proxy": 0.1757,
+      "per_group_tpr": {
+        "Female": 0.6822,
+        "Unknown": 0.7565
+      },
+      "per_group_fpr": {
+        "Female": 0.1548,
+        "Unknown": 0.3305
+      },
+      "per_group_sr": {
+        "Female": 0.3713,
+        "Unknown": 0.5518
+      }
+    },
+    "ETHNICITY": {
+      "DI": 0.7452,
+      "SPD": 0.1198,
+      "EOD": 0.0673,
+      "WTPR": 0.6626,
+      "PPV_Ratio": 0.9681,
+      "FPR_diff": 0.0964,
+      "EqOdds_proxy": 0.0964,
+      "per_group_tpr": {
+        "Hispanic": 0.7299,
+        "Non-Hispanic": 0.6626
+      },
+      "per_group_fpr": {
+        "Hispanic": 0.24,
+        "Non-Hispanic": 0.1436
+      },
+      "per_group_sr": {
+        "Hispanic": 0.4703,
+        "Non-Hispanic": 0.3505
+      }
+    },
+    "AGE_GROUP": {
+      "DI": 0.1494,
+      "SPD": 0.577,
+      "EOD": 0.4931,
+      "WTPR": 0.3403,
+      "PPV_Ratio": 0.7261,
+      "FPR_diff": 0.4241,
+      "EqOdds_proxy": 0.4931,
+      "per_group_tpr": {
+        "Elderly": 0.8334,
+        "Middle-Aged": 0.3672,
+        "Paediatric": 0.3993,
+        "Senior": 0.6775,
+        "Young Adult": 0.3403
+      },
+      "per_group_fpr": {
+        "Elderly": 0.439,
+        "Middle-Aged": 0.0361,
+        "Paediatric": 0.0149,
+        "Senior": 0.2437,
+        "Young Adult": 0.0214
+      },
+      "per_group_sr": {
+        "Elderly": 0.6783,
+        "Middle-Aged": 0.1103,
+        "Paediatric": 0.1703,
+        "Senior": 0.4357,
+        "Young Adult": 0.1014
+      }
+    }
+  },
+  "bootstrap_ci": {
+    "RACE": {
+      "Asian/PI": {
+        "mean": 0.692,
+        "ci_low": 0.6855,
+        "ci_high": 0.6988,
+        "ci_width": 0.0133
+      },
+      "Black": {
+        "mean": 0.7067,
+        "ci_low": 0.6986,
+        "ci_high": 0.7148,
+        "ci_width": 0.0162
+      },
+      "Other/Unknown": {
+        "mean": 0.7203,
+        "ci_low": 0.7165,
+        "ci_high": 0.7244,
+        "ci_width": 0.0079
+      },
+      "White": {
+        "mean": 0.7495,
+        "ci_low": 0.727,
+        "ci_high": 0.7734,
+        "ci_width": 0.0464
+      }
+    },
+    "SEX": {
+      "Female": {
+        "mean": 0.6824,
+        "ci_low": 0.6782,
+        "ci_high": 0.6868,
+        "ci_width": 0.0085
+      },
+      "Unknown": {
+        "mean": 0.7564,
+        "ci_low": 0.752,
+        "ci_high": 0.7603,
+        "ci_width": 0.0083
+      }
+    }
+  },
+  "intersectional_audit": {
+    "intersections": {
+      "Asian/PI x Female": {
+        "n": 25015,
+        "selection_rate": 0.2937,
+        "tpr": 0.6439,
+        "positive_rate": 0.34
+      },
+      "Asian/PI x Unknown": {
+        "n": 12086,
+        "selection_rate": 0.5584,
+        "tpr": 0.7548,
+        "positive_rate": 0.5409
+      },
+      "Black x Female": {
+        "n": 15520,
+        "selection_rate": 0.4088,
+        "tpr": 0.6844,
+        "positive_rate": 0.4855
+      },
+      "Black x Unknown": {
+        "n": 7641,
+        "selection_rate": 0.56,
+        "tpr": 0.7425,
+        "positive_rate": 0.5991
+      },
+      "Other/Unknown x Female": {
+        "n": 74345,
+        "selection_rate": 0.3912,
+        "tpr": 0.6918,
+        "positive_rate": 0.4203
+      },
+      "Other/Unknown x Unknown": {
+        "n": 47128,
+        "selection_rate": 0.5476,
+        "tpr": 0.7578,
+        "positive_rate": 0.5008
+      },
+      "White x Female": {
+        "n": 2293,
+        "selection_rate": 0.3175,
+        "tpr": 0.6905,
+        "positive_rate": 0.3537
+      },
+      "White x Unknown": {
+        "n": 998,
+        "selection_rate": 0.6062,
+        "tpr": 0.8409,
+        "positive_rate": 0.5291
+      }
+    },
+    "intersectional_DI": 0.4846,
+    "n_intersections": 8
+  },
+  "hospital_analysis": {
+    "n_hospitals": 30,
+    "per_hospital": {
+      "488000": {
+        "n": 284,
+        "accuracy": 0.7641,
+        "f1": 0.5732,
+        "DI": 0.5127
+      },
+      "409000": {
+        "n": 1235,
+        "accuracy": 0.7668,
+        "f1": 0.8,
+        "DI": 0.6103
+      },
+      "58000": {
+        "n": 335,
+        "accuracy": 0.7761,
+        "f1": 0.7911,
+        "DI": 0.5938
+      },
+      "300000": {
+        "n": 738,
+        "accuracy": 0.7073,
+        "f1": 0.7017,
+        "DI": 0.8992
+      },
+      "600001": {
+        "n": 446,
+        "accuracy": 0.7332,
+        "f1": 0.6909,
+        "DI": 0.8136
+      },
+      "802001": {
+        "n": 2243,
+        "accuracy": 0.815,
+        "f1": 0.7385,
+        "DI": 0.842
+      },
+      "266000": {
+        "n": 1037,
+        "accuracy": 0.785,
+        "f1": 0.7786,
+        "DI": 0.6641
+      },
+      "207001": {
+        "n": 1089,
+        "accuracy": 0.7998,
+        "f1": 0.792,
+        "DI": 0.4718
+      },
+      "71000": {
+        "n": 610,
+        "accuracy": 0.7787,
+        "f1": 0.6218,
+        "DI": 0.461
+      },
+      "703000": {
+        "n": 828,
+        "accuracy": 0.7959,
+        "f1": 0.5395,
+        "DI": 0.492
+      },
+      "602000": {
+        "n": 1094,
+        "accuracy": 0.7486,
+        "f1": 0.7418,
+        "DI": 0.5935
+      },
+      "56000": {
+        "n": 526,
+        "accuracy": 0.73,
+        "f1": 0.729,
+        "DI": 1.0
+      },
+      "627000": {
+        "n": 587,
+        "accuracy": 0.8262,
+        "f1": 0.7839,
+        "DI": 0.9635
+      },
+      "228001": {
+        "n": 747,
+        "accuracy": 0.8286,
+        "f1": 0.7647,
+        "DI": 0.4904
+      },
+      "415000": {
+        "n": 523,
+        "accuracy": 0.847,
+        "f1": 0.7279,
+        "DI": 0.3483
+      },
+      "410000": {
+        "n": 1596,
+        "accuracy": 0.7174,
+        "f1": 0.755,
+        "DI": 0.7823
+      },
+      "508001": {
+        "n": 1195,
+        "accuracy": 0.723,
+        "f1": 0.7371,
+        "DI": 0.5181
+      },
+      "29000": {
+        "n": 1503,
+        "accuracy": 0.7665,
+        "f1": 0.7323,
+        "DI": 0.3313
+      },
+      "297000": {
+        "n": 872,
+        "accuracy": 0.7397,
+        "f1": 0.7294,
+        "DI": 0.1891
+      },
+      "814001": {
+        "n": 601,
+        "accuracy": 0.7537,
+        "f1": 0.7087,
+        "DI": 0.85
+      },
+      "407000": {
+        "n": 2058,
+        "accuracy": 0.7741,
+        "f1": 0.7401,
+        "DI": 0.6647
+      },
+      "349001": {
+        "n": 1304,
+        "accuracy": 0.7661,
+        "f1": 0.7477,
+        "DI": 0.6866
+      },
+      "481000": {
+        "n": 513,
+        "accuracy": 0.7466,
+        "f1": 0.7575,
+        "DI": 0.3951
+      },
+      "155000": {
+        "n": 428,
+        "accuracy": 0.7944,
+        "f1": 0.6589,
+        "DI": 0.2728
+      },
+      "335000": {
+        "n": 1037,
+        "accuracy": 0.7608,
+        "f1": 0.6437,
+        "DI": 0.235
+      },
+      "255000": {
+        "n": 1236,
+        "accuracy": 0.746,
+        "f1": 0.7439,
+        "DI": 0.7457
+      },
+      "453000": {
+        "n": 712,
+        "accuracy": 0.7416,
+        "f1": 0.6871,
+        "DI": 0.6787
+      },
+      "784400": {
+        "n": 501,
+        "accuracy": 0.6667,
+        "f1": 0.1257,
+        "DI": 0.9034
+      },
+      "126000": {
+        "n": 202,
+        "accuracy": 0.7228,
+        "f1": 0.541,
+        "DI": 0.5018
+      },
+      "263000": {
+        "n": 704,
+        "accuracy": 0.8026,
+        "f1": 0.7412,
+        "DI": 0.6586
+      }
+    },
+    "DI_mean": 0.6056,
+    "DI_std": 0.2152,
+    "DI_min": 0.1891,
+    "DI_max": 1.0,
+    "F1_mean": 0.6941,
+    "Acc_mean": 0.7641
+  },
+  "fairlearn_baseline": {
+    "error": "fairlearn not installed. Install with: pip install fairlearn"
+  },
+  "elapsed_seconds": 31.7
+}

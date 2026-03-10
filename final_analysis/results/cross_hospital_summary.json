@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-19T11:33:09.838891",
+  "n_folds": 50,
+  "attributes": [
+    "RACE",
+    "ETHNICITY",
+    "SEX",
+    "AGE_GROUP"
+  ]
+}

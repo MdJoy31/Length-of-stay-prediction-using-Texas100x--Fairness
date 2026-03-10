@@ -1,0 +1,577 @@
+﻿papermill.exe : Input Notebook:  LOS_Prediction_Standard.ipynb
+At line:1 char:102
++ ... notebooks"; & "d:\Research study\Research question ML\fairness_projec ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Input Notebook:..._Standard.ipynb 
+   :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Output Notebook: LOS_Prediction_Standard.ipynb
+
+Executing:   0%|          | 0/68 [00:00<?, ?cell/s]Executing notebook with 
+kernel: fairness_env
+Executing Cell 1---------------------------------------
+Ending Cell 1------------------------------------------
+
+Executing:   1%|1         | 1/68 [00:00<01:06,  1.01cell/s]Executing Cell 
+2---------------------------------------
+Ending Cell 2------------------------------------------
+Executing Cell 3---------------------------------------
+\u2705 All libraries loaded!
+   NumPy 2.4.2 | Pandas 3.0.1
+   XGBoost 3.2.0 | LightGBM 4.6.0
+   PyTorch 2.10.0+cu128
+
+Ending Cell 3------------------------------------------
+
+Executing:   4%|4         | 3/68 [00:03<01:07,  1.04s/cell]Executing Cell 
+4---------------------------------------
+============================================================
+\U0001f5a5\ufe0f  GPU STATUS REPORT
+============================================================
+  \u2705 GPU Found: NVIDIA GeForce RTX 5070 Laptop GPU
+  \u2705 VRAM: 8.5 GB
+  \u2705 CUDA Version: 12.8
+  \u2705 GPU Matmul (5000x5000): 74.2ms
+============================================================
+
+Ending Cell 4------------------------------------------
+
+Executing:   6%|5         | 4/68 [00:03<00:47,  1.34cell/s]Executing Cell 
+5---------------------------------------
+Ending Cell 5------------------------------------------
+Executing Cell 6---------------------------------------
+\U0001f4ca Dataset Shape: 925,128 rows ╫ 12 columns
+   Memory: 88.8 MB
+
+
+   THCIC_ID  SEX_CODE  TYPE_OF_ADMISSION  SOURCE_OF_ADMISSION  LENGTH_OF_STAY  
+\
+0       102         1                  0                    7              12  
+ 
+1       102         1                  0                    7              38  
+ 
+2       102         0                  0                    7               3  
+ 
+3       102         0                  0                    7              15  
+ 
+4       102         0                  2                    1              12  
+ 
+5       102         0                  2                    1              13  
+ 
+6       102         0                  0                    7              59  
+ 
+7       102         0                  2                    9              11  
+ 
+8       102         0                  2                    2              12  
+ 
+9       102         0                  0                    6              15  
+ 
+
+   PAT_AGE  PAT_STATUS  RACE  ETHNICITY  TOTAL_CHARGES  ADMITTING_DIAGNOSIS  \
+0       15           9     2          1       57239.53                  414   
+1       12           0     2          1       74721.31                  858   
+2       16           0     2          1       34401.88                 4333   
+3       15           0     3          0       60229.40                  463   
+4       12           0     3          0       49780.73                  859   
+5       12           0     3          1       42970.17                  853   
+6        9           0     3          1      369079.35                 4214   
+7       10           0     3          0       39781.71                  853   
+8       18           2     3          1       51974.09                  859   
+9        7           0     3          0      106545.98                 1859   
+
+   PRINC_SURG_PROC_CODE  
+0                     2  
+1                     2  
+2                     2  
+3                     2  
+4                     2  
+5                     2  
+6                     2  
+7                     2  
+8                     2  
+9                     2  
+Ending Cell 6------------------------------------------
+
+Executing:   9%|8         | 6/68 [00:03<00:31,  2.00cell/s]Executing Cell 
+7---------------------------------------
+\U0001f4cb Column Summary:
+----------------------------------------------------------------------
+  THCIC_ID                       | unique:    441 | nulls: 0 | int64
+  SEX_CODE                       | unique:      2 | nulls: 0 | int64
+  TYPE_OF_ADMISSION              | unique:      5 | nulls: 0 | int64
+  SOURCE_OF_ADMISSION            | unique:     10 | nulls: 0 | int64
+  LENGTH_OF_STAY                 | unique:    221 | nulls: 0 | int64
+  PAT_AGE                        | unique:     22 | nulls: 0 | int64
+  PAT_STATUS                     | unique:     23 | nulls: 0 | int64
+  RACE                           | unique:      5 | nulls: 0 | int64
+  ETHNICITY                      | unique:      2 | nulls: 0 | int64
+  TOTAL_CHARGES                  | unique: 662,833 | nulls: 0 | float64
+  ADMITTING_DIAGNOSIS            | unique:  5,225 | nulls: 0 | int64
+  PRINC_SURG_PROC_CODE           | unique:    100 | nulls: 0 | int64
+
+\U0001f4ca Target: LENGTH_OF_STAY (will binarize at >3 days)
+   Mean LOS: 5.35 days
+   Median LOS: 3 days
+
+Ending Cell 7------------------------------------------
+
+Executing:  10%|#         | 7/68 [00:03<00:24,  2.51cell/s]Executing Cell 
+8---------------------------------------
+<Figure size 2160x1200 with 6 Axes>
+
+\U0001f4ca Binary Target: Normal=508,401 (55.0%) | Extended=416,727 (45.0%)
+
+Ending Cell 8------------------------------------------
+
+Executing:  12%|#1        | 8/68 [00:04<00:30,  1.98cell/s]Executing Cell 
+9---------------------------------------
+<Figure size 1920x600 with 2 Axes>
+Ending Cell 9------------------------------------------
+
+Executing:  13%|#3        | 9/68 [00:04<00:25,  2.35cell/s]Executing Cell 
+10--------------------------------------
+Ending Cell 10-----------------------------------------
+Executing Cell 11--------------------------------------
+\u2705 Protected Attributes (NOT used as model features):
+   RACE: 5 groups \u2192 ['Asian/PI', 'Black', 'Hispanic', 'Other/Unknown', 
+'White']
+   ETHNICITY: 2 groups \u2192 ['Hispanic', 'Non-Hispanic']
+   SEX: 2 groups \u2192 ['Female', 'Male']
+   AGE_GROUP: 5 groups \u2192 ['Elderly (65+)', 'Middle-aged (45-64)', 
+'Pediatric (0-17)', 'Unknown', 'Young Adult (18-44)']
+   Hospitals: 441 unique
+
+Ending Cell 11-----------------------------------------
+
+Executing:  16%|#6        | 11/68 [00:05<00:20,  2.82cell/s]Executing Cell 
+12--------------------------------------
+\u2705 Train/Test Split:
+   Training: 740,102 samples (45.0% positive)
+   Testing:  185,026 samples (45.0% positive)
+
+Ending Cell 12-----------------------------------------
+
+Executing:  18%|#7        | 12/68 [00:05<00:20,  2.77cell/s]Executing Cell 
+13--------------------------------------
+\u2705 Target Encoding Complete (with Hospital + Interaction features):
+
+   DIAG_TARGET range: [0.011, 0.970]
+   PROC_TARGET range: [0.022, 0.987]
+   HOSP_TARGET range: [0.022, 0.982]
+   PS_TARGET range:   [0.338, 0.931]
+   Unique diagnoses: 5,225
+   Unique procedures: 100
+   Unique hospitals: 441
+   Interaction features: AGE_CHARGE, DIAG_PROC, AGE_DIAG, HOSP_DIAG, HOSP_PROC
+
+Ending Cell 13-----------------------------------------
+
+Executing:  19%|#9        | 13/68 [00:06<00:17,  3.13cell/s]Executing Cell 
+14--------------------------------------
+\u2705 One-Hot Encoding: 15 dummy columns
+   TYPE_OF_ADMISSION_0
+   TYPE_OF_ADMISSION_1
+   TYPE_OF_ADMISSION_2
+   TYPE_OF_ADMISSION_3
+   TYPE_OF_ADMISSION_4
+   SOURCE_OF_ADMISSION_0
+   SOURCE_OF_ADMISSION_1
+   SOURCE_OF_ADMISSION_2
+   SOURCE_OF_ADMISSION_3
+   SOURCE_OF_ADMISSION_4
+   SOURCE_OF_ADMISSION_5
+   SOURCE_OF_ADMISSION_6
+   SOURCE_OF_ADMISSION_7
+   SOURCE_OF_ADMISSION_8
+   SOURCE_OF_ADMISSION_9
+
+Ending Cell 14-----------------------------------------
+
+Executing:  21%|##        | 14/68 [00:06<00:14,  3.79cell/s]Executing Cell 
+15--------------------------------------
+\u2705 Final Feature Matrix: 31 features (up from 22 \u2192 31)
+   Training: (740102, 31)
+   Testing:  (185026, 31)
+
+\U0001f4ca Feature groups:
+   Base numeric:   PAT_AGE, TOTAL_CHARGES, PAT_STATUS
+   Target-encoded: DIAG_TARGET/FREQ, PROC_TARGET/FREQ (diagnosis/procedure 
+codes)
+   Hospital:       HOSP_TARGET, HOSP_FREQ, HOSP_SIZE (hospital-level encoding)
+   PS encoding:    PS_TARGET (patient status target encoding)
+   Interactions:   AGE_CHARGE, DIAG_PROC, AGE_DIAG, HOSP_DIAG, HOSP_PROC
+   One-hot:        TYPE_OF_ADMISSION (5) + SOURCE_OF_ADMISSION (10)
+
+Ending Cell 15-----------------------------------------
+
+Executing:  22%|##2       | 15/68 [00:06<00:18,  2.87cell/s]Executing Cell 
+16--------------------------------------
+Ending Cell 16-----------------------------------------
+Executing Cell 17--------------------------------------
+\u2705 Model Configurations (Hyperparameters optimized via 50-agent search):
+   \U0001f4bb CPU Logistic_Regression
+   \U0001f4bb CPU Random_Forest
+   \U0001f4bb CPU Gradient_Boosting
+   \U0001f5a5\ufe0f GPU XGBoost_GPU
+   \U0001f5a5\ufe0f GPU LightGBM_GPU
+   \U0001f5a5\ufe0f GPU PyTorch_DNN (defined separately)
+
+Ending Cell 17-----------------------------------------
+Executing Cell 18--------------------------------------
+===============================================================================
+=
+\U0001f680 MODEL TRAINING
+===============================================================================
+=
+
+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u
+2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2
+500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25
+00\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u250
+0\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+\u2500
+  \U0001f527 Training: Logistic Regression
+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u
+2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2
+500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25
+00\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u250
+0\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+\u2500
+
+  \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u250
+0\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u
+2500\u2500\u2510
+  \u2502 Metric               \u2502      Train \u2502       Test \u2502      
+Gap \u2502
+  \u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u250
+0\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u
+2500\u2500\u2524
+  \u2502 Accuracy             \u2502     0.8028 \u2502     0.8021 \u2502  
++0.0007 \u2502
+  \u2502 AUC-ROC              \u2502     0.8847 \u2502     0.8840 \u2502  
++0.0007 \u2502
+  \u2502 F1-Score             \u2502          ù \u2502     0.7844 \u2502       
+   \u2502
+  \u2502 Precision            \u2502          ù \u2502     0.7701 \u2502       
+   \u2502
+  \u2502 Recall               \u2502          ù \u2502     0.7992 \u2502       
+   \u2502
+  \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u250
+0\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u
+2500\u2500\u2518
+  \u23f1 Training time: 1.1s
+
+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u
+2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2
+500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25
+00\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u250
+0\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+\u2500
+  \U0001f527 Training: Random Forest
+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u
+2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2
+500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25
+00\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u250
+0\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+\u2500
+
+  \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u250
+0\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u
+2500\u2500\u2510
+  \u2502 Metric               \u2502      Train \u2502       Test \u2502      
+Gap \u2502
+  \u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u250
+0\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u
+2500\u2500\u2524
+  \u2502 Accuracy             \u2502     0.9238 \u2502     0.8624 \u2502  
++0.0614 \u2502
+  \u2502 AUC-ROC              \u2502     0.9813 \u2502     0.9410 \u2502  
++0.0404 \u2502
+  \u2502 F1-Score             \u2502          ù \u2502     0.8478 \u2502       
+   \u2502
+  \u2502 Precision            \u2502          ù \u2502     0.8449 \u2502       
+   \u2502
+  \u2502 Recall               \u2502          ù \u2502     0.8508 \u2502       
+   \u2502
+  \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u250
+0\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u
+2500\u2500\u2518
+  \u23f1 Training time: 283.0s
+
+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u
+2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2
+500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25
+00\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u250
+0\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+\u2500
+  \U0001f527 Training: Gradient Boosting
+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u
+2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2
+500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25
+00\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u250
+0\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+\u2500
+
+  \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u250
+0\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u
+2500\u2500\u2510
+  \u2502 Metric               \u2502      Train \u2502       Test \u2502      
+Gap \u2502
+  \u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u250
+0\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u
+2500\u2500\u2524
+  \u2502 Accuracy             \u2502     0.8919 \u2502     0.8740 \u2502  
++0.0179 \u2502
+  \u2502 AUC-ROC              \u2502     0.9619 \u2502     0.9501 \u2502  
++0.0117 \u2502
+  \u2502 F1-Score             \u2502          ù \u2502     0.8584 \u2502       
+   \u2502
+  \u2502 Precision            \u2502          ù \u2502     0.8693 \u2502       
+   \u2502
+  \u2502 Recall               \u2502          ù \u2502     0.8478 \u2502       
+   \u2502
+  \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u250
+0\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u
+2500\u2500\u2518
+  \u23f1 Training time: 975.8s
+
+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u
+2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2
+500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25
+00\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u250
+0\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+\u2500
+  \U0001f527 Training: XGBoost GPU
+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u
+2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2
+500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25
+00\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u250
+0\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+\u2500
+
+  \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u250
+0\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u
+2500\u2500\u2510
+  \u2502 Metric               \u2502      Train \u2502       Test \u2502      
+Gap \u2502
+  \u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u250
+0\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u
+2500\u2500\u2524
+  \u2502 Accuracy             \u2502     0.9103 \u2502     0.8782 \u2502  
++0.0321 \u2502
+  \u2502 AUC-ROC              \u2502     0.9736 \u2502     0.9532 \u2502  
++0.0204 \u2502
+  \u2502 F1-Score             \u2502          ù \u2502     0.8633 \u2502       
+   \u2502
+  \u2502 Precision            \u2502          ù \u2502     0.8726 \u2502       
+   \u2502
+  \u2502 Recall               \u2502          ù \u2502     0.8542 \u2502       
+   \u2502
+  \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u250
+0\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u
+2500\u2500\u2518
+  \u23f1 Training time: 9.3s
+
+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u
+2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2
+500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25
+00\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u250
+0\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+\u2500
+  \U0001f527 Training: LightGBM GPU
+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\
+u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u
+2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2
+500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25
+00\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u250
+0\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+\u2500
+
+Timeout waiting for execute reply (1800s).
+Ending Cell 18-----------------------------------------
+
+Executing:  26%|##6       | 18/68 [30:06<4:31:25, 325.71s/cell]  File 
+"D:\Research study\Research question ML\fairness_project_v2\fairness_project_v1
+\.venv\Lib\site-packages\joblib\externals\loky\backend\context.py", line 247, 
+in _count_physical_cores
+    cpu_count_physical = _count_physical_cores_win32()
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Research study\Research question ML\fairness_project_v2\fairness_pro
+ject_v1\.venv\Lib\site-packages\joblib\externals\loky\backend\context.py", 
+line 299, in _count_physical_cores_win32
+    cpu_info = subprocess.run(
+               ^^^^^^^^^^^^^^^
+  File 
+"C:\Users\rakib\AppData\Local\Programs\Python\Python311\Lib\subprocess.py", 
+line 548, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File 
+"C:\Users\rakib\AppData\Local\Programs\Python\Python311\Lib\subprocess.py", 
+line 1026, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File 
+"C:\Users\rakib\AppData\Local\Programs\Python\Python311\Lib\subprocess.py", 
+line 1538, in _execute_child
+    hp, ht, pid, tid = _winapi.CreateProcess(executable, args,
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+Executing:  26%|##6       | 18/68 [30:09<1:23:46, 100.52s/cell]
+Traceback (most recent call last):
+  File "d:\Research study\Research question ML\fairness_project_v2\fairness_pro
+ject_v1\.venv\Lib\site-packages\nbclient\client.py", line 782, in 
+_async_poll_for_reply
+    msg = await 
+ensure_async(self.kc.shell_channel.get_msg(timeout=new_timeout))
+          
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\Research study\Research question ML\fairness_project_v2\fairness_pro
+ject_v1\.venv\Lib\site-packages\jupyter_core\utils\__init__.py", line 214, in 
+ensure_async
+    result = await obj
+             ^^^^^^^^^
+  File "d:\Research study\Research question ML\fairness_project_v2\fairness_pro
+ject_v1\.venv\Lib\site-packages\jupyter_client\channels.py", line 316, in 
+get_msg
+    raise Empty
+_queue.Empty
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "D:\Research study\Research question ML\fairness_project_v2\fairness_pro
+ject_v1\.venv\Scripts\papermill.exe\__main__.py", line 5, in <module>
+  File "d:\Research study\Research question ML\fairness_project_v2\fairness_pro
+ject_v1\.venv\Lib\site-packages\click\core.py", line 1485, in __call__
+    return self.main(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\Research study\Research question ML\fairness_project_v2\fairness_pro
+ject_v1\.venv\Lib\site-packages\click\core.py", line 1406, in main
+    rv = self.invoke(ctx)
+         ^^^^^^^^^^^^^^^^
+  File "d:\Research study\Research question ML\fairness_project_v2\fairness_pro
+ject_v1\.venv\Lib\site-packages\click\core.py", line 1269, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\Research study\Research question ML\fairness_project_v2\fairness_pro
+ject_v1\.venv\Lib\site-packages\click\core.py", line 824, in invoke
+    return callback(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\Research study\Research question ML\fairness_project_v2\fairness_pro
+ject_v1\.venv\Lib\site-packages\click\decorators.py", line 34, in new_func
+    return f(get_current_context(), *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\Research study\Research question ML\fairness_project_v2\fairness_pro
+ject_v1\.venv\Lib\site-packages\papermill\cli.py", line 235, in papermill
+    execute_notebook(
+  File "d:\Research study\Research question ML\fairness_project_v2\fairness_pro
+ject_v1\.venv\Lib\site-packages\papermill\execute.py", line 116, in 
+execute_notebook
+    nb = papermill_engines.execute_notebook_with_engine(
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\Research study\Research question ML\fairness_project_v2\fairness_pro
+ject_v1\.venv\Lib\site-packages\papermill\engines.py", line 48, in 
+execute_notebook_with_engine
+    return self.get_engine(engine_name).execute_notebook(nb, kernel_name, 
+**kwargs)
+           
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\Research study\Research question ML\fairness_project_v2\fairness_pro
+ject_v1\.venv\Lib\site-packages\papermill\engines.py", line 370, in 
+execute_notebook
+    cls.execute_managed_notebook(nb_man, kernel_name, log_output=log_output, 
+**kwargs)
+  File "d:\Research study\Research question ML\fairness_project_v2\fairness_pro
+ject_v1\.venv\Lib\site-packages\papermill\engines.py", line 442, in 
+execute_managed_notebook
+    return PapermillNotebookClient(nb_man, **final_kwargs).execute()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\Research study\Research question ML\fairness_project_v2\fairness_pro
+ject_v1\.venv\Lib\site-packages\papermill\clientwrap.py", line 45, in execute
+    self.papermill_execute_cells()
+  File "d:\Research study\Research question ML\fairness_project_v2\fairness_pro
+ject_v1\.venv\Lib\site-packages\papermill\clientwrap.py", line 72, in 
+papermill_execute_cells
+    self.execute_cell(cell, index)
+  File "d:\Research study\Research question ML\fairness_project_v2\fairness_pro
+ject_v1\.venv\Lib\site-packages\jupyter_core\utils\__init__.py", line 165, in 
+wrapped
+    return loop.run_until_complete(inner)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\rakib\AppData\Local\Programs\Python\Python311\Lib\asyncio\base
+_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "d:\Research study\Research question ML\fairness_project_v2\fairness_pro
+ject_v1\.venv\Lib\site-packages\nbclient\client.py", line 1005, in 
+async_execute_cell
+    exec_reply = await self.task_poll_for_reply
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\Research study\Research question ML\fairness_project_v2\fairness_pro
+ject_v1\.venv\Lib\site-packages\nbclient\client.py", line 806, in 
+_async_poll_for_reply
+    error_on_timeout_execute_reply = await self._async_handle_timeout(timeout, 
+cell)
+                                     
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\Research study\Research question ML\fairness_project_v2\fairness_pro
+ject_v1\.venv\Lib\site-packages\nbclient\client.py", line 856, in 
+_async_handle_timeout
+    raise CellTimeoutError.error_from_timeout_and_cell(
+nbclient.exceptions.CellTimeoutError: A cell timed out while it was being 
+executed, after 1800 seconds.
+The message was: Cell execution timed out.
+Here is a preview of the cell contents:
+-------------------
+['# \u2500\u2500 Train All Models \u2500\u2500', 'results = {}', 'predictions 
+= {}', '', 'print("=" * 80)']
+...
+['    print(f"  \u2502 {\'F1-Score\':<20} \u2502 {\'ù\':>10} \u2502 
+{test_f1:>10.4f} \u2502          \u2502")', '    print(f"  \u2502 
+{\'Precision\':<20} \u2502 {\'ù\':>10} \u2502 {test_prec:>10.4f} \u2502        
+  \u2502")', '    print(f"  \u2502 {\'Recall\':<20} \u2502 {\'ù\':>10} \u2502 
+{test_rec:>10.4f} \u2502          \u2502")', '    print(f"  \u2514\u2500\u2500\
+u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u
+2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2
+500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25
+00\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518")', 
+'    print(f"  \u23f1 Training time: {elapsed:.1f}s")']
+-------------------
+

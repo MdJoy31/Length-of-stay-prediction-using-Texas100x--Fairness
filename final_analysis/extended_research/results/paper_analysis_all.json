@@ -1,0 +1,423 @@
+{
+  "timestamp": "2026-02-24T16:55:45.296355",
+  "dataset": "Texas-100X",
+  "n_train": 740102,
+  "n_test": 185026,
+  "best_model": "Random_Forest",
+  "model_performance": {
+    "Logistic_Regression": {
+      "test_accuracy": 0.736447850572352,
+      "test_auc": 0.8158962157185625,
+      "test_f1": 0.6965941190378417,
+      "test_precision": 0.7234672249793217,
+      "test_recall": 0.6716459098217071
+    },
+    "Random_Forest": {
+      "test_accuracy": 0.7486515408645271,
+      "test_auc": 0.8362820116487849,
+      "test_f1": 0.740172525532438,
+      "test_precision": 0.6925932121871144,
+      "test_recall": 0.7947711947783936
+    },
+    "Gradient_Boosting": {
+      "test_accuracy": 0.7544182979689341,
+      "test_auc": 0.8378670441306139,
+      "test_f1": 0.7281754933807122,
+      "test_precision": 0.7261295441258934,
+      "test_recall": 0.7302330045833033
+    },
+    "Neural_Network": {
+      "test_accuracy": 0.7522672489271778,
+      "test_auc": 0.8358653021719455,
+      "test_f1": 0.7284393125225871,
+      "test_precision": 0.7194920709228159,
+      "test_recall": 0.737611882993785
+    }
+  },
+  "baseline_fairness": {
+    "Logistic_Regression": {
+      "RACE": {
+        "DI": 0.7481703246998038,
+        "WTPR": 0.7316017316017316,
+        "SPD": 0.13969637184305173,
+        "EOD": 0.12127354845801452,
+        "PPV_ratio": 0.7132488200729505
+      },
+      "ETHNICITY": {
+        "DI": 0.8090793666323556,
+        "WTPR": 0.7748068924539513,
+        "SPD": 0.09638399784739976,
+        "EOD": 0.03866895869410891,
+        "PPV_ratio": 0.9981794865529288
+      },
+      "SEX": {
+        "DI": 0.809851402000888,
+        "WTPR": 0.8011185263726897,
+        "SPD": 0.10342953819213929,
+        "EOD": 0.007063730273266011,
+        "PPV_ratio": 0.9672472836527652
+      },
+      "AGE_GROUP": {
+        "DI": 0.5308884944255865,
+        "WTPR": 0.7686718829387258,
+        "SPD": 0.3675988519091306,
+        "EOD": 0.13449941937476528,
+        "PPV_ratio": 0.8845995793011425
+      }
+    },
+    "Random_Forest": {
+      "RACE": {
+        "DI": 0.5957490590771837,
+        "WTPR": 0.7445887445887446,
+        "SPD": 0.21347926507607473,
+        "EOD": 0.11724844734553475,
+        "PPV_ratio": 0.9082844017684444
+      },
+      "ETHNICITY": {
+        "DI": 0.8107618866528236,
+        "WTPR": 0.809863339275104,
+        "SPD": 0.09173439804450179,
+        "EOD": 0.03479224267263947,
+        "PPV_ratio": 0.9972643295446731
+      },
+      "SEX": {
+        "DI": 0.7831159756237926,
+        "WTPR": 0.8243206719474417,
+        "SPD": 0.11555875397216075,
+        "EOD": 0.028149041787060458,
+        "PPV_ratio": 0.975767934320827
+      },
+      "AGE_GROUP": {
+        "DI": 0.5176608604894914,
+        "WTPR": 0.803339768993666,
+        "SPD": 0.36933396968233223,
+        "EOD": 0.12088690113890488,
+        "PPV_ratio": 0.9265196118329955
+      }
+    },
+    "Gradient_Boosting": {
+      "RACE": {
+        "DI": 0.5873418696411314,
+        "WTPR": 0.7619047619047619,
+        "SPD": 0.21314404444899376,
+        "EOD": 0.08454120523797737,
+        "PPV_ratio": 0.9507099999638768
+      },
+      "ETHNICITY": {
+        "DI": 0.8295922495218782,
+        "WTPR": 0.7967419290948703,
+        "SPD": 0.07786129405293901,
+        "EOD": 0.023954824666016505,
+        "PPV_ratio": 0.9922502731048793
+      },
+      "SEX": {
+        "DI": 0.7906595269992267,
+        "WTPR": 0.8047984365579326,
+        "SPD": 0.10512221915840636,
+        "EOD": 0.023867832911809495,
+        "PPV_ratio": 0.9706738897978969
+      },
+      "AGE_GROUP": {
+        "DI": 0.4933769445893666,
+        "WTPR": 0.7778342309385903,
+        "SPD": 0.38152156837902407,
+        "EOD": 0.14067369731719348,
+        "PPV_ratio": 0.9471188217411384
+      }
+    },
+    "Neural_Network": {
+      "RACE": {
+        "DI": 0.5705512376097265,
+        "WTPR": 0.7186147186147186,
+        "SPD": 0.22411584953202518,
+        "EOD": 0.12221744517624977,
+        "PPV_ratio": 0.9292438936282547
+      },
+      "ETHNICITY": {
+        "DI": 0.821040268881644,
+        "WTPR": 0.7944147355912062,
+        "SPD": 0.08373885358228061,
+        "EOD": 0.028926515398500774,
+        "PPV_ratio": 0.9964463349159656
+      },
+      "SEX": {
+        "DI": 0.7907458623687511,
+        "WTPR": 0.8068151105012579,
+        "SPD": 0.10733938830108097,
+        "EOD": 0.02250369677312014,
+        "PPV_ratio": 0.9722343793427728
+      },
+      "AGE_GROUP": {
+        "DI": 0.49706651001320296,
+        "WTPR": 0.7799342885208143,
+        "SPD": 0.38552737691446937,
+        "EOD": 0.14286269614255975,
+        "PPV_ratio": 0.9382455638906803
+      }
+    }
+  },
+  "bootstrap_ci": {
+    "overall": {
+      "accuracy": {
+        "mean": 0.8432757612443657,
+        "std": 0.0008366554711926047,
+        "ci_low": 0.84163820219861,
+        "ci_high": 0.8448870699253077
+      },
+      "auc": {
+        "mean": 0.9261500892470933,
+        "std": 0.0005809002789282239,
+        "ci_low": 0.9250273911773075,
+        "ci_high": 0.927277074091357
+      },
+      "f1": {
+        "mean": 0.8278094141989067,
+        "std": 0.0009806364807246268,
+        "ci_low": 0.8259404825046254,
+        "ci_high": 0.8297138716384256
+      }
+    },
+    "RACE": {
+      "DI": {
+        "mean": 0.5958303146325599,
+        "std": 0.0325408626514967,
+        "ci_low": 0.5344533315573392,
+        "ci_high": 0.6619132777464112
+      },
+      "WTPR": {
+        "mean": 0.7442725548924641,
+        "std": 0.028076544128815595,
+        "ci_low": 0.6892416819209648,
+        "ci_high": 0.7982465552292749
+      },
+      "SPD": {
+        "mean": 0.21353433274383105,
+        "std": 0.017359092123266133,
+        "ci_low": 0.17835483629697899,
+        "ci_high": 0.24682898462403433
+      },
+      "EOD": {
+        "mean": 0.1183331323776247,
+        "std": 0.02913587505535142,
+        "ci_low": 0.06184518023018357,
+        "ci_high": 0.17695431032623726
+      },
+      "PPV_ratio": {
+        "mean": 0.9078053023306627,
+        "std": 0.03027904085361891,
+        "ci_low": 0.8429872470634678,
+        "ci_high": 0.9601064650929682
+      }
+    },
+    "ETHNICITY": {
+      "DI": {
+        "mean": 0.8107961775537418,
+        "std": 0.0051021294079586915,
+        "ci_low": 0.8001564621730785,
+        "ci_high": 0.8205824834203925
+      },
+      "WTPR": {
+        "mean": 0.8099906206223497,
+        "std": 0.002775451220301138,
+        "ci_low": 0.804601521448215,
+        "ci_high": 0.8154580762765478
+      },
+      "SPD": {
+        "mean": 0.09173095484083969,
+        "std": 0.002614223442302463,
+        "ci_low": 0.08679121086093071,
+        "ci_high": 0.09704754304308384
+      },
+      "EOD": {
+        "mean": 0.034653042407624686,
+        "std": 0.003158444022919586,
+        "ci_low": 0.02823395105592345,
+        "ci_high": 0.040464435719309445
+      },
+      "PPV_ratio": {
+        "mean": 0.9961714202657733,
+        "std": 0.002766511830793125,
+        "ci_low": 0.9893545587162661,
+        "ci_high": 0.9998936859002086
+      }
+    },
+    "SEX": {
+      "DI": {
+        "mean": 0.7832716444217801,
+        "std": 0.003939328661052618,
+        "ci_low": 0.7758528194365061,
+        "ci_high": 0.791024400087004
+      },
+      "WTPR": {
+        "mean": 0.8243542576913699,
+        "std": 0.0017358327408918143,
+        "ci_low": 0.82089718925606,
+        "ci_high": 0.8275960087739905
+      },
+      "SPD": {
+        "mean": 0.11548162905711595,
+        "std": 0.0024254238904409565,
+        "ci_low": 0.11043167349623872,
+        "ci_high": 0.12016446769010973
+      },
+      "EOD": {
+        "mean": 0.028120288064354123,
+        "std": 0.0025796047306215404,
+        "ci_low": 0.023037554605833198,
+        "ci_high": 0.03303470180900292
+      },
+      "PPV_ratio": {
+        "mean": 0.9756556574924755,
+        "std": 0.0031040955096338996,
+        "ci_low": 0.9691726007117231,
+        "ci_high": 0.981435921069635
+      }
+    },
+    "AGE_GROUP": {
+      "DI": {
+        "mean": 0.5176801444526886,
+        "std": 0.0031577238997354666,
+        "ci_low": 0.5116079245466566,
+        "ci_high": 0.5241890482914411
+      },
+      "WTPR": {
+        "mean": 0.8033674653419239,
+        "std": 0.0016727999127661127,
+        "ci_low": 0.8000597572075566,
+        "ci_high": 0.806692200826866
+      },
+      "SPD": {
+        "mean": 0.3693784039508787,
+        "std": 0.004219787032245675,
+        "ci_low": 0.36100970466380333,
+        "ci_high": 0.37745471973324146
+      },
+      "EOD": {
+        "mean": 0.12151372751806014,
+        "std": 0.003051244691875712,
+        "ci_low": 0.11555515072923433,
+        "ci_high": 0.12754478335284952
+      },
+      "PPV_ratio": {
+        "mean": 0.9263847281013746,
+        "std": 0.004366249629218068,
+        "ci_low": 0.9179517460848409,
+        "ci_high": 0.9347204204677004
+      }
+    }
+  },
+  "paper_comparison": {
+    "Our Study (Texas-100X)": {
+      "year": 2024,
+      "dataset": "Texas PUDF",
+      "n_samples": 925128,
+      "task": "LOS > 3 days",
+      "best_model": "Gradient Boosting",
+      "accuracy": 0.7486515408645271,
+      "auc": 0.8362820116487849,
+      "f1": 0.740172525532438,
+      "fairness_done": 1,
+      "di_race": 0.5957490590771837,
+      "di_sex": 0.7831159756237926,
+      "notes": "4 models, 24 features, fairness analysis"
+    },
+    "Jain et al. (2024) - BMC": {
+      "year": 2024,
+      "dataset": "SPARCS (NY)",
+      "n_samples": 2300000,
+      "task": "LOS (multi-class)",
+      "best_model": "CatBoost",
+      "accuracy": 0.6008,
+      "auc": 0.784,
+      "f1": NaN,
+      "fairness_done": 0,
+      "di_race": NaN,
+      "di_sex": NaN,
+      "notes": "R\u00b2=0.82 (newborns), separate models per subpopulation"
+    },
+    "Tarek et al. (2025) - CHASE": {
+      "year": 2025,
+      "dataset": "MIMIC-III, PIC",
+      "n_samples": 46520,
+      "task": "Mortality",
+      "best_model": "DL + FO Synthetic",
+      "accuracy": NaN,
+      "auc": NaN,
+      "f1": 0.5,
+      "fairness_done": 1,
+      "di_race": 0.95,
+      "di_sex": NaN,
+      "notes": "Fairness-optimized synthetic EHR, lambda=1.2 best tradeoff"
+    },
+    "Almeida et al. (2024) - AppSci": {
+      "year": 2024,
+      "dataset": "Review (12 studies)",
+      "n_samples": 0,
+      "task": "LOS (review)",
+      "best_model": "XGBoost",
+      "accuracy": 0.9474,
+      "auc": NaN,
+      "f1": NaN,
+      "fairness_done": 0,
+      "di_race": NaN,
+      "di_sex": NaN,
+      "notes": "Literature review, XGBoost R\u00b2=0.89"
+    },
+    "Zeleke et al. (2023) - Frontiers": {
+      "year": 2023,
+      "dataset": "Bologna Hospital",
+      "n_samples": 12858,
+      "task": "LOS > 6 days",
+      "best_model": "Gradient Boosting",
+      "accuracy": 0.754,
+      "auc": 0.754,
+      "f1": 0.73,
+      "fairness_done": 0,
+      "di_race": NaN,
+      "di_sex": NaN,
+      "notes": "ED admissions only, Brier=0.181"
+    },
+    "Poulain et al. (2023) - FAccT": {
+      "year": 2023,
+      "dataset": "MIMIC-III, eICU",
+      "n_samples": 50000,
+      "task": "Mortality",
+      "best_model": "FairFedAvg (GRU)",
+      "accuracy": 0.7659,
+      "auc": NaN,
+      "f1": NaN,
+      "fairness_done": 1,
+      "di_race": NaN,
+      "di_sex": NaN,
+      "notes": "Federated Learning, TPSD=0.030, beta=2.5"
+    },
+    "Mekhaldi et al. (2021) - JISE": {
+      "year": 2021,
+      "dataset": "Microsoft Open",
+      "n_samples": 100000,
+      "task": "LOS (regression)",
+      "best_model": "GBM",
+      "accuracy": NaN,
+      "auc": NaN,
+      "f1": NaN,
+      "fairness_done": 0,
+      "di_race": NaN,
+      "di_sex": NaN,
+      "notes": "R\u00b2=0.94, MAE=0.44, GBM best"
+    },
+    "Jaotombo et al. (2023) - JMAHP": {
+      "year": 2023,
+      "dataset": "French PMSI",
+      "n_samples": 73182,
+      "task": "LOS > 14 days",
+      "best_model": "Gradient Boosting",
+      "accuracy": NaN,
+      "auc": 0.81,
+      "f1": NaN,
+      "fairness_done": 0,
+      "di_race": NaN,
+      "di_sex": NaN,
+      "notes": "AUC best metric, 90th percentile threshold"
+    }
+  }
+}

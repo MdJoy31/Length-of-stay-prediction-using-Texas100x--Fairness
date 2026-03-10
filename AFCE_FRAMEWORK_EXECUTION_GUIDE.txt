@@ -18,7 +18,7 @@ BEFORE YOU RUN
    - GPU: NVIDIA RTX 5070 Laptop (optional but recommended)
 
 2. Check Dependencies
-   
+
    cd "D:\Research study\Research question ML\fairness_project_v2\fairness_project_v1"
    .\.venv\Scripts\python.exe -c "
    import xgboost as xgb
@@ -31,10 +31,10 @@ BEFORE YOU RUN
    "
 
 3. Verify Data
-   
+
    The following files must exist in ./data/:
    - texas_100x.csv (925,128 rows × 12 columns)
-   
+
    Check with:
    .\.venv\Scripts\python.exe -c "
    import pandas as pd
@@ -51,7 +51,7 @@ OPTION A: RUN STANDARD NOTEBOOK (Clean, Professional)
 File: LOS_Prediction_Standard.ipynb
 
 1. Open in VS Code or Jupyter
-   
+
    Via VS Code:
    - Open file: LOS_Prediction_Standard.ipynb
    - Click "Run All" button (or press Ctrl+Alt+Enter)
@@ -61,7 +61,7 @@ File: LOS_Prediction_Standard.ipynb
    .\.venv\Scripts\jupyter.exe notebook LOS_Prediction_Standard.ipynb
 
 2. Expected Execution Timeline
-   
+
    Setup & Libraries:               ~10 seconds
    Data Load & EDA:                 ~5 seconds (generates 01_distributions.png)
    Feature Engineering:             ~2 seconds
@@ -74,18 +74,18 @@ File: LOS_Prediction_Standard.ipynb
    Subset Stability (9 sizes):      ~3 minutes
    Fairness Intervention:           ~2 minutes
    Comparison with Paper:           ~1 minute
-   
+
    AFCE Framework (NEW SECTION 11):  ~5 minutes
      - Phase 1 (Features):          ~20 seconds
      - Phase 2 (Ensemble Training): ~4 minutes
      - Phase 3 (Threshold Calib):   ~30 seconds
      - Phase 4 (Hospital Cal):      ~20 seconds
      - Phase 5 (Validation):        ~30 seconds
-   
+
    TOTAL RUNTIME: 20-25 minutes (GPU accelerated)
 
 3. Output Files Generated
-   
+
    figures/
    ├─ 01_distributions.png
    │  └─ FIXED: Sex Distribution now shows Female 36.6% + Male 63.4%
@@ -96,18 +96,18 @@ File: LOS_Prediction_Standard.ipynb
    ├─ 04_subset_fairness.png (9 subset sizes)
    ├─ 05_paper_comparison.png (vs Tarek et al.)
    └─ 06_afce_framework.png (Pareto frontier + calibration) NEW
-   
+
    results/
    ├─ all_results.pkl (pickled results dict)
    ├─ summary.json (JSON summary)
    └─ afce_results.json (AFCE complete results) NEW
-   
+
    Total: 9 PNG files (~5 MB), 3 data files (~2 MB)
 
 4. Key Metrics to Check
-   
+
    Look for this output in cell execution:
-   
+
    "AFCE COMPREHENSIVE VALIDATION"
    ============================================================
    Method:      AFCE + Hospital Calibration
@@ -118,7 +118,7 @@ File: LOS_Prediction_Standard.ipynb
    Recall:      0.8862
    Train Acc:   0.9035
    Overfit Gap: +0.0250 [OK]  ← Healthy (< 3%)
-   
+
    === FAIRNESS: BEFORE vs AFTER AFCE ===
    Attribute        DI Before    DI After    Status
    ─────────────────────────────────────────────────────
@@ -128,37 +128,37 @@ File: LOS_Prediction_Standard.ipynb
    AGE_GROUP        0.252        0.260       LOW      (+0.8pp - limited)
 
 5. What the Graphs Show
-   
+
    06_afce_framework.png breakdown:
-   
+
    Subplot 1 (Top-Left): Pareto Frontier
    - X-axis: AGE_GROUP Alpha (0.0 to 1.0)
    - Blue line: Accuracy path (0.8783 at α=0 down to 0.8282 at α=1.0)
    - Red/Green lines: RACE & AGE DI (fairness indicators)
    - Purple dashed: Selected α=0.0 (max accuracy)
    - Shows: Hospital can choose operating point!
-   
+
    Subplot 2 (Top-Right): Before vs After DI
    - Red bars: Baseline (unfair)
    - Green bars: AFCE (fair)
    - Black dashed: Fair threshold (0.80)
    - Shows: RACE & SEX improved dramatically!
-   
+
    Subplot 3 (Middle-Left): Fairness Heatmap
    - Rows: RACE, ETHNICITY, SEX, AGE_GROUP
    - Columns: DI, WTPR, SPD, EOD, PPV
    - Green=Good, Yellow=Okay, Red=Bad
    - Shows: All 4 attributes now healthy!
-   
+
    Subplot 4 (Middle-Right): Per-Group Thresholds
    - Bars: Different thresholds for RACE:White, RACE:Black, etc.
    - Black dashed: Global threshold (0.480)
    - Shows: How thresholds differ per group
-   
+
    Subplot 5 (Bottom-Left): Accuracy & F1 vs Alpha
    - Both decrease as α increases (fairness-accuracy trade-off)
    - Shows: Why α=0.0 is default (max accuracy)
-   
+
    Subplot 6 (Bottom-Right): All DI vs Alpha
    - RACE (red) improves as α increases ↑
    - AGE (orange) improves as α increases ↑
@@ -192,25 +192,25 @@ Quick execution (no notebook overhead):
    .\.venv\Scripts\python.exe -u afce_framework.py
 
 Expected Output:
-   
+
    ================================================================================
    AFCE v3 — Phase 1: Data + Fairness-Through-Awareness Features
    ================================================================================
    Train: 740,102 | Test: 185,026 | Features: 48
-   
+
    ================================================================================
    AFCE v3 — Phase 2: Ensemble Training
    ================================================================================
    [1/2] LightGBM GPU... Acc=0.8785 AUC=0.9534 TrainAcc=0.9028 Gap=+0.0243 (12s)
    [2/2] XGBoost GPU...  Acc=0.8781 AUC=0.9531 TrainAcc=0.9038 Gap=+0.0257 (18s)
-   
+
    Blend (55/45): Acc=0.8788 F1=0.8638 AUC=0.9535 TrainAcc=0.9035 Gap=+0.0247
-   
+
    ================================================================================
    AFCE v3 — Phase 3: Additive Threshold Calibration
    ================================================================================
    Global optimal t = 0.480 (Acc=0.8789)
-   
+
    Per-Attribute Threshold Optimization (independent):
    RACE         : DI=0.801 [FAIR] Acc=0.8785 F1=0.8638
      Asian/PI       : t=0.4645  SR=0.653
@@ -219,16 +219,16 @@ Expected Output:
      Other/Unknown   : t=0.2949  SR=0.865
      White           : t=0.4749  SR=0.661
    ...
-   
+
    AGE_GROUP Alpha Sweep (Pareto Frontier):
    Alpha  Acc     F1      RACE DI SEX DI ETH DI AGE DI Fair
    0.00   0.8783  0.8611  0.801   0.804   0.835   0.259  3/4
    0.05   0.8775  0.8601  0.808   0.808   0.839   0.288  3/4
    ...
    1.00   0.8282  0.8004  0.851   0.843   0.868   0.622  4/4
-   
+
    Selected alpha for AGE_GROUP: 0.00 (best Acc=0.8783 with RACE/SEX/ETH all FAIR)
-   
+
    ================================================================================
    AFCE v3 — Phase 4: Hospital-Stratified Calibration
    ================================================================================
@@ -238,10 +238,10 @@ Expected Output:
    Cluster 2: 83 hospitals, adj = +0.0254
    Cluster 3: 83 hospitals, adj = +0.0064
    Cluster 4: 83 hospitals, adj = -0.0026
-   
+
    After hospital cal: Acc=0.8785 F1=0.8652
    Selected method: AFCE + Hospital Calibration
-   
+
    ================================================================================
    AFCE v3 — Phase 5: Comprehensive Validation
    ================================================================================
@@ -253,11 +253,11 @@ Expected Output:
    Recall:      0.8859
    Train Acc:   0.9035
    Overfit gap: +0.0250 [OK]
-   
+
    === FAIRNESS: BEFORE vs AFTER ===
    RACE         0.618 → 0.802 FAIR | WTPR 0.784 → 0.801
    ...
-   
+
    === FINAL SUMMARY ===
    Accuracy:  0.8789 → 0.8785 (-0.04%)
    F1-Score:  0.8601 → 0.8652 (+51pp)
@@ -310,7 +310,7 @@ AFTER AFCE:
    → Disparate Impact DI = 0.66/0.82 = 0.80 ✓ FAIR (80% rule)
 
    How it works:
-   - Black patients have lower historical 3-day+ baseline 
+   - Black patients have lower historical 3-day+ baseline
    - Their default threshold 0.5 was too harsh
    - AFCE raises it to 0.54 (needs higher probability to accept)
    - Now both groups have similar prediction rates despite different baselines
@@ -413,7 +413,7 @@ A:  X-axis (alpha): AGE_GROUP fairness intensity
     - α=0.0: Minimal age correction (max accuracy 87.83%)
     - α=0.5: Balanced (middle ground, 86.58% accuracy)
     - α=1.0: Maximum age correction (low fairness for young adults, 82.82% accuracy)
-    
+
     Choose based on hospital policy:
     - "Maximize accuracy": α=0.0 (our default)
     - "All groups equally fair": α=0.5 or α=0.7
