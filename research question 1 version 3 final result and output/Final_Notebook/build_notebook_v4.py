@@ -3584,6 +3584,221 @@ plt.show()
 """)
 
 ###############################################################################
+# SECTION 14.4 — COMPREHENSIVE FAIRNESS-ACCURACY TRADEOFF ANALYSIS
+###############################################################################
+md("""
+---
+### 14.4 Fairness–Accuracy Tradeoff Analysis
+
+A central question in fair ML is: **how much accuracy must we sacrifice to achieve
+fairness?**  This section quantifies the tradeoff across all 15 models (12 standard
++ 2 AFCE + 1 reweighed-with-threshold-tuned) and all 4 protected attributes.
+
+We compute:
+- **Composite Fairness Score (CFS):** the fraction of all 28 metric–attribute
+  verdicts that pass their threshold  (7 metrics × 4 attributes = 28 tests).
+- **Accuracy Cost of Fairness:** the accuracy difference between the best standard
+  model and each fairness-enhanced model, expressed in percentage points.
+- Per-attribute tradeoff (DI improvement vs accuracy drop).
+""")
+
+code("""
+# ──────────────────────────────────────────────────────────────
+# Cell 56b · Comprehensive Fairness–Accuracy Tradeoff Table
+# ──────────────────────────────────────────────────────────────
+from sklearn.metrics import f1_score
+
+# --- build a catalogue of ALL models (standard + AFCE + Fair) ---
+tradeoff_catalogue = {}
+for name in test_predictions:
+    tradeoff_catalogue[name] = test_predictions[name]
+for name in afce_predictions:
+    tradeoff_catalogue[name] = afce_predictions[name]
+# Fair model (reweighed + threshold-tuned)
+tradeoff_catalogue['Fair (Reweigh+Thr)'] = {
+    'y_pred': y_pred_fair_opt,
+    'y_prob': y_prob_fair,
+}
+
+attrs_all = ['RACE','SEX','ETHNICITY','AGE_GROUP']
+
+tradeoff_rows = []
+for name, preds in tradeoff_catalogue.items():
+    yp  = preds['y_pred']
+    ypb = preds['y_prob']
+    acc = accuracy_score(y_test, yp)
+    auc = roc_auc_score(y_test, ypb)
+    f1  = f1_score(y_test, yp)
+    row = {'Model': name, 'Accuracy': acc, 'AUC': auc, 'F1': f1}
+    total_fair = 0
+    for attr in attrs_all:
+        fc = FairnessCalculator(y_test, yp, ypb, protected_attrs[attr])
+        metrics, verdicts, _ = fc.compute_all()
+        for mk in METRIC_KEYS:
+            row[f'{mk}_{attr}'] = metrics[mk]
+            if verdicts[mk]:
+                total_fair += 1
+    row['Fair_Verdicts'] = total_fair
+    row['CFS'] = total_fair / 28  # 7 metrics × 4 attributes
+    tradeoff_rows.append(row)
+
+tradeoff_df = pd.DataFrame(tradeoff_rows).sort_values('Accuracy', ascending=False)
+tradeoff_df.to_csv(f'{TABLES_DIR}/14d_fairness_accuracy_tradeoff.csv', index=False)
+
+# Display main table
+display(HTML("<h4>Table: Fairness–Accuracy Tradeoff (All 15 Models × 4 Attributes)</h4>"))
+show_cols = ['Model','Accuracy','AUC','F1']
+for attr in attrs_all:
+    show_cols.append(f'DI_{attr}')
+show_cols += ['Fair_Verdicts','CFS']
+fmt_dict = {c:'{:.4f}' for c in show_cols if c not in ['Model','Fair_Verdicts']}
+fmt_dict['Fair_Verdicts'] = '{:.0f}'
+fmt_dict['CFS'] = '{:.1%}'
+display(tradeoff_df[show_cols].style.format(fmt_dict).background_gradient(
+    subset=['CFS'], cmap='RdYlGn', vmin=0, vmax=1).set_caption(
+    'Higher CFS = more fair verdicts passed (max 28/28 = 100%)'))
+
+# --- Accuracy cost summary ---
+best_std_name = tradeoff_df.iloc[0]['Model']
+best_std_acc = tradeoff_df.iloc[0]['Accuracy']
+print(f"\\nBest standard model: {best_std_name} (Acc={best_std_acc:.4f})")
+print(f"\\nAccuracy cost of fairness interventions:")
+for name in ['Fair (Reweigh+Thr)'] + list(afce_predictions.keys()):
+    row = tradeoff_df[tradeoff_df['Model']==name].iloc[0]
+    delta = (row['Accuracy'] - best_std_acc) * 100
+    print(f"  {name}: Acc={row['Accuracy']:.4f} ({delta:+.2f} pp), "
+          f"Fair verdicts={int(row['Fair_Verdicts'])}/28, CFS={row['CFS']:.1%}")
+""")
+
+code("""
+# ──────────────────────────────────────────────────────────────
+# Cell 56c · Fairness–Accuracy Tradeoff Visualizations
+# ──────────────────────────────────────────────────────────────
+fig, axes = plt.subplots(2, 2, figsize=(20, 14))
+
+# ── (a) Accuracy vs Composite Fairness Score ──
+ax = axes[0, 0]
+std_models = [n for n in tradeoff_catalogue if n not in list(afce_predictions.keys()) + ['Fair (Reweigh+Thr)']]
+fair_models = list(afce_predictions.keys()) + ['Fair (Reweigh+Thr)']
+
+for _, r in tradeoff_df.iterrows():
+    c = PALETTE[2] if r['Model'] in fair_models else PALETTE[0]
+    mk = '*' if r['Model'] in fair_models else 'o'
+    sz = 200 if r['Model'] in fair_models else 80
+    ax.scatter(r['Accuracy'], r['CFS'], s=sz, c=c, marker=mk, zorder=5, edgecolors='black', linewidths=0.5)
+    ax.annotate(r['Model'], (r['Accuracy'], r['CFS']), fontsize=7,
+                xytext=(5, 5), textcoords='offset points')
+ax.set_xlabel('Accuracy', fontsize=11)
+ax.set_ylabel('Composite Fairness Score (CFS)', fontsize=11)
+ax.set_title('(a) Accuracy vs Composite Fairness Score', fontsize=12, fontweight='bold')
+ax.axhline(y=0.5, color='gray', linestyle=':', alpha=0.5, label='50% verdicts fair')
+ax.legend(fontsize=9)
+
+# ── (b) Per-Attribute DI Comparison (Best Standard vs Fair Models) ──
+ax = axes[0, 1]
+best_std = tradeoff_df.iloc[0]
+compare_names = [best_std['Model']] + fair_models
+x_pos = np.arange(len(attrs_all))
+width = 0.8 / len(compare_names)
+for i, name in enumerate(compare_names):
+    r = tradeoff_df[tradeoff_df['Model']==name].iloc[0]
+    dis = [r[f'DI_{a}'] for a in attrs_all]
+    ax.bar(x_pos + i*width, dis, width, label=name, alpha=0.85)
+ax.axhline(y=0.80, color='red', linestyle='--', alpha=0.6, label='4/5 rule')
+ax.set_xticks(x_pos + width*(len(compare_names)-1)/2)
+ax.set_xticklabels(attrs_all)
+ax.set_ylabel('Disparate Impact')
+ax.set_title('(b) DI: Best Standard vs Fair Models', fontsize=12, fontweight='bold')
+ax.legend(fontsize=7, loc='lower right')
+
+# ── (c) Metric-Level Fairness Comparison (7 metrics, best model vs fair) ──
+ax = axes[1, 0]
+# Average each metric across 4 attributes
+metric_compare = {}
+for name in compare_names:
+    r = tradeoff_df[tradeoff_df['Model']==name].iloc[0]
+    vals = {}
+    for mk in METRIC_KEYS:
+        # For DI, higher is better (closer to 1). For others, lower is better (closer to 0).
+        if mk == 'DI':
+            vals[mk] = np.mean([r[f'DI_{a}'] for a in attrs_all])
+        else:
+            vals[mk] = np.mean([r[f'{mk}_{a}'] for a in attrs_all])
+    metric_compare[name] = vals
+
+x_mk = np.arange(len(METRIC_KEYS))
+width_mk = 0.8 / len(compare_names)
+for i, name in enumerate(compare_names):
+    ax.bar(x_mk + i*width_mk, [metric_compare[name][mk] for mk in METRIC_KEYS],
+           width_mk, label=name, alpha=0.85)
+ax.set_xticks(x_mk + width_mk*(len(compare_names)-1)/2)
+ax.set_xticklabels(METRIC_KEYS)
+ax.set_ylabel('Metric Value (avg across 4 attributes)')
+ax.set_title('(c) All 7 Fairness Metrics: Best Standard vs Fair', fontsize=12, fontweight='bold')
+ax.legend(fontsize=7)
+
+# ── (d) Accuracy Drop vs Fairness Gain (cost-benefit) ──
+ax = axes[1, 1]
+best_acc = tradeoff_df.iloc[0]['Accuracy']
+best_cfs = tradeoff_df.iloc[0]['CFS']
+for _, r in tradeoff_df.iterrows():
+    acc_drop = (best_acc - r['Accuracy']) * 100   # pp drop
+    fair_gain = (r['Fair_Verdicts'] - tradeoff_df.iloc[0]['Fair_Verdicts'])
+    c = PALETTE[2] if r['Model'] in fair_models else PALETTE[0]
+    mk = '*' if r['Model'] in fair_models else 'o'
+    sz = 200 if r['Model'] in fair_models else 80
+    ax.scatter(acc_drop, fair_gain, s=sz, c=c, marker=mk, zorder=5, edgecolors='black', linewidths=0.5)
+    if r['Model'] in fair_models or abs(fair_gain) > 1:
+        ax.annotate(r['Model'], (acc_drop, fair_gain), fontsize=7,
+                    xytext=(5, 3), textcoords='offset points')
+ax.axhline(y=0, color='gray', linestyle=':', alpha=0.5)
+ax.axvline(x=0, color='gray', linestyle=':', alpha=0.5)
+ax.set_xlabel('Accuracy Drop from Best Model (pp)', fontsize=11)
+ax.set_ylabel('Additional Fair Verdicts (vs Best Model)', fontsize=11)
+ax.set_title('(d) Cost-Benefit: Accuracy Lost vs Fairness Gained', fontsize=12, fontweight='bold')
+
+plt.tight_layout()
+save_fig('fairness_accuracy_tradeoff')
+plt.show()
+
+# --- Print concise tradeoff summary ---
+print("\\n=== Fairness–Accuracy Tradeoff Summary ===")
+print(f"Best standard: {tradeoff_df.iloc[0]['Model']}  "
+      f"Acc={tradeoff_df.iloc[0]['Accuracy']:.4f}  "
+      f"Fair={int(tradeoff_df.iloc[0]['Fair_Verdicts'])}/28")
+for name in fair_models:
+    r = tradeoff_df[tradeoff_df['Model']==name].iloc[0]
+    delta_acc = (r['Accuracy'] - tradeoff_df.iloc[0]['Accuracy']) * 100
+    delta_fair = int(r['Fair_Verdicts'] - tradeoff_df.iloc[0]['Fair_Verdicts'])
+    cost_per = abs(delta_acc) / max(delta_fair, 1) if delta_fair > 0 else float('inf')
+    print(f"  {name}: Acc={r['Accuracy']:.4f} ({delta_acc:+.2f}pp), "
+          f"Fair={int(r['Fair_Verdicts'])}/28 ({delta_fair:+d}), "
+          f"Cost={cost_per:.2f}pp per additional fair verdict")
+""")
+
+md("""
+> **Key takeaway — Why are many metrics unfair?**
+>
+> Fairness metrics are **structurally difficult to satisfy simultaneously** because:
+> 1. **Different base rates:** Groups have inherently different LOS distributions
+>    (e.g., 65+ patients stay longer → AGE_GROUP DI ≈ 0.53, far below 0.80).
+> 2. **Metric disagreement:** DI and SPD measure *selection parity*; EOPP and EOD
+>    measure *error parity*; CAL measures *calibration*. Satisfying one often
+>    worsens another (the impossibility theorem of Chouldechova, 2017).
+> 3. **Threshold sensitivity:** Small changes in decision thresholds or sample
+>    composition can flip verdicts (as shown in VFR analysis, Section 9.1).
+>
+> **The cost of fairness** varies by intervention:
+> - AFCE models (fairness-through-awareness) maintain accuracy with modest fairness
+>   gains — they learn to compensate for group differences.
+> - Reweighing + threshold-tuning offers larger DI improvements but at the cost
+>   of ~1–2 pp accuracy.
+> - A "perfectly fair" model (DI=1.0 for all groups) would require equalizing
+>   selection rates across groups with fundamentally different clinical profiles,
+>   making it clinically inappropriate.
+""")
+
+###############################################################################
 # SECTION 14b — COMPREHENSIVE LITERATURE COMPARISON & ANALYSIS
 ###############################################################################
 md("""

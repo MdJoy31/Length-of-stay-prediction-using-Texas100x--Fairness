@@ -36,7 +36,7 @@ CatBoost,SEX,0,0,1,1,1,1,1,5,2
 CatBoost,ETHNICITY,1,1,1,1,1,1,1,7,0
 CatBoost,AGE_GROUP,0,0,0,0,1,1,1,3,4
 DNN (PyTorch),RACE,0,0,0,0,1,0,0,1,6
-DNN (PyTorch),SEX,0,0,1,1,1,1,1,5,2
+DNN (PyTorch),SEX,0,0,1,1,1,1,0,4,3
 DNN (PyTorch),ETHNICITY,1,1,1,1,1,1,1,7,0
 DNN (PyTorch),AGE_GROUP,0,0,0,0,1,1,1,3,4
 Stacking Ensemble,RACE,0,0,1,1,1,1,0,4,3
