@@ -1929,14 +1929,14 @@ whether fairness verdicts are **reliable**:
 
 | Protocol | Method | Purpose |
 |----------|--------|---------|
-| **P1** | K=30 Random-Subset Resampling (30%) | Verdict Flip Rate (VFR) |
+| **P1** | K=30 Hospital-Scale Resampling (N=500) | Verdict Flip Rate (VFR) |
 | **P2** | Sample-Size Sensitivity (1K→925K), 30 repeats | CV curves, min-N guidance |
 | **P3** | Cross-Hospital K=20 GroupKFold (train 19 / eval 1) | Cross-site portability |
 
 All protocols compute **all 7 fairness metrics** × 4 protected attributes.
 """)
 
-md("### 9.1 Protocol 1 — K=30 Random-Subset Resampling (VFR)")
+md("### 9.1 Protocol 1 — K=30 Hospital-Scale Resampling (VFR, N=500)")
 
 code("""
 # ──────────────────────────────────────────────────────────────
@@ -1945,14 +1945,15 @@ code("""
 K_P1 = 30
 np.random.seed(42)
 
-# Pre-generate 30 resample index sets (shared across models for comparability)
-n_sub = int(0.30 * len(y_test))
+# Fixed N=500 per resample — simulates realistic hospital-level deployment
+# (individual hospitals typically have 200–2000 patients in test periods)
+n_sub = 500
 resample_indices = [np.random.choice(len(y_test), size=n_sub, replace=False) for _ in range(K_P1)]
 
 # Compute metrics for ALL models across all resamples
 all_p1_rows = []
 model_names_list = list(test_predictions.keys())
-print(f"Protocol 1: K={K_P1} random 30% subsets × {len(model_names_list)} models …")
+print(f"Protocol 1: K={K_P1} random N={n_sub} subsets × {len(model_names_list)} models …")
 _t0 = time.time()
 
 for mi, model_name in enumerate(model_names_list):
@@ -3058,7 +3059,7 @@ md("""
 ## 12. Comprehensive Subset & Subgroup Analysis (20-30 Tests)
 
 We systematically test fairness across:
-1. **30 random 30% subsets** — All 7 metrics, measuring VFR and variance.
+1. **30 random N=2000 subsets** — All 7 metrics, measuring VFR and variance at hospital scale.
 2. **Intersectional subgroups** — RACE×SEX, RACE×AGE, SEX×AGE, ETH×AGE, RACE×ETH
    (approximately 50+ subgroups, ~25-30 with sufficient sample size).
 """)
@@ -3070,11 +3071,12 @@ code("""
 # Cell 48 · 30 Random Subset Tests (All 7 Metrics)
 # ──────────────────────────────────────────────────────────────
 N_SUBSETS = 30
+SUBSET_N = 500  # Fixed hospital-scale sample size
 subset_results = []
-print(f"Running {N_SUBSETS} random 30% subset tests …")
+print(f"Running {N_SUBSETS} random N={SUBSET_N} subset tests …")
 
 for s in range(N_SUBSETS):
-    idx = np.random.choice(len(y_test), size=int(0.3*len(y_test)), replace=False)
+    idx = np.random.choice(len(y_test), size=SUBSET_N, replace=False)
     y_sub = y_test[idx]; pred_sub = best_y_pred[idx]; prob_sub = best_y_prob[idx]
     row = {'Subset': s+1, 'N': len(idx)}
     for attr in ['RACE','SEX','ETHNICITY','AGE_GROUP']:
@@ -4816,9 +4818,12 @@ for attr in ['RACE','SEX','ETHNICITY','AGE_GROUP']:
     print(f"    {attr:<12s}: DI={f['DI']:.3f}  SPD={f['SPD']:.3f}  EOPP={f['EOPP']:.3f}  "
           f"EOD={f['EOD']:.3f}  TI={f['TI']:.3f}  PP={f['PP']:.3f}  CAL={f['CAL']:.3f}  [{flag}]")
 print()
-print("  Stability (Protocol 1 — K=30 Resampling VFR):")
-for _, r in vfr_df[vfr_df['Metric']=='DI'].iterrows():
-    print(f"    DI {r['Attribute']:<12s}: VFR = {r['VFR']:.1%}")
+print("  Stability (Protocol 1 — K=30, N=2000 Resampling VFR):")
+best_vfr = vfr_df[vfr_df['Model'] == best_model_name].copy()
+for attr in ['RACE','SEX','ETHNICITY','AGE_GROUP']:
+    vals = best_vfr[best_vfr['Attribute']==attr][['Metric','VFR']].values
+    parts = '  '.join(f"{mk}={v:.1%}" for mk, v in vals)
+    print(f"    {attr:<12s}: {parts}")
 print()
 print("  Cross-Site Portability (Protocol 3):")
 if 'fk' in dir():
