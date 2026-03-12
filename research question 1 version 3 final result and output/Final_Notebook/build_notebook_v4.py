@@ -715,8 +715,8 @@ train_df['HOSP_TE'] = train_df['THCIC_ID'].map(hosp_te_map).fillna(global_mean)
 test_df['HOSP_TE']  = test_df['THCIC_ID'].map(hosp_te_map).fillna(global_mean)
 print(f"  THCIC_ID → HOSP_TE: {len(hosp_te_map)} hospitals")
 
-# Feature matrix — PAT_AGE excluded (protected attribute, fairness-through-unawareness)
-numeric_features = ['TOTAL_CHARGES', 'PAT_STATUS',
+# Feature matrix — PAT_AGE included (key clinical predictor for LOS)
+numeric_features = ['PAT_AGE', 'TOTAL_CHARGES', 'PAT_STATUS',
                     'TYPE_OF_ADMISSION', 'SOURCE_OF_ADMISSION',
                     'ADMITTING_DIAGNOSIS_TE', 'PROC_TE', 'HOSP_TE']
 X_train_raw = train_df[numeric_features].reset_index(drop=True).fillna(0)
@@ -752,9 +752,10 @@ print(f"  X_train: {X_train.shape}  |  X_test: {X_test.shape}")
 """)
 
 md("""
-> **Design note:** Protected attributes (Race, Sex, Ethnicity, Age) are **not** included
-> as model features — they are reserved for post-hoc fairness evaluation.
-> This is the standard "fairness-through-unawareness" baseline.
+> **Design note:** Race, Sex, and Ethnicity are **not** included as model features —
+> they are reserved for post-hoc fairness evaluation (fairness-through-unawareness).
+> **PAT_AGE is included** as it is a critical clinical predictor of hospital length of stay.
+> Age-based fairness is evaluated via a binary AGE_GROUP (Under_65 vs 65_Plus).
 """)
 
 ###############################################################################
@@ -1120,8 +1121,8 @@ plt.show()
 md("""
 > **Feature importance:** Diagnosis and hospital target-encoded features consistently
 > rank highest, confirming that clinical context is the strongest predictor.
-> Total charges and admission type are also informative. Note: PAT_AGE is excluded
-> from features (fairness-through-unawareness design).
+> Total charges, patient age, and admission type are also highly informative.
+> PAT_AGE is retained as a feature given its strong clinical relevance for LOS prediction.
 """)
 
 code("""
@@ -3301,30 +3302,27 @@ code("""
 # ──────────────────────────────────────────────────────────────
 print("AFCE: Adding protected attributes + interactions …")
 
-# Add ALL protected attributes (including PAT_AGE) for fairness-aware model
-pat_age_train = train_df['PAT_AGE'].values.reshape(-1,1)
-pat_age_test  = test_df['PAT_AGE'].values.reshape(-1,1)
+# Baseline already includes PAT_AGE; add RACE, SEX, ETHNICITY + interactions
+age_idx = feature_names.index('PAT_AGE')
 charges_idx = feature_names.index('TOTAL_CHARGES')
 
 X_train_afce = np.column_stack([X_train,
     protected_attrs_train['RACE'].reshape(-1,1),
     protected_attrs_train['SEX'].reshape(-1,1),
-    protected_attrs_train['ETHNICITY'].reshape(-1,1),
-    pat_age_train])
+    protected_attrs_train['ETHNICITY'].reshape(-1,1)])
 X_test_afce = np.column_stack([X_test,
     protected_attrs['RACE'].reshape(-1,1),
     protected_attrs['SEX'].reshape(-1,1),
-    protected_attrs['ETHNICITY'].reshape(-1,1),
-    pat_age_test])
+    protected_attrs['ETHNICITY'].reshape(-1,1)])
 
 # Interaction features: demographics × charges, demographics × age
 for attr_name in ['RACE', 'SEX', 'ETHNICITY']:
     a_tr = protected_attrs_train[attr_name].reshape(-1,1)
     a_te = protected_attrs[attr_name].reshape(-1,1)
-    X_train_afce = np.column_stack([X_train_afce, X_train[:,charges_idx:charges_idx+1]*a_tr, pat_age_train*a_tr])
-    X_test_afce = np.column_stack([X_test_afce, X_test[:,charges_idx:charges_idx+1]*a_te, pat_age_test*a_te])
+    X_train_afce = np.column_stack([X_train_afce, X_train[:,charges_idx:charges_idx+1]*a_tr, X_train[:,age_idx:age_idx+1]*a_tr])
+    X_test_afce = np.column_stack([X_test_afce, X_test[:,charges_idx:charges_idx+1]*a_te, X_test[:,age_idx:age_idx+1]*a_te])
 
-afce_feat_names = feature_names + ['RACE_feat','SEX_feat','ETHNICITY_feat','PAT_AGE_feat',
+afce_feat_names = feature_names + ['RACE_feat','SEX_feat','ETHNICITY_feat',
     'RACE×Charges','RACE×Age','SEX×Charges','SEX×Age','ETH×Charges','ETH×Age']
 print(f"✓ AFCE features: {X_train_afce.shape[1]} ({X_train.shape[1]} original + "
       f"{X_train_afce.shape[1]-X_train.shape[1]} fairness-aware)")

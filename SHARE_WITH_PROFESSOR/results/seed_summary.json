@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-02-19T11:35:38.070994",
+  "num_seeds": 50,
+  "attributes": [
+    "RACE",
+    "ETHNICITY",
+    "SEX",
+    "AGE_GROUP"
+  ]
+}

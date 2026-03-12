@@ -1,0 +1,25 @@
+Attribute,Metric,Min,Max,Difference,Ratio,Best_Subgroup,Worst_Subgroup,Is_Fair
+RACE,Demographic Parity,0.335,0.455,0.121,0.735,1,4,No
+RACE,Equal Opportunity (TPR),0.619,0.805,0.186,0.769,1,4,No
+RACE,FPR Parity,0.141,0.252,0.110,0.561,0,4,No
+RACE,Predictive Parity (Precision),0.587,0.805,0.218,0.730,2,0,No
+RACE,Calibration (ECE),0.048,0.195,0.147,N/A,3,0,No
+RACE,Equalized Odds,N/A,N/A,0.148,N/A,N/A,N/A,No
+ETHNICITY,Demographic Parity,0.326,0.453,0.127,0.720,1,0,No
+ETHNICITY,Equal Opportunity (TPR),0.617,0.689,0.072,0.895,1,0,Yes
+ETHNICITY,FPR Parity,0.134,0.243,0.110,0.550,1,0,No
+ETHNICITY,Predictive Parity (Precision),0.715,0.754,0.038,0.949,0,1,Yes
+ETHNICITY,Calibration (ECE),0.043,0.066,0.023,N/A,1,0,Yes
+ETHNICITY,Equalized Odds,N/A,N/A,0.091,N/A,N/A,N/A,Yes
+SEX,Demographic Parity,0.354,0.530,0.176,0.668,0,1,No
+SEX,Equal Opportunity (TPR),0.645,0.708,0.063,0.911,0,1,Yes
+SEX,FPR Parity,0.151,0.337,0.187,0.447,0,1,No
+SEX,Predictive Parity (Precision),0.694,0.749,0.055,0.927,1,0,Yes
+SEX,Calibration (ECE),0.043,0.061,0.018,N/A,0,1,Yes
+SEX,Equalized Odds,N/A,N/A,0.125,N/A,N/A,N/A,No
+AGE_GROUP,Demographic Parity,0.351,0.900,0.549,0.390,Adult (19-40),Pediatric (0-18),No
+AGE_GROUP,Equal Opportunity (TPR),0.603,0.970,0.367,0.621,Adult (19-40),Pediatric (0-18),No
+AGE_GROUP,FPR Parity,0.172,0.742,0.571,0.231,Adult (19-40),Pediatric (0-18),No
+AGE_GROUP,Predictive Parity (Precision),0.715,0.747,0.033,0.956,Adult (19-40),Pediatric (0-18),Yes
+AGE_GROUP,Calibration (ECE),0.059,0.062,0.003,N/A,Pediatric (0-18),Adult (19-40),Yes
+AGE_GROUP,Equalized Odds,N/A,N/A,0.469,N/A,N/A,N/A,No
