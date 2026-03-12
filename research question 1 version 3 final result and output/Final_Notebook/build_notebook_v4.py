@@ -5033,12 +5033,19 @@ for attr in ['RACE','SEX','ETHNICITY','AGE_GROUP']:
     print(f"    {attr:<12s}: DI={f['DI']:.3f}  SPD={f['SPD']:.3f}  EOPP={f['EOPP']:.3f}  "
           f"EOD={f['EOD']:.3f}  TI={f['TI']:.3f}  PP={f['PP']:.3f}  CAL={f['CAL']:.3f}  [{flag}]")
 print()
-print("  Stability (Protocol 1 — K=30, N=2000 Resampling VFR):")
+n_unstable = (vfr_df['VFR'] > 0).sum()
+n_total_vfr = len(vfr_df)
+max_vfr_val = vfr_df['VFR'].max()
+print(f"  Stability (Protocol 1 — K=30, N=500 Hospital-Scale Resampling):")
+print(f"    Unstable combos: {n_unstable}/{n_total_vfr} ({n_unstable/n_total_vfr*100:.1f}%) have VFR > 0")
+print(f"    Max VFR observed: {max_vfr_val:.1%}")
+print(f"    Best model ({best_model_name}) VFR per attribute:")
 best_vfr = vfr_df[vfr_df['Model'] == best_model_name].copy()
 for attr in ['RACE','SEX','ETHNICITY','AGE_GROUP']:
     vals = best_vfr[best_vfr['Attribute']==attr][['Metric','VFR']].values
     parts = '  '.join(f"{mk}={v:.1%}" for mk, v in vals)
-    print(f"    {attr:<12s}: {parts}")
+    n_flips = sum(1 for _, v in vals if v > 0)
+    print(f"      {attr:<12s}: {parts}  [{n_flips}/7 unstable]")
 print()
 print("  Cross-Site Portability (Protocol 3):")
 if 'fk' in dir():

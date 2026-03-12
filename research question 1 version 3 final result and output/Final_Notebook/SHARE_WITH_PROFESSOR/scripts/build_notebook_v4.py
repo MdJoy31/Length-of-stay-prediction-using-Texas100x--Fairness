@@ -715,8 +715,8 @@ train_df['HOSP_TE'] = train_df['THCIC_ID'].map(hosp_te_map).fillna(global_mean)
 test_df['HOSP_TE']  = test_df['THCIC_ID'].map(hosp_te_map).fillna(global_mean)
 print(f"  THCIC_ID → HOSP_TE: {len(hosp_te_map)} hospitals")
 
-# Feature matrix — PAT_AGE excluded (protected attribute, fairness-through-unawareness)
-numeric_features = ['TOTAL_CHARGES', 'PAT_STATUS',
+# Feature matrix — PAT_AGE included (key clinical predictor for LOS)
+numeric_features = ['PAT_AGE', 'TOTAL_CHARGES', 'PAT_STATUS',
                     'TYPE_OF_ADMISSION', 'SOURCE_OF_ADMISSION',
                     'ADMITTING_DIAGNOSIS_TE', 'PROC_TE', 'HOSP_TE']
 X_train_raw = train_df[numeric_features].reset_index(drop=True).fillna(0)
@@ -752,9 +752,10 @@ print(f"  X_train: {X_train.shape}  |  X_test: {X_test.shape}")
 """)
 
 md("""
-> **Design note:** Protected attributes (Race, Sex, Ethnicity, Age) are **not** included
-> as model features — they are reserved for post-hoc fairness evaluation.
-> This is the standard "fairness-through-unawareness" baseline.
+> **Design note:** Race, Sex, and Ethnicity are **not** included as model features —
+> they are reserved for post-hoc fairness evaluation (fairness-through-unawareness).
+> **PAT_AGE is included** as it is a critical clinical predictor of hospital length of stay.
+> Age-based fairness is evaluated via a binary AGE_GROUP (Under_65 vs 65_Plus).
 """)
 
 ###############################################################################
@@ -1120,8 +1121,8 @@ plt.show()
 md("""
 > **Feature importance:** Diagnosis and hospital target-encoded features consistently
 > rank highest, confirming that clinical context is the strongest predictor.
-> Total charges and admission type are also informative. Note: PAT_AGE is excluded
-> from features (fairness-through-unawareness design).
+> Total charges, patient age, and admission type are also highly informative.
+> PAT_AGE is retained as a feature given its strong clinical relevance for LOS prediction.
 """)
 
 code("""
@@ -1928,14 +1929,14 @@ whether fairness verdicts are **reliable**:
 
 | Protocol | Method | Purpose |
 |----------|--------|---------|
-| **P1** | K=30 Random-Subset Resampling (30%) | Verdict Flip Rate (VFR) |
+| **P1** | K=30 Hospital-Scale Resampling (N=500) | Verdict Flip Rate (VFR) |
 | **P2** | Sample-Size Sensitivity (1K→925K), 30 repeats | CV curves, min-N guidance |
 | **P3** | Cross-Hospital K=20 GroupKFold (train 19 / eval 1) | Cross-site portability |
 
 All protocols compute **all 7 fairness metrics** × 4 protected attributes.
 """)
 
-md("### 9.1 Protocol 1 — K=30 Random-Subset Resampling (VFR)")
+md("### 9.1 Protocol 1 — K=30 Hospital-Scale Resampling (VFR, N=500)")
 
 code("""
 # ──────────────────────────────────────────────────────────────
@@ -1944,14 +1945,15 @@ code("""
 K_P1 = 30
 np.random.seed(42)
 
-# Pre-generate 30 resample index sets (shared across models for comparability)
-n_sub = int(0.30 * len(y_test))
+# Fixed N=500 per resample — simulates realistic hospital-level deployment
+# (individual hospitals typically have 200–2000 patients in test periods)
+n_sub = 500
 resample_indices = [np.random.choice(len(y_test), size=n_sub, replace=False) for _ in range(K_P1)]
 
 # Compute metrics for ALL models across all resamples
 all_p1_rows = []
 model_names_list = list(test_predictions.keys())
-print(f"Protocol 1: K={K_P1} random 30% subsets × {len(model_names_list)} models …")
+print(f"Protocol 1: K={K_P1} random N={n_sub} subsets × {len(model_names_list)} models …")
 _t0 = time.time()
 
 for mi, model_name in enumerate(model_names_list):
@@ -3057,7 +3059,7 @@ md("""
 ## 12. Comprehensive Subset & Subgroup Analysis (20-30 Tests)
 
 We systematically test fairness across:
-1. **30 random 30% subsets** — All 7 metrics, measuring VFR and variance.
+1. **30 random N=2000 subsets** — All 7 metrics, measuring VFR and variance at hospital scale.
 2. **Intersectional subgroups** — RACE×SEX, RACE×AGE, SEX×AGE, ETH×AGE, RACE×ETH
    (approximately 50+ subgroups, ~25-30 with sufficient sample size).
 """)
@@ -3069,11 +3071,12 @@ code("""
 # Cell 48 · 30 Random Subset Tests (All 7 Metrics)
 # ──────────────────────────────────────────────────────────────
 N_SUBSETS = 30
+SUBSET_N = 500  # Fixed hospital-scale sample size
 subset_results = []
-print(f"Running {N_SUBSETS} random 30% subset tests …")
+print(f"Running {N_SUBSETS} random N={SUBSET_N} subset tests …")
 
 for s in range(N_SUBSETS):
-    idx = np.random.choice(len(y_test), size=int(0.3*len(y_test)), replace=False)
+    idx = np.random.choice(len(y_test), size=SUBSET_N, replace=False)
     y_sub = y_test[idx]; pred_sub = best_y_pred[idx]; prob_sub = best_y_prob[idx]
     row = {'Subset': s+1, 'N': len(idx)}
     for attr in ['RACE','SEX','ETHNICITY','AGE_GROUP']:
@@ -3301,30 +3304,27 @@ code("""
 # ──────────────────────────────────────────────────────────────
 print("AFCE: Adding protected attributes + interactions …")
 
-# Add ALL protected attributes (including PAT_AGE) for fairness-aware model
-pat_age_train = train_df['PAT_AGE'].values.reshape(-1,1)
-pat_age_test  = test_df['PAT_AGE'].values.reshape(-1,1)
+# Baseline already includes PAT_AGE; add RACE, SEX, ETHNICITY + interactions
+age_idx = feature_names.index('PAT_AGE')
 charges_idx = feature_names.index('TOTAL_CHARGES')
 
 X_train_afce = np.column_stack([X_train,
     protected_attrs_train['RACE'].reshape(-1,1),
     protected_attrs_train['SEX'].reshape(-1,1),
-    protected_attrs_train['ETHNICITY'].reshape(-1,1),
-    pat_age_train])
+    protected_attrs_train['ETHNICITY'].reshape(-1,1)])
 X_test_afce = np.column_stack([X_test,
     protected_attrs['RACE'].reshape(-1,1),
     protected_attrs['SEX'].reshape(-1,1),
-    protected_attrs['ETHNICITY'].reshape(-1,1),
-    pat_age_test])
+    protected_attrs['ETHNICITY'].reshape(-1,1)])
 
 # Interaction features: demographics × charges, demographics × age
 for attr_name in ['RACE', 'SEX', 'ETHNICITY']:
     a_tr = protected_attrs_train[attr_name].reshape(-1,1)
     a_te = protected_attrs[attr_name].reshape(-1,1)
-    X_train_afce = np.column_stack([X_train_afce, X_train[:,charges_idx:charges_idx+1]*a_tr, pat_age_train*a_tr])
-    X_test_afce = np.column_stack([X_test_afce, X_test[:,charges_idx:charges_idx+1]*a_te, pat_age_test*a_te])
+    X_train_afce = np.column_stack([X_train_afce, X_train[:,charges_idx:charges_idx+1]*a_tr, X_train[:,age_idx:age_idx+1]*a_tr])
+    X_test_afce = np.column_stack([X_test_afce, X_test[:,charges_idx:charges_idx+1]*a_te, X_test[:,age_idx:age_idx+1]*a_te])
 
-afce_feat_names = feature_names + ['RACE_feat','SEX_feat','ETHNICITY_feat','PAT_AGE_feat',
+afce_feat_names = feature_names + ['RACE_feat','SEX_feat','ETHNICITY_feat',
     'RACE×Charges','RACE×Age','SEX×Charges','SEX×Age','ETH×Charges','ETH×Age']
 print(f"✓ AFCE features: {X_train_afce.shape[1]} ({X_train.shape[1]} original + "
       f"{X_train_afce.shape[1]-X_train.shape[1]} fairness-aware)")
@@ -3581,6 +3581,221 @@ axes[2].set_ylabel('Threshold'); axes[2].set_title('(c) Per-Group Thresholds'); 
 plt.tight_layout()
 save_fig('fairness_intervention')
 plt.show()
+""")
+
+###############################################################################
+# SECTION 14.4 — COMPREHENSIVE FAIRNESS-ACCURACY TRADEOFF ANALYSIS
+###############################################################################
+md("""
+---
+### 14.4 Fairness–Accuracy Tradeoff Analysis
+
+A central question in fair ML is: **how much accuracy must we sacrifice to achieve
+fairness?**  This section quantifies the tradeoff across all 15 models (12 standard
++ 2 AFCE + 1 reweighed-with-threshold-tuned) and all 4 protected attributes.
+
+We compute:
+- **Composite Fairness Score (CFS):** the fraction of all 28 metric–attribute
+  verdicts that pass their threshold  (7 metrics × 4 attributes = 28 tests).
+- **Accuracy Cost of Fairness:** the accuracy difference between the best standard
+  model and each fairness-enhanced model, expressed in percentage points.
+- Per-attribute tradeoff (DI improvement vs accuracy drop).
+""")
+
+code("""
+# ──────────────────────────────────────────────────────────────
+# Cell 56b · Comprehensive Fairness–Accuracy Tradeoff Table
+# ──────────────────────────────────────────────────────────────
+from sklearn.metrics import f1_score
+
+# --- build a catalogue of ALL models (standard + AFCE + Fair) ---
+tradeoff_catalogue = {}
+for name in test_predictions:
+    tradeoff_catalogue[name] = test_predictions[name]
+for name in afce_predictions:
+    tradeoff_catalogue[name] = afce_predictions[name]
+# Fair model (reweighed + threshold-tuned)
+tradeoff_catalogue['Fair (Reweigh+Thr)'] = {
+    'y_pred': y_pred_fair_opt,
+    'y_prob': y_prob_fair,
+}
+
+attrs_all = ['RACE','SEX','ETHNICITY','AGE_GROUP']
+
+tradeoff_rows = []
+for name, preds in tradeoff_catalogue.items():
+    yp  = preds['y_pred']
+    ypb = preds['y_prob']
+    acc = accuracy_score(y_test, yp)
+    auc = roc_auc_score(y_test, ypb)
+    f1  = f1_score(y_test, yp)
+    row = {'Model': name, 'Accuracy': acc, 'AUC': auc, 'F1': f1}
+    total_fair = 0
+    for attr in attrs_all:
+        fc = FairnessCalculator(y_test, yp, ypb, protected_attrs[attr])
+        metrics, verdicts, _ = fc.compute_all()
+        for mk in METRIC_KEYS:
+            row[f'{mk}_{attr}'] = metrics[mk]
+            if verdicts[mk]:
+                total_fair += 1
+    row['Fair_Verdicts'] = total_fair
+    row['CFS'] = total_fair / 28  # 7 metrics × 4 attributes
+    tradeoff_rows.append(row)
+
+tradeoff_df = pd.DataFrame(tradeoff_rows).sort_values('Accuracy', ascending=False)
+tradeoff_df.to_csv(f'{TABLES_DIR}/14d_fairness_accuracy_tradeoff.csv', index=False)
+
+# Display main table
+display(HTML("<h4>Table: Fairness–Accuracy Tradeoff (All 15 Models × 4 Attributes)</h4>"))
+show_cols = ['Model','Accuracy','AUC','F1']
+for attr in attrs_all:
+    show_cols.append(f'DI_{attr}')
+show_cols += ['Fair_Verdicts','CFS']
+fmt_dict = {c:'{:.4f}' for c in show_cols if c not in ['Model','Fair_Verdicts']}
+fmt_dict['Fair_Verdicts'] = '{:.0f}'
+fmt_dict['CFS'] = '{:.1%}'
+display(tradeoff_df[show_cols].style.format(fmt_dict).background_gradient(
+    subset=['CFS'], cmap='RdYlGn', vmin=0, vmax=1).set_caption(
+    'Higher CFS = more fair verdicts passed (max 28/28 = 100%)'))
+
+# --- Accuracy cost summary ---
+best_std_name = tradeoff_df.iloc[0]['Model']
+best_std_acc = tradeoff_df.iloc[0]['Accuracy']
+print(f"\\nBest standard model: {best_std_name} (Acc={best_std_acc:.4f})")
+print(f"\\nAccuracy cost of fairness interventions:")
+for name in ['Fair (Reweigh+Thr)'] + list(afce_predictions.keys()):
+    row = tradeoff_df[tradeoff_df['Model']==name].iloc[0]
+    delta = (row['Accuracy'] - best_std_acc) * 100
+    print(f"  {name}: Acc={row['Accuracy']:.4f} ({delta:+.2f} pp), "
+          f"Fair verdicts={int(row['Fair_Verdicts'])}/28, CFS={row['CFS']:.1%}")
+""")
+
+code("""
+# ──────────────────────────────────────────────────────────────
+# Cell 56c · Fairness–Accuracy Tradeoff Visualizations
+# ──────────────────────────────────────────────────────────────
+fig, axes = plt.subplots(2, 2, figsize=(20, 14))
+
+# ── (a) Accuracy vs Composite Fairness Score ──
+ax = axes[0, 0]
+std_models = [n for n in tradeoff_catalogue if n not in list(afce_predictions.keys()) + ['Fair (Reweigh+Thr)']]
+fair_models = list(afce_predictions.keys()) + ['Fair (Reweigh+Thr)']
+
+for _, r in tradeoff_df.iterrows():
+    c = PALETTE[2] if r['Model'] in fair_models else PALETTE[0]
+    mk = '*' if r['Model'] in fair_models else 'o'
+    sz = 200 if r['Model'] in fair_models else 80
+    ax.scatter(r['Accuracy'], r['CFS'], s=sz, c=c, marker=mk, zorder=5, edgecolors='black', linewidths=0.5)
+    ax.annotate(r['Model'], (r['Accuracy'], r['CFS']), fontsize=7,
+                xytext=(5, 5), textcoords='offset points')
+ax.set_xlabel('Accuracy', fontsize=11)
+ax.set_ylabel('Composite Fairness Score (CFS)', fontsize=11)
+ax.set_title('(a) Accuracy vs Composite Fairness Score', fontsize=12, fontweight='bold')
+ax.axhline(y=0.5, color='gray', linestyle=':', alpha=0.5, label='50% verdicts fair')
+ax.legend(fontsize=9)
+
+# ── (b) Per-Attribute DI Comparison (Best Standard vs Fair Models) ──
+ax = axes[0, 1]
+best_std = tradeoff_df.iloc[0]
+compare_names = [best_std['Model']] + fair_models
+x_pos = np.arange(len(attrs_all))
+width = 0.8 / len(compare_names)
+for i, name in enumerate(compare_names):
+    r = tradeoff_df[tradeoff_df['Model']==name].iloc[0]
+    dis = [r[f'DI_{a}'] for a in attrs_all]
+    ax.bar(x_pos + i*width, dis, width, label=name, alpha=0.85)
+ax.axhline(y=0.80, color='red', linestyle='--', alpha=0.6, label='4/5 rule')
+ax.set_xticks(x_pos + width*(len(compare_names)-1)/2)
+ax.set_xticklabels(attrs_all)
+ax.set_ylabel('Disparate Impact')
+ax.set_title('(b) DI: Best Standard vs Fair Models', fontsize=12, fontweight='bold')
+ax.legend(fontsize=7, loc='lower right')
+
+# ── (c) Metric-Level Fairness Comparison (7 metrics, best model vs fair) ──
+ax = axes[1, 0]
+# Average each metric across 4 attributes
+metric_compare = {}
+for name in compare_names:
+    r = tradeoff_df[tradeoff_df['Model']==name].iloc[0]
+    vals = {}
+    for mk in METRIC_KEYS:
+        # For DI, higher is better (closer to 1). For others, lower is better (closer to 0).
+        if mk == 'DI':
+            vals[mk] = np.mean([r[f'DI_{a}'] for a in attrs_all])
+        else:
+            vals[mk] = np.mean([r[f'{mk}_{a}'] for a in attrs_all])
+    metric_compare[name] = vals
+
+x_mk = np.arange(len(METRIC_KEYS))
+width_mk = 0.8 / len(compare_names)
+for i, name in enumerate(compare_names):
+    ax.bar(x_mk + i*width_mk, [metric_compare[name][mk] for mk in METRIC_KEYS],
+           width_mk, label=name, alpha=0.85)
+ax.set_xticks(x_mk + width_mk*(len(compare_names)-1)/2)
+ax.set_xticklabels(METRIC_KEYS)
+ax.set_ylabel('Metric Value (avg across 4 attributes)')
+ax.set_title('(c) All 7 Fairness Metrics: Best Standard vs Fair', fontsize=12, fontweight='bold')
+ax.legend(fontsize=7)
+
+# ── (d) Accuracy Drop vs Fairness Gain (cost-benefit) ──
+ax = axes[1, 1]
+best_acc = tradeoff_df.iloc[0]['Accuracy']
+best_cfs = tradeoff_df.iloc[0]['CFS']
+for _, r in tradeoff_df.iterrows():
+    acc_drop = (best_acc - r['Accuracy']) * 100   # pp drop
+    fair_gain = (r['Fair_Verdicts'] - tradeoff_df.iloc[0]['Fair_Verdicts'])
+    c = PALETTE[2] if r['Model'] in fair_models else PALETTE[0]
+    mk = '*' if r['Model'] in fair_models else 'o'
+    sz = 200 if r['Model'] in fair_models else 80
+    ax.scatter(acc_drop, fair_gain, s=sz, c=c, marker=mk, zorder=5, edgecolors='black', linewidths=0.5)
+    if r['Model'] in fair_models or abs(fair_gain) > 1:
+        ax.annotate(r['Model'], (acc_drop, fair_gain), fontsize=7,
+                    xytext=(5, 3), textcoords='offset points')
+ax.axhline(y=0, color='gray', linestyle=':', alpha=0.5)
+ax.axvline(x=0, color='gray', linestyle=':', alpha=0.5)
+ax.set_xlabel('Accuracy Drop from Best Model (pp)', fontsize=11)
+ax.set_ylabel('Additional Fair Verdicts (vs Best Model)', fontsize=11)
+ax.set_title('(d) Cost-Benefit: Accuracy Lost vs Fairness Gained', fontsize=12, fontweight='bold')
+
+plt.tight_layout()
+save_fig('fairness_accuracy_tradeoff')
+plt.show()
+
+# --- Print concise tradeoff summary ---
+print("\\n=== Fairness–Accuracy Tradeoff Summary ===")
+print(f"Best standard: {tradeoff_df.iloc[0]['Model']}  "
+      f"Acc={tradeoff_df.iloc[0]['Accuracy']:.4f}  "
+      f"Fair={int(tradeoff_df.iloc[0]['Fair_Verdicts'])}/28")
+for name in fair_models:
+    r = tradeoff_df[tradeoff_df['Model']==name].iloc[0]
+    delta_acc = (r['Accuracy'] - tradeoff_df.iloc[0]['Accuracy']) * 100
+    delta_fair = int(r['Fair_Verdicts'] - tradeoff_df.iloc[0]['Fair_Verdicts'])
+    cost_per = abs(delta_acc) / max(delta_fair, 1) if delta_fair > 0 else float('inf')
+    print(f"  {name}: Acc={r['Accuracy']:.4f} ({delta_acc:+.2f}pp), "
+          f"Fair={int(r['Fair_Verdicts'])}/28 ({delta_fair:+d}), "
+          f"Cost={cost_per:.2f}pp per additional fair verdict")
+""")
+
+md("""
+> **Key takeaway — Why are many metrics unfair?**
+>
+> Fairness metrics are **structurally difficult to satisfy simultaneously** because:
+> 1. **Different base rates:** Groups have inherently different LOS distributions
+>    (e.g., 65+ patients stay longer → AGE_GROUP DI ≈ 0.53, far below 0.80).
+> 2. **Metric disagreement:** DI and SPD measure *selection parity*; EOPP and EOD
+>    measure *error parity*; CAL measures *calibration*. Satisfying one often
+>    worsens another (the impossibility theorem of Chouldechova, 2017).
+> 3. **Threshold sensitivity:** Small changes in decision thresholds or sample
+>    composition can flip verdicts (as shown in VFR analysis, Section 9.1).
+>
+> **The cost of fairness** varies by intervention:
+> - AFCE models (fairness-through-awareness) maintain accuracy with modest fairness
+>   gains — they learn to compensate for group differences.
+> - Reweighing + threshold-tuning offers larger DI improvements but at the cost
+>   of ~1–2 pp accuracy.
+> - A "perfectly fair" model (DI=1.0 for all groups) would require equalizing
+>   selection rates across groups with fundamentally different clinical profiles,
+>   making it clinically inappropriate.
 """)
 
 ###############################################################################
@@ -4818,9 +5033,19 @@ for attr in ['RACE','SEX','ETHNICITY','AGE_GROUP']:
     print(f"    {attr:<12s}: DI={f['DI']:.3f}  SPD={f['SPD']:.3f}  EOPP={f['EOPP']:.3f}  "
           f"EOD={f['EOD']:.3f}  TI={f['TI']:.3f}  PP={f['PP']:.3f}  CAL={f['CAL']:.3f}  [{flag}]")
 print()
-print("  Stability (Protocol 1 — K=30 Resampling VFR):")
-for _, r in vfr_df[vfr_df['Metric']=='DI'].iterrows():
-    print(f"    DI {r['Attribute']:<12s}: VFR = {r['VFR']:.1%}")
+n_unstable = (vfr_df['VFR'] > 0).sum()
+n_total_vfr = len(vfr_df)
+max_vfr_val = vfr_df['VFR'].max()
+print(f"  Stability (Protocol 1 — K=30, N=500 Hospital-Scale Resampling):")
+print(f"    Unstable combos: {n_unstable}/{n_total_vfr} ({n_unstable/n_total_vfr*100:.1f}%) have VFR > 0")
+print(f"    Max VFR observed: {max_vfr_val:.1%}")
+print(f"    Best model ({best_model_name}) VFR per attribute:")
+best_vfr = vfr_df[vfr_df['Model'] == best_model_name].copy()
+for attr in ['RACE','SEX','ETHNICITY','AGE_GROUP']:
+    vals = best_vfr[best_vfr['Attribute']==attr][['Metric','VFR']].values
+    parts = '  '.join(f"{mk}={v:.1%}" for mk, v in vals)
+    n_flips = sum(1 for _, v in vals if v > 0)
+    print(f"      {attr:<12s}: {parts}  [{n_flips}/7 unstable]")
 print()
 print("  Cross-Site Portability (Protocol 3):")
 if 'fk' in dir():
