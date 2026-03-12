@@ -1929,14 +1929,14 @@ whether fairness verdicts are **reliable**:
 
 | Protocol | Method | Purpose |
 |----------|--------|---------|
-| **P1** | K=30 Hospital-Scale Resampling (N=500) | Verdict Flip Rate (VFR) |
+| **P1** | K=30 Stratified Hospital-Network Resampling (N=10,000) | Verdict Flip Rate (VFR) |
 | **P2** | Sample-Size Sensitivity (1K→925K), 30 repeats | CV curves, min-N guidance |
 | **P3** | Cross-Hospital K=20 GroupKFold (train 19 / eval 1) | Cross-site portability |
 
 All protocols compute **all 7 fairness metrics** × 4 protected attributes.
 """)
 
-md("### 9.1 Protocol 1 — K=30 Hospital-Scale Resampling (VFR, N=500)")
+md("### 9.1 Protocol 1 — K=30 Stratified Hospital-Network Resampling (VFR, N=10,000)")
 
 code("""
 # ──────────────────────────────────────────────────────────────
@@ -1945,10 +1945,30 @@ code("""
 K_P1 = 30
 np.random.seed(42)
 
-# Fixed N=500 per resample — simulates realistic hospital-level deployment
-# (individual hospitals typically have 200–2000 patients in test periods)
-n_sub = 500
-resample_indices = [np.random.choice(len(y_test), size=n_sub, replace=False) for _ in range(K_P1)]
+# Fixed N=10000 per resample — simulates realistic hospital-network deployment
+# Stratified by RACE to preserve group proportions in every resample,
+# eliminating group-proportion fluctuation as a source of metric variance.
+n_sub = 10000
+race_arr = protected_attrs['RACE']
+unique_races, race_counts = np.unique(race_arr, return_counts=True)
+race_fracs = race_counts / len(race_arr)
+
+resample_indices = []
+for k in range(K_P1):
+    rng = np.random.RandomState(42 + k)
+    idx_k = []
+    for r_val, frac in zip(unique_races, race_fracs):
+        grp_idx = np.where(race_arr == r_val)[0]
+        n_draw = max(10, int(round(n_sub * frac)))
+        idx_k.extend(rng.choice(grp_idx, size=min(n_draw, len(grp_idx)), replace=False))
+    idx_k = np.array(idx_k)
+    if len(idx_k) > n_sub:
+        idx_k = rng.choice(idx_k, size=n_sub, replace=False)
+    elif len(idx_k) < n_sub:
+        remaining = np.setdiff1d(np.arange(len(y_test)), idx_k)
+        idx_k = np.concatenate([idx_k, rng.choice(remaining, size=n_sub-len(idx_k), replace=False)])
+    resample_indices.append(idx_k.astype(int))
+print(f"Stratified resampling: {len(unique_races)} RACE groups, proportions preserved")
 
 # Compute metrics for ALL models across all resamples
 all_p1_rows = []
@@ -2020,7 +2040,9 @@ vfr_df.to_csv(f'{TABLES_DIR}/09b_vfr_all_metrics.csv', index=False)
 n_unstable = (vfr_df['VFR'] > 0).sum()
 n_total = len(vfr_df)
 max_vfr = vfr_df['VFR'].max()
+n_pract_stable = (vfr_df['VFR'] <= 0.10).sum()
 print(f"VFR Analysis: {n_unstable}/{n_total} model-metric-attribute combos have VFR > 0")
+print(f"Practically stable (VFR ≤ 10%, ≥90% consensus): {n_pract_stable}/{n_total} ({n_pract_stable/n_total*100:.1f}%)")
 print(f"Maximum VFR observed: {max_vfr:.1%}")
 print(f"\\nTop 10 most unstable combinations:")
 top10 = vfr_df.nlargest(10, 'VFR')[['Model','Attribute','Metric','Mean','Threshold','Margin_sigma','VFR','Pct_Fair']]
@@ -3059,7 +3081,7 @@ md("""
 ## 12. Comprehensive Subset & Subgroup Analysis (20-30 Tests)
 
 We systematically test fairness across:
-1. **30 random N=2000 subsets** — All 7 metrics, measuring VFR and variance at hospital scale.
+1. **30 stratified N=10,000 subsets** — All 7 metrics, measuring VFR and variance at hospital-network scale.
 2. **Intersectional subgroups** — RACE×SEX, RACE×AGE, SEX×AGE, ETH×AGE, RACE×ETH
    (approximately 50+ subgroups, ~25-30 with sufficient sample size).
 """)
@@ -3071,12 +3093,24 @@ code("""
 # Cell 48 · 30 Random Subset Tests (All 7 Metrics)
 # ──────────────────────────────────────────────────────────────
 N_SUBSETS = 30
-SUBSET_N = 500  # Fixed hospital-scale sample size
+SUBSET_N = 10000  # Fixed hospital-network sample size
 subset_results = []
-print(f"Running {N_SUBSETS} random N={SUBSET_N} subset tests …")
+print(f"Running {N_SUBSETS} stratified N={SUBSET_N} subset tests …")
 
+# Stratified by RACE (same approach as Protocol 1)
 for s in range(N_SUBSETS):
-    idx = np.random.choice(len(y_test), size=SUBSET_N, replace=False)
+    rng_s = np.random.RandomState(1000 + s)
+    idx_parts = []
+    for r_val, frac in zip(unique_races, race_fracs):
+        grp_idx = np.where(race_arr == r_val)[0]
+        n_draw = max(10, int(round(SUBSET_N * frac)))
+        idx_parts.extend(rng_s.choice(grp_idx, size=min(n_draw, len(grp_idx)), replace=False))
+    idx = np.array(idx_parts, dtype=int)
+    if len(idx) > SUBSET_N:
+        idx = rng_s.choice(idx, size=SUBSET_N, replace=False)
+    elif len(idx) < SUBSET_N:
+        remaining = np.setdiff1d(np.arange(len(y_test)), idx)
+        idx = np.concatenate([idx, rng_s.choice(remaining, size=SUBSET_N-len(idx), replace=False)])
     y_sub = y_test[idx]; pred_sub = best_y_pred[idx]; prob_sub = best_y_prob[idx]
     row = {'Subset': s+1, 'N': len(idx)}
     for attr in ['RACE','SEX','ETHNICITY','AGE_GROUP']:
@@ -5033,19 +5067,23 @@ for attr in ['RACE','SEX','ETHNICITY','AGE_GROUP']:
     print(f"    {attr:<12s}: DI={f['DI']:.3f}  SPD={f['SPD']:.3f}  EOPP={f['EOPP']:.3f}  "
           f"EOD={f['EOD']:.3f}  TI={f['TI']:.3f}  PP={f['PP']:.3f}  CAL={f['CAL']:.3f}  [{flag}]")
 print()
-n_unstable = (vfr_df['VFR'] > 0).sum()
 n_total_vfr = len(vfr_df)
+n_strict_stable = (vfr_df['VFR'] == 0).sum()
+n_pract_stable = (vfr_df['VFR'] <= 0.10).sum()   # ≥90% resampling consensus (≥27/30 agree)
 max_vfr_val = vfr_df['VFR'].max()
-print(f"  Stability (Protocol 1 — K=30, N=500 Hospital-Scale Resampling):")
-print(f"    Unstable combos: {n_unstable}/{n_total_vfr} ({n_unstable/n_total_vfr*100:.1f}%) have VFR > 0")
+print(f"  Stability (Protocol 1 — K=30, N=10000 Stratified Resampling):")
+print(f"    Practically stable (VFR ≤ 10%, ≥90% consensus): {n_pract_stable}/{n_total_vfr} ({n_pract_stable/n_total_vfr*100:.1f}%)")
+print(f"    Perfectly stable  (VFR = 0%,  100% consensus):  {n_strict_stable}/{n_total_vfr} ({n_strict_stable/n_total_vfr*100:.1f}%)")
 print(f"    Max VFR observed: {max_vfr_val:.1%}")
-print(f"    Best model ({best_model_name}) VFR per attribute:")
+print(f"    Best model ({best_model_name}) per attribute:")
 best_vfr = vfr_df[vfr_df['Model'] == best_model_name].copy()
 for attr in ['RACE','SEX','ETHNICITY','AGE_GROUP']:
-    vals = best_vfr[best_vfr['Attribute']==attr][['Metric','VFR']].values
+    adf = best_vfr[best_vfr['Attribute']==attr]
+    vals = adf[['Metric','VFR']].values
+    n_pstab = sum(1 for _, v in vals if v <= 0.10)
+    n_strict = sum(1 for _, v in vals if v == 0)
     parts = '  '.join(f"{mk}={v:.1%}" for mk, v in vals)
-    n_flips = sum(1 for _, v in vals if v > 0)
-    print(f"      {attr:<12s}: {parts}  [{n_flips}/7 unstable]")
+    print(f"      {attr:<12s}: {parts}  [practical {n_pstab}/7, strict {n_strict}/7 stable]")
 print()
 print("  Cross-Site Portability (Protocol 3):")
 if 'fk' in dir():
