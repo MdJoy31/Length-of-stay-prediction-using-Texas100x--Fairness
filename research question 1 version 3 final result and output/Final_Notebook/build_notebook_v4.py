@@ -73,16 +73,15 @@ code("""
 # ──────────────────────────────────────────────────────────────
 %matplotlib inline
 
-import os, sys, time, json, warnings, copy, gc
+import os, time, json, warnings
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import seaborn as sns
 from IPython.display import display, HTML
-from collections import defaultdict
 
-from sklearn.model_selection import train_test_split, StratifiedKFold, GroupKFold
+from sklearn.model_selection import train_test_split, GroupKFold
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import (RandomForestClassifier, HistGradientBoostingClassifier,
@@ -92,7 +91,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import (accuracy_score, roc_auc_score, f1_score, precision_score,
                              recall_score, roc_curve, precision_recall_curve,
                              confusion_matrix, classification_report)
-from sklearn.base import BaseEstimator, ClassifierMixin, clone
+from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.calibration import calibration_curve
 
 import xgboost as xgb
@@ -249,11 +248,12 @@ df['LOS_BINARY'] = (df['LENGTH_OF_STAY'] > 3).astype(int)
 # 13=55-59, 14=60-64, 15=65-69, 16=70-74, 17=75-79, 18=80-84,
 # 19=85-89, 20=90-94, 21=95+
 def create_age_groups(age_code):
-    # Map Texas PUDF PAT_AGE codes to clinical age groups.
-    if age_code <= 4:    return 'Pediatric'      # <18 years
-    elif age_code <= 9:  return 'Young_Adult'     # 18-39 years
-    elif age_code <= 14: return 'Middle_Aged'     # 40-64 years
-    else:                return 'Elderly'          # 65+ years
+    # Map Texas PUDF PAT_AGE codes to standard clinical binary age groups.
+    # Codes 0-14 cover ages <1 through 64; codes 15-21 cover 65+.
+    if age_code <= 14:
+        return 'Under_65'
+    else:
+        return '65_Plus'
 
 df['AGE_GROUP'] = df['PAT_AGE'].apply(create_age_groups)
 
@@ -271,7 +271,7 @@ print(f"  Long stay  (>3 days): {(df['LOS_BINARY']==1).sum():>10,} ({(df['LOS_BI
 print()
 
 summary = []
-for g in ['Pediatric','Young_Adult','Middle_Aged','Elderly']:
+for g in ['Under_65','65_Plus']:
     n = (df['AGE_GROUP']==g).sum()
     r = df.loc[df['AGE_GROUP']==g,'LOS_BINARY'].mean()
     summary.append({'Age Group':g, 'N':f'{n:,}', 'LOS>3 Rate':f'{r:.1%}'})
@@ -284,7 +284,7 @@ display(HTML(f"<i>Table saved → {TABLES_DIR}/01_descriptive_statistics.csv</i>
 
 md("""
 > **Key finding:** About one-third of patients have extended stays (> 3 days).
-> Elderly patients have the highest LOS>3 rate, while Pediatric patients have the lowest.
+> Patients aged 65+ have a substantially higher LOS>3 rate (~61%) compared to Under-65 patients (~34%).
 """)
 
 md("### 2.2 LOS Distribution & Admission Type")
@@ -341,10 +341,10 @@ for label, color, name in [(0, PALETTE[0], 'LOS≤3'), (1, PALETTE[2], 'LOS>3')]
 axes[0][0].set_xlabel('Patient Age'); axes[0][0].set_ylabel('Count')
 axes[0][0].set_title('(a) Age Distribution by Outcome'); axes[0][0].legend()
 
-age_order = ['Pediatric','Young_Adult','Middle_Aged','Elderly']
+age_order = ['Under_65','65_Plus']
 agg = df.groupby('AGE_GROUP')['LOS_BINARY'].mean().reindex(age_order)
 bars = axes[0][1].bar(agg.index, agg.values,
-                      color=[PALETTE[i] for i in range(4)], edgecolor='white')
+                      color=[PALETTE[i] for i in range(len(agg))], edgecolor='white')
 for b, v in zip(bars, agg.values):
     axes[0][1].text(b.get_x()+b.get_width()/2, v+0.005, f'{v:.1%}', ha='center', fontsize=10)
 axes[0][1].set_ylabel('LOS>3 Rate'); axes[0][1].set_title('(b) LOS>3 Rate by Age Group')
@@ -366,7 +366,7 @@ plt.show()
 
 md("""
 > **Findings:**
-> - Elderly patients dominate the LOS>3 group.  The LOS>3 rate rises monotonically with age.
+> - Patients aged 65+ have a significantly higher LOS>3 rate than Under-65 patients.
 > - Total charges are substantially higher for long-stay patients — a useful predictive feature.
 > - Patient status codes show significant variation in volume, providing discharge-related signal.
 """)
@@ -454,9 +454,8 @@ for i, grp in enumerate(['Hispanic','Non-Hispanic']):
                         'LOS_gt_3d_pct': f'{rate*100:.1f}%'})
 
 # --- Age Group ---
-age_display = {'Pediatric':'Pediatric (<18)', 'Young_Adult':'Young Adult (18–39)',
-               'Middle_Aged':'Middle-Aged (40–64)', 'Elderly':'Elderly (\u226565)'}
-age_order = ['Pediatric','Young_Adult','Middle_Aged','Elderly']
+age_display = {'Under_65':'Under 65', '65_Plus':'65 and Over'}
+age_order = ['Under_65','65_Plus']
 first = True
 for grp in age_order:
     mask = df['AGE_GROUP'] == grp
@@ -510,8 +509,8 @@ md("""
 >   small, which can lead to unstable fairness metrics for those groups.
 > - **Sex:** Roughly balanced.  Males have a slightly higher LOS>3 rate.
 > - **Ethnicity:** Non-Hispanic patients are the majority with a higher long-stay rate.
-> - **Age:** Elderly patients have the highest LOS>3 rate (>50%), raising fairness concerns
->   if the model under-predicts for younger groups.
+> - **Age:** Patients 65+ have a substantially higher LOS>3 rate (~61% vs ~34%), raising
+>   fairness concerns if the model under-predicts for younger patients.
 """)
 
 md("### 2.5 Source of Admission")
@@ -657,7 +656,7 @@ sns.heatmap(ct1, annot=True, fmt='.3f', cmap='YlOrRd', ax=axes[0], linewidths=0.
 axes[0].set_title('LOS>3 Rate: Race × Sex')
 
 ct2 = df.pivot_table(values='LOS_BINARY', index='AGE_GROUP', columns='ETH_LABEL', aggfunc='mean')
-ct2 = ct2.reindex(['Pediatric','Young_Adult','Middle_Aged','Elderly'])
+ct2 = ct2.reindex(['Under_65','65_Plus'])
 sns.heatmap(ct2, annot=True, fmt='.3f', cmap='YlOrRd', ax=axes[1], linewidths=0.5)
 axes[1].set_title('LOS>3 Rate: Age × Ethnicity')
 
@@ -669,7 +668,7 @@ plt.show()
 md("""
 > **Intersectional patterns:** The heatmaps reveal that LOS>3 rates differ
 > not just by single attributes but by their combinations.  For example,
-> elderly non-Hispanic patients have a particularly high long-stay rate.
+> 65+ non-Hispanic patients have a particularly high long-stay rate.
 > We will return to intersectional fairness in Section 8.
 """)
 
@@ -716,8 +715,8 @@ train_df['HOSP_TE'] = train_df['THCIC_ID'].map(hosp_te_map).fillna(global_mean)
 test_df['HOSP_TE']  = test_df['THCIC_ID'].map(hosp_te_map).fillna(global_mean)
 print(f"  THCIC_ID → HOSP_TE: {len(hosp_te_map)} hospitals")
 
-# Feature matrix
-numeric_features = ['PAT_AGE', 'TOTAL_CHARGES', 'PAT_STATUS',
+# Feature matrix — PAT_AGE excluded (protected attribute, fairness-through-unawareness)
+numeric_features = ['TOTAL_CHARGES', 'PAT_STATUS',
                     'TYPE_OF_ADMISSION', 'SOURCE_OF_ADMISSION',
                     'ADMITTING_DIAGNOSIS_TE', 'PROC_TE', 'HOSP_TE']
 X_train_raw = train_df[numeric_features].reset_index(drop=True).fillna(0)
@@ -1121,7 +1120,8 @@ plt.show()
 md("""
 > **Feature importance:** Diagnosis and hospital target-encoded features consistently
 > rank highest, confirming that clinical context is the strongest predictor.
-> Total charges and patient age are also highly informative.
+> Total charges and admission type are also informative. Note: PAT_AGE is excluded
+> from features (fairness-through-unawareness design).
 """)
 
 code("""
@@ -1858,8 +1858,8 @@ display(inter2_df.head(10).style.format({'Selection_Rate':'{:.3f}','Accuracy':'{
 """)
 
 md("""
-> The RACE × AGE interaction shows that **elderly patients** in each racial group
-> have the highest selection rates, while pediatric patients have the lowest.
+> The RACE × AGE interaction shows that **patients aged 65+** in each racial group
+> have the highest selection rates, while younger patients have the lowest.
 > The age gradient dominates, but racial disparities persist within each age band.
 """)
 
@@ -1928,7 +1928,7 @@ whether fairness verdicts are **reliable**:
 
 | Protocol | Method | Purpose |
 |----------|--------|---------|
-| **P1** | K=30 Random-Subset Resampling (80%) | Verdict Flip Rate (VFR) |
+| **P1** | K=30 Random-Subset Resampling (30%) | Verdict Flip Rate (VFR) |
 | **P2** | Sample-Size Sensitivity (1K→925K), 30 repeats | CV curves, min-N guidance |
 | **P3** | Cross-Hospital K=20 GroupKFold (train 19 / eval 1) | Cross-site portability |
 
@@ -1945,13 +1945,13 @@ K_P1 = 30
 np.random.seed(42)
 
 # Pre-generate 30 resample index sets (shared across models for comparability)
-n_sub = int(0.80 * len(y_test))
+n_sub = int(0.30 * len(y_test))
 resample_indices = [np.random.choice(len(y_test), size=n_sub, replace=False) for _ in range(K_P1)]
 
 # Compute metrics for ALL models across all resamples
 all_p1_rows = []
 model_names_list = list(test_predictions.keys())
-print(f"Protocol 1: K={K_P1} random 80% subsets × {len(model_names_list)} models …")
+print(f"Protocol 1: K={K_P1} random 30% subsets × {len(model_names_list)} models …")
 _t0 = time.time()
 
 for mi, model_name in enumerate(model_names_list):
@@ -3057,7 +3057,7 @@ md("""
 ## 12. Comprehensive Subset & Subgroup Analysis (20-30 Tests)
 
 We systematically test fairness across:
-1. **30 random 80% subsets** — All 7 metrics, measuring VFR and variance.
+1. **30 random 30% subsets** — All 7 metrics, measuring VFR and variance.
 2. **Intersectional subgroups** — RACE×SEX, RACE×AGE, SEX×AGE, ETH×AGE, RACE×ETH
    (approximately 50+ subgroups, ~25-30 with sufficient sample size).
 """)
@@ -3070,10 +3070,10 @@ code("""
 # ──────────────────────────────────────────────────────────────
 N_SUBSETS = 30
 subset_results = []
-print(f"Running {N_SUBSETS} random 80% subset tests …")
+print(f"Running {N_SUBSETS} random 30% subset tests …")
 
 for s in range(N_SUBSETS):
-    idx = np.random.choice(len(y_test), size=int(0.8*len(y_test)), replace=False)
+    idx = np.random.choice(len(y_test), size=int(0.3*len(y_test)), replace=False)
     y_sub = y_test[idx]; pred_sub = best_y_pred[idx]; prob_sub = best_y_prob[idx]
     row = {'Subset': s+1, 'N': len(idx)}
     for attr in ['RACE','SEX','ETHNICITY','AGE_GROUP']:
@@ -3301,23 +3301,30 @@ code("""
 # ──────────────────────────────────────────────────────────────
 print("AFCE: Adding protected attributes + interactions …")
 
+# Add ALL protected attributes (including PAT_AGE) for fairness-aware model
+pat_age_train = train_df['PAT_AGE'].values.reshape(-1,1)
+pat_age_test  = test_df['PAT_AGE'].values.reshape(-1,1)
+charges_idx = feature_names.index('TOTAL_CHARGES')
+
 X_train_afce = np.column_stack([X_train,
     protected_attrs_train['RACE'].reshape(-1,1),
     protected_attrs_train['SEX'].reshape(-1,1),
-    protected_attrs_train['ETHNICITY'].reshape(-1,1)])
+    protected_attrs_train['ETHNICITY'].reshape(-1,1),
+    pat_age_train])
 X_test_afce = np.column_stack([X_test,
     protected_attrs['RACE'].reshape(-1,1),
     protected_attrs['SEX'].reshape(-1,1),
-    protected_attrs['ETHNICITY'].reshape(-1,1)])
+    protected_attrs['ETHNICITY'].reshape(-1,1),
+    pat_age_test])
 
-# Interaction features
+# Interaction features: demographics × charges, demographics × age
 for attr_name in ['RACE', 'SEX', 'ETHNICITY']:
     a_tr = protected_attrs_train[attr_name].reshape(-1,1)
     a_te = protected_attrs[attr_name].reshape(-1,1)
-    X_train_afce = np.column_stack([X_train_afce, X_train[:,1:2]*a_tr, X_train[:,0:1]*a_tr])
-    X_test_afce = np.column_stack([X_test_afce, X_test[:,1:2]*a_te, X_test[:,0:1]*a_te])
+    X_train_afce = np.column_stack([X_train_afce, X_train[:,charges_idx:charges_idx+1]*a_tr, pat_age_train*a_tr])
+    X_test_afce = np.column_stack([X_test_afce, X_test[:,charges_idx:charges_idx+1]*a_te, pat_age_test*a_te])
 
-afce_feat_names = feature_names + ['RACE_feat','SEX_feat','ETHNICITY_feat',
+afce_feat_names = feature_names + ['RACE_feat','SEX_feat','ETHNICITY_feat','PAT_AGE_feat',
     'RACE×Charges','RACE×Age','SEX×Charges','SEX×Age','ETH×Charges','ETH×Age']
 print(f"✓ AFCE features: {X_train_afce.shape[1]} ({X_train.shape[1]} original + "
       f"{X_train_afce.shape[1]-X_train.shape[1]} fairness-aware)")
