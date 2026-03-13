@@ -1,0 +1,112 @@
+
+@article{jain2024los,
+  author  = {Jain, Raunak and Singh, Mrityunjai and Rao, A. Ravishankar and Garg, Rahul},
+  title   = {Predicting Hospital Length of Stay Using Machine Learning on a Large Open Health Dataset},
+  journal = {BMC Health Services Research},
+  year    = {2024},
+  volume  = {24},
+  pages   = {860},
+  doi     = {10.1186/s12913-024-11238-y},
+}
+
+@article{jaotombo2022french,
+  author  = {Jaotombo, Franck and Pauly, Vanessa and Fond, Guillaume and Orleans, Veronica and Auquier, Pascal and Ghattas, Badih and Boyer, Laurent},
+  title   = {Machine-Learning Prediction for Hospital Length of Stay Using a French Medico-Administrative Database},
+  journal = {Journal of the Academy of Consultation-Liaison Psychiatry},
+  year    = {2022},
+  doi     = {10.1016/j.jaclp.2022.12.003},
+}
+
+@article{zeleke2023gradient,
+  author  = {Zeleke, Addisu Jember and Palumbo, Pierpaolo and Tubertini, Paolo and Miglio, Rossella and Chiari, Lorenzo},
+  title   = {Machine Learning-Based Prediction of Hospital Prolonged Length of Stay Admission at Emergency Department: A Gradient Boosting Algorithm Analysis},
+  journal = {Frontiers in Artificial Intelligence},
+  year    = {2023},
+  volume  = {6},
+  pages   = {1179226},
+  doi     = {10.3389/frai.2023.1179226},
+}
+
+@article{mekhaldi2021comparative,
+  author  = {Mekhaldi, Rachda Naila and Caulier, Patrice and Chaabane, Sond\`{e}s and Chraibi, Abdelahad and Piechowiak, Sylvain},
+  title   = {A Comparative Study of Machine Learning Models for Predicting Length of Stay in Hospitals},
+  journal = {Journal of Information Science and Engineering},
+  year    = {2021},
+  volume  = {37},
+  number  = {5},
+  pages   = {1025--1038},
+  doi     = {10.6688/JISE.202109_37(5).0003},
+}
+
+@article{pfohl2021fairml,
+  author  = {Pfohl, Stephen R. and Foryciarz, Agata and Shah, Nigam H.},
+  title   = {An Empirical Characterization of Fair Machine Learning for Clinical Risk Prediction},
+  journal = {Journal of Biomedical Informatics},
+  year    = {2021},
+  volume  = {113},
+  pages   = {103621},
+  doi     = {10.1016/j.jbi.2020.103621},
+}
+
+@inproceedings{poulain2023federated,
+  author    = {Poulain, Raphael and Tarek, Mirza Farhan Bin and Beheshti, Rahmatollah},
+  title     = {Improving Fairness in AI Models on Electronic Health Records: The Case for Federated Learning Methods},
+  booktitle = {Proceedings of the 2023 ACM Conference on Fairness, Accountability, and Transparency (FAccT)},
+  year      = {2023},
+  pages     = {1599--1608},
+  doi       = {10.1145/3593013.3594102},
+}
+
+@inproceedings{tarek2025fairsynth,
+  author    = {Tarek, Mirza Farhan Bin and Poulain, Raphael and Beheshti, Rahmatollah},
+  title     = {Fairness-Optimized Synthetic EHR Generation for Arbitrary Downstream Predictive Tasks},
+  booktitle = {Proceedings of CHASE 2025 (ACM/IEEE Int. Conf. on Connected Health)},
+  year      = {2025},
+  doi       = {10.1145/3721201.3721373},
+}
+
+@article{almeida2024review,
+  author  = {Almeida, Guilherme and Correia, Fernanda Brito and Borges, Ana Rosa and Bernardino, Jorge},
+  title   = {Hospital Length-of-Stay Prediction Using Machine Learning Algorithms --- A Literature Review},
+  journal = {Applied Sciences},
+  year    = {2024},
+  volume  = {14},
+  number  = {22},
+  pages   = {10523},
+  doi     = {10.3390/app142210523},
+}
+
+@article{obermeyer2019dissecting,
+  author  = {Obermeyer, Ziad and Powers, Brian and Vogeli, Christine and Mullainathan, Sendhil},
+  title   = {Dissecting Racial Bias in an Algorithm Used to Manage the Health of Populations},
+  journal = {Science},
+  year    = {2019},
+  volume  = {366},
+  number  = {6464},
+  pages   = {447--453},
+}
+
+@article{chouldechova2017fair,
+  author  = {Chouldechova, Alexandra},
+  title   = {Fair Prediction with Disparate Impact: A Study of Bias in Recidivism Prediction Instruments},
+  journal = {Big Data},
+  year    = {2017},
+  volume  = {5},
+  number  = {2},
+  pages   = {153--163},
+}
+
+@article{kleinberg2016inherent,
+  author  = {Kleinberg, Jon and Mullainathan, Sendhil and Raghavan, Manish},
+  title   = {Inherent Trade-Offs in the Fair Determination of Risk Scores},
+  journal = {arXiv preprint arXiv:1609.05807},
+  year    = {2016},
+}
+
+@inproceedings{hardt2016equality,
+  author    = {Hardt, Moritz and Price, Eric and Srebro, Nathan},
+  title     = {Equality of Opportunity in Supervised Learning},
+  booktitle = {Advances in Neural Information Processing Systems},
+  year      = {2016},
+  volume    = {29},
+}
