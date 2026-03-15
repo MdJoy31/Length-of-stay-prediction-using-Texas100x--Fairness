@@ -5660,6 +5660,133 @@ print("\n✅ All paper tables saved to output/tables/paper_*.csv")
 print("   Copy the LaTeX blocks above directly into your .tex manuscript.")
 """)
 
+code(r"""
+# ════════════════════════════════════════════════════════════════════════
+# 12e  TABLE 3 – FAIRNESS VERDICT STABILITY ACROSS 30 SUBSETS (Best Model)
+# ════════════════════════════════════════════════════════════════════════
+import pandas as pd, numpy as np
+from IPython.display import display, HTML
+
+vfr_df   = pd.read_csv('output/tables/09b_vfr_all_metrics.csv')
+sub30_df = pd.read_csv('output/tables/16_30_random_subsets.csv')
+
+best_model = 'LGB-XGB Blend'
+bm = vfr_df[vfr_df['Model'] == best_model].copy()
+
+attrs       = ['RACE', 'SEX', 'ETHNICITY', 'AGE_GROUP']
+attr_labels = ['Race', 'Sex', 'Ethnicity', 'Age Group']
+metrics     = ['DI', 'SPD', 'EOPP', 'EOD', 'TI', 'PP', 'CAL']
+thresholds  = {'DI': 0.80, 'SPD': 0.10, 'EOPP': 0.10, 'EOD': 0.10,
+               'TI': 0.10, 'PP': 0.10, 'CAL': 0.05}
+
+# ── Table 3a: Mean(SD) per metric per attribute from 30 subsets ──
+rows_mean = []
+for m in metrics:
+    row = {'Metric': m, 'Threshold': thresholds[m]}
+    for attr, albl in zip(attrs, attr_labels):
+        col_name = f'{m}_{attr}'
+        if col_name in sub30_df.columns:
+            vals = sub30_df[col_name].dropna()
+            mu  = vals.mean()
+            sd  = vals.std()
+            row[albl] = f"{mu:.3f} ({sd:.3f})"
+        else:
+            row[albl] = '—'
+    rows_mean.append(row)
+mean_df = pd.DataFrame(rows_mean).set_index('Metric')
+mean_df.to_csv('output/tables/paper_table3a_subset_meansd.csv')
+
+# ── Table 3b: VFR + Verdict + Margin (σ) ──
+rows_vfr = []
+for m in metrics:
+    row = {'Metric': m}
+    for attr, albl in zip(attrs, attr_labels):
+        r = bm[(bm['Metric'] == m) & (bm['Attribute'] == attr)]
+        if len(r):
+            r = r.iloc[0]
+            vfr_val  = r['VFR']
+            verdict  = r['Verdict']
+            margin_s = r['Margin_sigma']
+            tag = 'F' if verdict == 'FAIR' else 'U'
+            row[albl] = f"{vfr_val:.0%} [{tag}] ({margin_s:.1f}σ)"
+        else:
+            row[albl] = '—'
+    rows_vfr.append(row)
+vfr_table = pd.DataFrame(rows_vfr).set_index('Metric')
+vfr_table.to_csv('output/tables/paper_table3b_vfr_stability.csv')
+
+# ── Table 3c: Compact paper table — all-in-one ──
+rows_compact = []
+for m in metrics:
+    for attr, albl in zip(attrs, attr_labels):
+        col_name = f'{m}_{attr}'
+        r = bm[(bm['Metric'] == m) & (bm['Attribute'] == attr)]
+        if len(r) and col_name in sub30_df.columns:
+            r = r.iloc[0]
+            vals = sub30_df[col_name].dropna()
+            rows_compact.append({
+                'Metric': m,
+                'Attribute': albl,
+                'Threshold': thresholds[m],
+                'Mean': round(vals.mean(), 4),
+                'SD': round(vals.std(), 4),
+                'VFR (%)': round(r['VFR'] * 100, 1),
+                'Margin (σ)': round(r['Margin_sigma'], 1),
+                'Verdict': r['Verdict'],
+                '% Subsets Fair': round(r['Pct_Fair'], 1)
+            })
+compact_df = pd.DataFrame(rows_compact)
+compact_df.to_csv('output/tables/paper_table3_compact_stability.csv', index=False)
+
+# ── Display ──
+print("Table 3a: Fairness Metric Values Across 30 Random Subsets (N=10,000 each)")
+print("          Format: Mean (SD) — Best Model:", best_model)
+print("─" * 80)
+display(mean_df.style.set_caption(
+    f'Fairness Metrics Across 30 Stratified Subsets — {best_model}'))
+
+print("\nTable 3b: Verdict Flip Rate (VFR) Stability — Best Model:", best_model)
+print("          Format: VFR [F=Fair/U=Unfair] (margin in σ from threshold)")
+print("─" * 80)
+
+def style_vfr(val):
+    if isinstance(val, str):
+        if '[F]' in val and '0%' in val.split('[')[0]:
+            return 'background-color: #d4edda; font-weight: bold'
+        elif '[F]' in val:
+            return 'background-color: #fff3cd'
+        elif '[U]' in val and '0%' in val.split('[')[0]:
+            return 'background-color: #f8d7da'
+        elif '[U]' in val:
+            return 'background-color: #f8d7da'
+    return ''
+
+display(vfr_table.style.map(style_vfr).set_caption(
+    f'Verdict Flip Rate — {best_model} (K=30 subsets, N=10,000)'))
+
+# Summary stats
+n_combos = len(bm)
+n_stable = (bm['VFR'] == 0).sum()
+n_pstable = (bm['VFR'] <= 0.10).sum()
+n_fair = (bm['Verdict'] == 'FAIR').sum()
+
+print(f"\n  Summary: {n_combos} metric-attribute combinations")
+print(f"  Perfectly stable (VFR = 0%):     {n_stable}/{n_combos} ({n_stable/n_combos*100:.0f}%)")
+print(f"  Practically stable (VFR ≤ 10%):  {n_pstable}/{n_combos} ({n_pstable/n_combos*100:.0f}%)")
+print(f"  Fair verdicts:                    {n_fair}/{n_combos} ({n_fair/n_combos*100:.0f}%)")
+
+# LaTeX output
+print("\n" + "=" * 80)
+print("LaTeX — Table 3a: Subset Mean(SD)")
+print("=" * 80)
+print(mean_df[attr_labels].to_latex())
+
+print("=" * 80)
+print("LaTeX — Table 3b: VFR Stability")
+print("=" * 80)
+print(vfr_table.to_latex())
+""")
+
 md("""
 ---
 ## Conclusion
