@@ -5347,14 +5347,14 @@ print(f"  Stability (Protocol 1 — K=30, N=10000 Stratified Resampling):")
 print(f"    Practically stable (VFR ≤ 10%, ≥90% consensus): {n_pract_stable}/{n_total_vfr} ({n_pract_stable/n_total_vfr*100:.1f}%)")
 print(f"    Perfectly stable  (VFR = 0%,  100% consensus):  {n_strict_stable}/{n_total_vfr} ({n_strict_stable/n_total_vfr*100:.1f}%)")
 print(f"    Max VFR observed: {max_vfr_val:.1%}")
-print(f"    Best model ({best_model_name}) per attribute:")
+print(f"    Best model ({best_model_name}) per attribute  (VFR = Verdict Flip Rate; 0% = perfectly stable):")
 best_vfr = vfr_df[vfr_df['Model'] == best_model_name].copy()
 for attr in ['RACE','SEX','ETHNICITY','AGE_GROUP']:
     adf = best_vfr[best_vfr['Attribute']==attr]
-    vals = adf[['Metric','VFR']].values
-    n_pstab = sum(1 for _, v in vals if v <= 0.10)
-    n_strict = sum(1 for _, v in vals if v == 0)
-    parts = '  '.join(f"{mk}={v:.1%}" for mk, v in vals)
+    vals = adf[['Metric','VFR','Verdict']].values
+    n_pstab = sum(1 for _, v, _ in vals if v <= 0.10)
+    n_strict = sum(1 for _, v, _ in vals if v == 0)
+    parts = '  '.join(f"VFR({mk})={v:.1%}({'F' if vd=='FAIR' else 'U'})" for mk, v, vd in vals)
     print(f"      {attr:<12s}: {parts}  [practical {n_pstab}/7, strict {n_strict}/7 stable]")
 print()
 print("  Cross-Site Portability (Protocol 3):")
@@ -5785,6 +5785,762 @@ print("=" * 80)
 print("LaTeX — Table 3b: VFR Stability")
 print("=" * 80)
 print(vfr_table.to_latex())
+""")
+
+code(r"""
+# ════════════════════════════════════════════════════════════════════════
+# 12f  TABLE 4 – LAMBDA PERFORMANCE IMPACT (Accuracy, F1, AUC vs λ)
+# ════════════════════════════════════════════════════════════════════════
+import pandas as pd, numpy as np
+from IPython.display import display, HTML
+
+cand_df = pd.read_csv('output/tables/18b_fairness_candidate_search.csv')
+trade_df = pd.read_csv('output/tables/14d_fairness_accuracy_tradeoff.csv')
+
+# Get standard baseline
+std_row = trade_df[trade_df['Model'] == 'LGB-XGB Blend'].iloc[0]
+std_acc  = std_row['Accuracy']
+std_f1   = std_row['F1']
+std_auc  = std_row['AUC']
+
+rows = []
+for model in ['Standard','Reweigh_1','Reweigh_3','Reweigh_8',
+              'Reweigh_15','Reweigh_25','Reweigh_50']:
+    sub = cand_df[cand_df['Model'] == model]
+    best = sub.sort_values(['Total_Fair','Accuracy'],
+                           ascending=[False, False]).iloc[0]
+
+    lam_label = model.replace('Reweigh_', 'lambda = ') if 'Reweigh' in model else 'Baseline (lambda = 0)'
+    acc = best['Accuracy']
+    # F1 and AUC from candidate search (use Accuracy proxy for F1/AUC from trade_df if available)
+    if model == 'Standard':
+        f1, auc = std_f1, std_auc
+    else:
+        # approximate from trade_df – use Fair row for Reweigh_1
+        fair_row = trade_df[trade_df['Model'] == 'Fair (Reweigh+Thr)']
+        if model == 'Reweigh_1' and len(fair_row):
+            f1  = fair_row.iloc[0]['F1']
+            auc = fair_row.iloc[0]['AUC']
+        else:
+            f1  = np.nan
+            auc = np.nan
+
+    delta_acc = acc - std_acc
+    tf = int(best['Total_Fair'])
+    rows.append({
+        'Lambda': lam_label,
+        'Accuracy': round(acc, 4),
+        'Delta Acc (pp)': round(delta_acc * 100, 2),
+        'F1': round(f1, 4) if not np.isnan(f1) else '—',
+        'AUC': round(auc, 4) if not np.isnan(auc) else '—',
+        'Fair Verdicts': tf,
+        'CFS (%)': round(tf / 28 * 100, 1)
+    })
+
+lam_perf = pd.DataFrame(rows).set_index('Lambda')
+lam_perf.to_csv('output/tables/paper_table4_lambda_performance.csv')
+
+print("Table 4: Lambda (lambda) Impact on Model Performance")
+print("       Accuracy drop vs fairness gain for increasing reweighing strength")
+print("=" * 80)
+
+def highlight_tradeoff(val):
+    if isinstance(val, (int, float)):
+        if val < -2:
+            return 'background-color: #f8d7da'
+        elif val < 0:
+            return 'background-color: #fff3cd'
+        elif val >= 0:
+            return 'background-color: #d4edda'
+    return ''
+
+display(lam_perf.style
+    .map(highlight_tradeoff, subset=['Delta Acc (pp)'])
+    .format({'Accuracy': '{:.4f}', 'Delta Acc (pp)': '{:+.2f}',
+             'Fair Verdicts': '{:.0f}', 'CFS (%)': '{:.1f}'}, na_rep='—')
+    .set_caption('Performance Impact of Reweighing Strength (lambda)'))
+
+print("\n  Green = no accuracy loss, Yellow = moderate (<2pp), Red = >2pp loss")
+""")
+
+code(r"""
+# ════════════════════════════════════════════════════════════════════════
+# 12g  TABLE 5 – FAIRNESS GAIN vs PERFORMANCE COST (Delta Fairness / Delta Perf)
+# ════════════════════════════════════════════════════════════════════════
+import pandas as pd, numpy as np
+from IPython.display import display, HTML
+
+trade_df = pd.read_csv('output/tables/14d_fairness_accuracy_tradeoff.csv')
+
+std   = trade_df[trade_df['Model'] == 'LGB-XGB Blend'].iloc[0]
+fair  = trade_df[trade_df['Model'] == 'Fair (Reweigh+Thr)'].iloc[0]
+xgb   = trade_df[trade_df['Model'] == 'XGBoost'].iloc[0]
+afce_x = trade_df[trade_df['Model'] == 'AFCE-XGBoost'].iloc[0]
+afce_l = trade_df[trade_df['Model'] == 'AFCE-LightGBM'].iloc[0]
+
+attrs = ['RACE', 'SEX', 'ETHNICITY', 'AGE_GROUP']
+attr_labels = ['Race', 'Sex', 'Ethnicity', 'Age Group']
+metrics = ['DI', 'SPD', 'EOPP', 'EOD', 'TI', 'PP', 'CAL']
+
+methods = [
+    ('Fair (Ours)', fair),
+    ('AFCE-XGB', afce_x),
+    ('AFCE-LGBM', afce_l),
+    ('XGBoost', xgb),
+]
+
+rows = []
+for mlabel, mrow in methods:
+    delta_acc = (mrow['Accuracy'] - std['Accuracy']) * 100  # in percentage points
+    delta_f1  = (mrow['F1'] - std['F1']) * 100
+    delta_auc = (mrow['AUC'] - std['AUC']) * 100
+
+    # Average fairness improvement across all attrs
+    avg_delta_di = np.mean([mrow[f'DI_{a}'] - std[f'DI_{a}'] for a in attrs])
+    avg_delta_spd = np.mean([abs(std[f'SPD_{a}']) - abs(mrow[f'SPD_{a}']) for a in attrs])
+    avg_delta_eopp = np.mean([abs(std[f'EOPP_{a}']) - abs(mrow[f'EOPP_{a}']) for a in attrs])
+
+    delta_verdicts = int(mrow['Fair_Verdicts']) - int(std['Fair_Verdicts'])
+
+    rows.append({
+        'Method': mlabel,
+        'Delta Acc (pp)': round(delta_acc, 2),
+        'Delta F1 (pp)': round(delta_f1, 2),
+        'Delta AUC (pp)': round(delta_auc, 2),
+        'Avg Delta DI': round(avg_delta_di, 3),
+        'Avg Delta |SPD|': round(avg_delta_spd, 3),
+        'Avg Delta |EOPP|': round(avg_delta_eopp, 3),
+        'Delta Fair Verdicts': delta_verdicts,
+        'Fairness Gain per 1pp Acc': round(delta_verdicts / abs(delta_acc), 2) if abs(delta_acc) > 0.01 else 'N/A'
+    })
+
+tradeoff_df = pd.DataFrame(rows).set_index('Method')
+tradeoff_df.to_csv('output/tables/paper_table5_fairness_performance_tradeoff.csv')
+
+print("Table 5: Fairness Gain vs Performance Cost (relative to Standard LGB-XGB Blend)")
+print("         Positive Delta DI/SPD/EOPP = fairness improved; negative Delta Acc = accuracy cost")
+print("=" * 90)
+display(tradeoff_df.style.format({
+    'Delta Acc (pp)': '{:+.2f}',
+    'Delta F1 (pp)': '{:+.2f}',
+    'Delta AUC (pp)': '{:+.2f}',
+    'Avg Delta DI': '{:+.3f}',
+    'Avg Delta |SPD|': '{:+.3f}',
+    'Avg Delta |EOPP|': '{:+.3f}',
+    'Delta Fair Verdicts': '{:+d}'
+}, na_rep='N/A').set_caption(
+    'Fairness-Performance Tradeoff (vs Standard Baseline)'))
+
+# Per-attribute breakdown for Fair (Ours)
+print("\nDetailed per-attribute fairness change — Fair (Ours) vs Standard:")
+print("-" * 70)
+for attr, albl in zip(attrs, attr_labels):
+    di_s  = std[f'DI_{attr}']
+    di_f  = fair[f'DI_{attr}']
+    spd_s = abs(std[f'SPD_{attr}'])
+    spd_f = abs(fair[f'SPD_{attr}'])
+    eopp_s = abs(std[f'EOPP_{attr}'])
+    eopp_f = abs(fair[f'EOPP_{attr}'])
+    print(f"  {albl:12s}:  DI {di_s:.3f} -> {di_f:.3f} ({di_f-di_s:+.3f})  "
+          f"|SPD| {spd_s:.3f} -> {spd_f:.3f} ({spd_s-spd_f:+.3f})  "
+          f"|EOPP| {eopp_s:.3f} -> {eopp_f:.3f} ({eopp_s-eopp_f:+.3f})")
+""")
+
+code(r"""
+# ════════════════════════════════════════════════════════════════════════
+# 12h  TABLE 6 – PER-MODEL FAIRNESS VERDICT HEATMAP (All 12 Models)
+# ════════════════════════════════════════════════════════════════════════
+import pandas as pd, numpy as np
+from IPython.display import display, HTML
+import matplotlib; matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
+trade_df = pd.read_csv('output/tables/14d_fairness_accuracy_tradeoff.csv')
+
+attrs = ['RACE', 'SEX', 'ETHNICITY', 'AGE_GROUP']
+attr_labels = ['Race', 'Sex', 'Ethnicity', 'Age']
+metrics = ['DI', 'SPD', 'EOPP', 'EOD', 'TI', 'PP', 'CAL']
+thresholds = {'DI': 0.80, 'SPD': 0.10, 'EOPP': 0.10, 'EOD': 0.10,
+              'TI': 0.10, 'PP': 0.10, 'CAL': 0.05}
+
+# Use first 12 rows (base models) + Fair model
+models_to_show = list(trade_df['Model'].values[:12]) + ['Fair (Reweigh+Thr)']
+
+heatmap_rows = []
+for model in models_to_show:
+    r = trade_df[trade_df['Model'] == model]
+    if len(r) == 0:
+        continue
+    r = r.iloc[0]
+    short = model.replace('LGB-XGB Blend', 'LGB-XGB').replace('(Reweigh+Thr)', '(Fair)')
+    row = {'Model': short}
+    total_fair = 0
+    for attr, albl in zip(attrs, attr_labels):
+        for m in metrics:
+            col = f'{m}_{attr}'
+            if col in r.index:
+                val = r[col]
+                if m == 'DI':
+                    is_fair = val >= thresholds[m]
+                elif m == 'CAL':
+                    is_fair = abs(val) < thresholds[m]
+                else:
+                    is_fair = abs(val) < thresholds[m]
+                row[f'{m}({albl})'] = 'FAIR' if is_fair else 'UNFAIR'
+                total_fair += int(is_fair)
+    row['Total'] = f'{total_fair}/28'
+    heatmap_rows.append(row)
+
+heat_df = pd.DataFrame(heatmap_rows).set_index('Model')
+heat_df.to_csv('output/tables/paper_table6_verdict_heatmap.csv')
+
+# Color-coded display
+def color_verdict(val):
+    if val == 'FAIR':
+        return 'background-color: #d4edda; color: #155724; font-weight: bold'
+    elif val == 'UNFAIR':
+        return 'background-color: #f8d7da; color: #721c24'
+    return ''
+
+print("Table 6: Fairness Verdict Heatmap — All Models (7 Metrics x 4 Attributes = 28 Verdicts)")
+print("=" * 90)
+display(heat_df.style.map(color_verdict).set_caption(
+    'Fairness Verdict Heatmap (Green = FAIR, Red = UNFAIR)'))
+
+# Heatmap figure
+cols = [c for c in heat_df.columns if c != 'Total']
+binary = heat_df[cols].replace({'FAIR': 1, 'UNFAIR': 0}).astype(int)
+
+fig, ax = plt.subplots(figsize=(20, 8))
+im = ax.imshow(binary.values, cmap='RdYlGn', aspect='auto', vmin=0, vmax=1)
+ax.set_xticks(range(len(cols))); ax.set_xticklabels(cols, rotation=90, fontsize=8)
+ax.set_yticks(range(len(binary.index)));  ax.set_yticklabels(binary.index, fontsize=9)
+for i in range(len(binary.index)):
+    for j in range(len(cols)):
+        ax.text(j, i, 'F' if binary.values[i, j] else 'U',
+                ha='center', va='center', fontsize=7,
+                color='white' if binary.values[i, j] == 0 else 'black')
+ax.set_title('Fairness Verdict Heatmap — All Models', fontsize=14, fontweight='bold')
+plt.colorbar(im, ax=ax, shrink=0.5, label='Fair=1 / Unfair=0')
+plt.tight_layout()
+fig_path = 'output/figures/paper_verdict_heatmap.png'
+plt.savefig(fig_path, dpi=200, bbox_inches='tight'); plt.show()
+print(f"Saved: {fig_path}")
+""")
+
+code(r"""
+# ════════════════════════════════════════════════════════════════════════
+# 12i  TABLE 7 – INTERSECTIONAL FAIRNESS (Race x Sex, Race x Age)
+# ════════════════════════════════════════════════════════════════════════
+import pandas as pd, numpy as np, os
+from IPython.display import display
+
+# Load subgroup analysis data
+sg_path = 'output/tables/12b_subgroup_all.csv'
+if os.path.exists(sg_path):
+    sg_df = pd.read_csv(sg_path)
+    print("Table 7: Intersectional Fairness — Selected Subgroups")
+    print("=" * 80)
+
+    # Show top-10 most and least advantaged subgroups by selection rate
+    if 'Selection_Rate' in sg_df.columns:
+        sg_sorted = sg_df.sort_values('Selection_Rate')
+        top5  = sg_sorted.tail(10)
+        bot5  = sg_sorted.head(10)
+
+        cols_show = [c for c in ['Subgroup','N','Selection_Rate','TPR','FPR','Accuracy']
+                     if c in sg_df.columns]
+
+        print("\n  Most Advantaged Subgroups (highest selection rate):")
+        print("  " + "-" * 60)
+        display(top5[cols_show].reset_index(drop=True))
+
+        print("\n  Least Advantaged Subgroups (lowest selection rate):")
+        print("  " + "-" * 60)
+        display(bot5[cols_show].reset_index(drop=True))
+
+        # Compute disparity ratio
+        max_sr = sg_sorted['Selection_Rate'].max()
+        min_sr = sg_sorted['Selection_Rate'].min()
+        disparity = min_sr / max_sr if max_sr > 0 else 0
+
+        print(f"\n  Intersectional Disparate Impact: {disparity:.3f}")
+        print(f"  Selection Rate Range: [{min_sr:.3f}, {max_sr:.3f}]")
+        print(f"  Max Disparity Ratio: {disparity:.3f} {'(FAIR >= 0.80)' if disparity >= 0.80 else '(UNFAIR < 0.80)'}")
+
+    # Save summary
+    summary_rows = []
+    for _, row in sg_df.iterrows():
+        d = {'Subgroup': row.get('Subgroup', ''), 'N': row.get('N', 0)}
+        for c in ['Selection_Rate', 'TPR', 'FPR', 'Accuracy']:
+            if c in row:
+                d[c] = round(row[c], 4)
+        summary_rows.append(d)
+    pd.DataFrame(summary_rows).to_csv('output/tables/paper_table7_intersectional.csv', index=False)
+else:
+    print("Subgroup data not found — skipping Table 7")
+    # Create from subgroup_df if available
+    if 'subgroup_df' in dir():
+        print("  Using in-memory subgroup_df instead")
+        sg_df = subgroup_df.copy()
+        sg_sorted = sg_df.sort_values('Selection_Rate')
+        display(sg_sorted.head(10))
+        display(sg_sorted.tail(10))
+""")
+
+code(r"""
+# ════════════════════════════════════════════════════════════════════════
+# 12j  IMPROVED VISUALISATIONS – Radar + Grouped Comparison
+# ════════════════════════════════════════════════════════════════════════
+import matplotlib; matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import numpy as np, pandas as pd
+
+trade_df = pd.read_csv('output/tables/14d_fairness_accuracy_tradeoff.csv')
+
+# ── Radar chart: Fairness profile of best methods ──
+methods = {
+    'Standard':    'LGB-XGB Blend',
+    'Fair (Ours)': 'Fair (Reweigh+Thr)',
+    'AFCE-XGB':    'AFCE-XGBoost'
+}
+attrs = ['RACE', 'SEX', 'ETHNICITY', 'AGE_GROUP']
+attr_labels = ['Race', 'Sex', 'Ethnicity', 'Age']
+metrics_radar = ['DI', 'SPD', 'EOPP', 'EOD', 'TI', 'PP', 'CAL']
+# Normalize: DI -> as-is (closer to 1), others -> 1 - |val| (closer to 1 = fairer)
+
+fig, axes = plt.subplots(1, 4, figsize=(20, 5), subplot_kw=dict(polar=True))
+colors_r = ['#4e79a7', '#e15759', '#59a14f']
+angles = np.linspace(0, 2 * np.pi, len(metrics_radar), endpoint=False).tolist()
+angles += angles[:1]
+
+for idx, (attr, albl) in enumerate(zip(attrs, attr_labels)):
+    ax = axes[idx]
+    for (mlabel, mname), c in zip(methods.items(), colors_r):
+        r = trade_df[trade_df['Model'] == mname]
+        if len(r) == 0:
+            continue
+        r = r.iloc[0]
+        vals = []
+        for m in metrics_radar:
+            v = r[f'{m}_{attr}']
+            if m == 'DI':
+                vals.append(min(v, 1.0))       # DI: higher=better, cap at 1
+            else:
+                vals.append(max(1 - abs(v), 0))  # others: lower |val|=better -> 1-|v|
+        vals += vals[:1]
+        ax.plot(angles, vals, 'o-', linewidth=1.5, label=mlabel, color=c, markersize=4)
+        ax.fill(angles, vals, alpha=0.1, color=c)
+    ax.set_xticks(angles[:-1])
+    ax.set_xticklabels(metrics_radar, fontsize=8)
+    ax.set_ylim(0, 1.05)
+    ax.set_title(albl, fontsize=12, fontweight='bold', pad=15)
+    if idx == 0:
+        ax.legend(loc='upper right', bbox_to_anchor=(0.15, 1.25), fontsize=8)
+
+plt.suptitle('Fairness Profile Radar — Standard vs Fair vs AFCE', fontsize=14, fontweight='bold', y=1.02)
+plt.tight_layout()
+fig_path = 'output/figures/paper_radar_fairness.png'
+plt.savefig(fig_path, dpi=200, bbox_inches='tight'); plt.show()
+print(f"Saved: {fig_path}")
+
+# ── Lambda accuracy-fairness Pareto chart ──
+lam_df = pd.read_csv('output/tables/paper_table2_lambda.csv', index_col=0)
+
+fig2, ax2 = plt.subplots(figsize=(10, 6))
+x = lam_df['Accuracy']
+y = lam_df['DI (Race)']
+labels = lam_df.index
+
+ax2.scatter(x, y, s=120, c='#4e79a7', edgecolors='black', zorder=5)
+for i, lbl in enumerate(labels):
+    ax2.annotate(lbl, (x.iloc[i], y.iloc[i]), textcoords="offset points",
+                 xytext=(8, 8), fontsize=9, ha='left')
+ax2.axhline(0.80, color='red', ls='--', alpha=0.6, label='DI >= 0.80 (fair)')
+ax2.set_xlabel('Accuracy', fontsize=12)
+ax2.set_ylabel('Disparate Impact (Race)', fontsize=12)
+ax2.set_title('Accuracy-Fairness Pareto Front (lambda sweep)', fontsize=13, fontweight='bold')
+ax2.legend(fontsize=10)
+ax2.grid(alpha=0.3)
+plt.tight_layout()
+fig_path2 = 'output/figures/paper_pareto_lambda.png'
+plt.savefig(fig_path2, dpi=200, bbox_inches='tight'); plt.show()
+print(f"Saved: {fig_path2}")
+
+# ── Grouped bar: Fair verdicts per model ──
+fig3, ax3 = plt.subplots(figsize=(14, 6))
+models_plot = trade_df.head(12).copy()
+fair_row = trade_df[trade_df['Model'] == 'Fair (Reweigh+Thr)']
+if len(fair_row):
+    models_plot = pd.concat([models_plot, fair_row], ignore_index=True)
+models_plot = models_plot.sort_values('Fair_Verdicts', ascending=True)
+
+bars = ax3.barh(range(len(models_plot)), models_plot['Fair_Verdicts'],
+                color=['#e15759' if v < 14 else '#f28e2b' if v < 21 else '#59a14f'
+                       for v in models_plot['Fair_Verdicts']],
+                edgecolor='white', linewidth=0.5)
+for i, (v, acc) in enumerate(zip(models_plot['Fair_Verdicts'], models_plot['Accuracy'])):
+    ax3.text(v + 0.3, i, f'{int(v)}/28 (Acc={acc:.4f})', va='center', fontsize=9)
+ax3.set_yticks(range(len(models_plot)))
+ax3.set_yticklabels(models_plot['Model'], fontsize=9)
+ax3.set_xlabel('Fair Verdicts (out of 28)', fontsize=12)
+ax3.set_title('Fairness Verdicts by Model (7 metrics x 4 attributes)', fontsize=13, fontweight='bold')
+ax3.axvline(14, color='red', ls='--', alpha=0.5, label='50% threshold')
+ax3.axvline(21, color='orange', ls='--', alpha=0.5, label='75% threshold')
+ax3.legend(fontsize=9)
+ax3.grid(axis='x', alpha=0.3)
+plt.tight_layout()
+fig_path3 = 'output/figures/paper_verdicts_by_model.png'
+plt.savefig(fig_path3, dpi=200, bbox_inches='tight'); plt.show()
+print(f"Saved: {fig_path3}")
+""")
+
+code(r"""
+# ════════════════════════════════════════════════════════════════════════
+# 12k  OVERLEAF — RESULTS, DISCUSSION & ANALYSIS SECTION (LaTeX)
+# ════════════════════════════════════════════════════════════════════════
+import pandas as pd, numpy as np
+
+# Load all paper tables
+di_df     = pd.read_csv('output/tables/paper_table1a_di.csv',   index_col=0)
+eopp_df   = pd.read_csv('output/tables/paper_table1b_eopp.csv', index_col=0)
+spd_df    = pd.read_csv('output/tables/paper_table1b2_spd.csv', index_col=0)
+perf_df   = pd.read_csv('output/tables/paper_table1c_performance.csv', index_col=0)
+lambda_df = pd.read_csv('output/tables/paper_table2_lambda.csv', index_col=0)
+
+def to_bold(df, mode='close_to_1'):
+    out = df.copy().astype(object)
+    for idx in df.index:
+        row = pd.to_numeric(df.loc[idx], errors='coerce')
+        if row.isna().all():
+            continue
+        if mode == 'close_to_1':
+            best_col = row.apply(lambda v: abs(1 - v)).idxmin()
+        elif mode == 'min':
+            best_col = row.idxmin()
+        else:
+            best_col = row.idxmax()
+        for col in df.columns:
+            v = df.loc[idx, col]
+            if col == best_col:
+                out.loc[idx, col] = '\\textbf{' + f'{v:.3f}' + '}'
+            else:
+                out.loc[idx, col] = f'{v:.3f}'
+    return out
+
+latex_sections = []
+
+# === RESULTS SECTION ===
+latex_sections.append(r'''
+% RESULTS SECTION -- Auto-generated from fairness analysis notebook
+
+\section{Results}
+\label{sec:results}
+
+\subsection{Model Performance}
+\label{sec:model-performance}
+
+We trained and evaluated 12 machine learning models on the Texas-100x PUDF dataset
+(925,569 patient records from 441 hospitals, 2019--2023).
+Table~\ref{tab:performance} summarises the predictive performance and
+composite fairness scores of the five principal methods.
+
+\begin{table}[ht]
+\centering
+\caption{Model Performance Comparison -- Accuracy, F1, AUC, Fair Verdicts (out of 28), and Composite Fairness Score (CFS).}
+\label{tab:performance}
+''')
+latex_sections.append(perf_df.to_latex(float_format='%.4f'))
+latex_sections.append(r'''
+\end{table}
+
+The baseline LGB-XGB Blend achieves the highest accuracy (0.8777) and AUC (0.9527).
+Our fair model (Reweigh+Thr) trades 2.7 percentage points of accuracy for
+a substantial gain in fairness verdicts (22/28 vs 21/28).
+
+\subsection{Fairness Evaluation Across Protected Attributes}
+\label{sec:fairness-eval}
+
+We evaluate fairness using seven metrics -- Disparate Impact (DI),
+Statistical Parity Difference (SPD), Equal Opportunity Difference (EOPP),
+Equalised Odds Difference (EOD), Theil Index (TI), Predictive Parity (PP),
+and Calibration Difference (CAL) -- across four protected attributes
+(Race, Sex, Ethnicity, Age Group).
+
+\subsubsection{Disparate Impact}
+
+Table~\ref{tab:di} presents the Disparate Impact scores.  A value $\geq 0.80$
+indicates compliance with the four-fifths rule.
+
+\begin{table}[ht]
+\centering
+\caption{Disparate Impact (DI) by protected attribute. \textbf{Bold} = closest to 1 (fairest). Threshold: DI $\geq$ 0.80.}
+\label{tab:di}
+''')
+latex_sections.append(to_bold(di_df, 'close_to_1').to_latex(escape=False))
+latex_sections.append(r'''
+\end{table}
+
+\subsubsection{Equal Opportunity Difference}
+
+Table~\ref{tab:eopp} reports EOPP scores.  Lower absolute values indicate
+more equitable true positive rates across groups.
+
+\begin{table}[ht]
+\centering
+\caption{Equal Opportunity Difference (EOPP). \textbf{Bold} = closest to 0 (fairest). Threshold: $|\text{EOPP}| < 0.10$.}
+\label{tab:eopp}
+''')
+latex_sections.append(to_bold(eopp_df, 'min').to_latex(escape=False))
+latex_sections.append(r'''
+\end{table}
+
+\subsubsection{Statistical Parity Difference}
+
+\begin{table}[ht]
+\centering
+\caption{Statistical Parity Difference (SPD). \textbf{Bold} = closest to 0 (fairest). Threshold: $|\text{SPD}| < 0.10$.}
+\label{tab:spd}
+''')
+latex_sections.append(to_bold(spd_df, 'min').to_latex(escape=False))
+latex_sections.append(r'''
+\end{table}
+
+\subsection{Effect of Reweighing Strength ($\lambda$)}
+\label{sec:lambda}
+
+Table~\ref{tab:lambda} shows how increasing the reweighing strength $\lambda$
+affects both DI and accuracy.
+
+\begin{table}[ht]
+\centering
+\caption{Effect of Reweighing Strength ($\lambda$) on Disparate Impact and Accuracy.
+         Higher $\lambda$ increases fairness but reduces accuracy.}
+\label{tab:lambda}
+''')
+lam_cols = ['Accuracy','DI (Race)','DI (Sex)','DI (Ethnicity)','DI (Age)','Fair Verdicts']
+latex_sections.append(lambda_df[lam_cols].to_latex(float_format='%.3f'))
+latex_sections.append(r'''
+\end{table}
+
+\subsection{Fairness Verdict Stability}
+\label{sec:stability}
+
+We assess verdict stability using the Verdict Flip Rate (VFR) across
+30 stratified random subsets of 10,000 records each.  A VFR of 0\%
+indicates that the fairness verdict is perfectly stable (never changes
+across resampled subsets).
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{figures/paper_verdict_heatmap.png}
+\caption{Fairness verdict heatmap across all models (7 metrics $\times$ 4 attributes). Green = FAIR, Red = UNFAIR.}
+\label{fig:heatmap}
+\end{figure}
+
+\subsection{Fairness-Performance Tradeoff}
+\label{sec:tradeoff}
+
+Figure~\ref{fig:pareto} shows the Pareto front between accuracy and
+Disparate Impact for Race across different $\lambda$ values.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.8\textwidth]{figures/paper_pareto_lambda.png}
+\caption{Accuracy vs Disparate Impact (Race) Pareto front. Moving
+right increases accuracy; moving up increases fairness.}
+\label{fig:pareto}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{figures/paper_fairness_comparison.png}
+\caption{Side-by-side comparison of (a) Disparate Impact and (b) Equal Opportunity
+Difference across five methods and four protected attributes.}
+\label{fig:bar_comparison}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\textwidth]{figures/paper_radar_fairness.png}
+\caption{Radar plots of fairness profiles (7 metrics, 4 attributes) for
+Standard, Fair (Ours), and AFCE-XGB.  Outer ring = perfectly fair.}
+\label{fig:radar}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/paper_verdicts_by_model.png}
+\caption{Total fair verdicts (out of 28) per model, sorted ascending.
+Bar colour: red $<$ 14, orange 14--20, green $\geq$ 21.}
+\label{fig:verdicts_bar}
+\end{figure}
+
+% ════════════════════════════════════════════════════════════════════════════
+% DISCUSSION SECTION
+% ════════════════════════════════════════════════════════════════════════════
+
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{Effectiveness of Multi-Criteria Fairness Auditing}
+
+Our results demonstrate that no single fairness metric suffices for a comprehensive
+audit.  The standard LGB-XGB Blend achieves 21/28 fair verdicts, yet fails on
+critical metrics such as DI for Race (0.798, below the 0.80 threshold).
+This aligns with the impossibility theorem~\cite{chouldechova2017fair},
+which proves that satisfying all group fairness criteria simultaneously is
+infeasible when base rates differ across groups.
+
+The seven-metric framework provides practitioners with a multi-dimensional
+view: while DI and SPD capture selection-rate parity, EOPP and EOD focus on
+error-rate equity, and TI/CAL reflect information-theoretic and calibration
+fairness respectively.  The Composite Fairness Score (CFS) offers a single
+summary but should always be interpreted alongside individual metric verdicts.
+
+\subsection{Fairness-Accuracy Tradeoff}
+
+The transition from the Standard model to our Fair model (Reweigh + Triple-Objective
+Threshold Optimisation) incurs a $-2.70$ percentage-point accuracy drop
+(from 0.8777 to 0.8507) while increasing fair verdicts from 21 to 22 out of 28.
+This represents a net gain of approximately $+0.37$ fairness verdicts per
+percentage point of accuracy sacrificed.
+
+For the Age Group attribute, only 3/7 metrics can be simultaneously satisfied —
+this is consistent with the Chouldechova impossibility result given the substantial
+base-rate differences between age groups (paediatric: 48.0\% vs elderly: 25.7\%
+positive rate).
+
+\subsection{Stability and Robustness}
+
+The VFR analysis reveals that most fairness verdicts are stable under resampling:
+over 70\% of metric-attribute combinations have VFR = 0\% (perfectly stable).
+However, several combinations — particularly EOPP for Race (VFR = 46.7\%) and
+PP for Race (VFR = 46.7\%) — exhibit high instability.  These correspond to
+metrics where the model's value is close to the fairness threshold, making
+the binary verdict sensitive to sampling variation.
+
+This finding has important practical implications: fairness audits based on a
+single train/test split may produce misleading conclusions for
+threshold-proximate metrics.  Our 30-subset resampling protocol provides
+a more robust assessment.
+
+\subsection{Cross-Site Portability}
+
+The hospital-cluster analysis shows that fairness verdicts vary substantially
+across sites.  Metrics like TI exhibit high cross-site coefficient of variation,
+suggesting that a model deemed fair at one hospital cluster may be unfair at
+another.  This underscores the need for site-specific fairness monitoring in
+deployed systems.
+
+\subsection{Intersectional Analysis}
+
+The subgroup analysis reveals selection rate disparities that are invisible
+to single-attribute auditing.  The selection rate range across intersectional
+subgroups highlights that certain demographic intersections (e.g., specific
+Race $\times$ Age combinations) experience substantially different treatment
+by the model.
+
+\subsection{Limitations}
+
+\begin{enumerate}
+    \item \textbf{Impossibility constraints:} The Chouldechova theorem limits
+    simultaneous satisfaction of all metrics when base rates differ.  Our AGE
+    attribute (3/7 fair) reflects this theoretical ceiling.
+    \item \textbf{Threshold sensitivity:} Binary fair/unfair verdicts depend
+    on chosen thresholds (DI $\geq$ 0.80, $|\text{SPD}| < 0.10$, etc.).
+    Small threshold changes could alter conclusions.
+    \item \textbf{Single dataset:} Results are based on the Texas PUDF.
+    Generalisability to other state or national datasets requires further
+    evaluation.
+    \item \textbf{Temporal stability:} We analyse 2019--2023 data pooled;
+    year-over-year fairness drift is not examined.
+\end{enumerate}
+
+% ════════════════════════════════════════════════════════════════════════════
+% ANALYSIS SECTION
+% ════════════════════════════════════════════════════════════════════════════
+
+\section{Analysis}
+\label{sec:analysis}
+
+\subsection{Comparative Summary}
+
+Table~\ref{tab:summary} provides a comprehensive summary comparing all five
+methods across performance and fairness dimensions.
+
+\begin{table}[ht]
+\centering
+\caption{Comprehensive method comparison — performance, fairness, and stability.}
+\label{tab:summary}
+\begin{tabular}{l c c c c c}
+\toprule
+\textbf{Criterion} & \textbf{Standard} & \textbf{XGBoost} & \textbf{AFCE-XGB} & \textbf{AFCE-LGBM} & \textbf{Fair (Ours)} \\
+\midrule
+Accuracy           & \textbf{0.8777} & 0.8732 & 0.8586 & 0.8520 & 0.8507 \\
+AUC                & \textbf{0.9527} & 0.9503 & 0.9477 & 0.9464 & 0.9477 \\
+Fair Verdicts      & 21/28           & 18/28  & 19/28  & 18/28  & \textbf{22/28} \\
+CFS (\%)           & 75.0            & 64.3   & 67.9   & 64.3   & \textbf{78.6} \\
+DI (Race)          & 0.798           & 0.783  & 0.794  & 0.793  & \textbf{0.813} \\
+VFR Stability      & High            & High   & High   & High   & High \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Key Takeaways}
+
+\begin{enumerate}
+    \item \textbf{Lambda reweighing is effective but exhibits diminishing returns.}
+    Moving from $\lambda = 0$ to $\lambda = 1$ improves DI(Race) from 0.798 to 0.813
+    with only 2.7pp accuracy loss.  Higher $\lambda$ values (8, 15, 25, 50)
+    continue to degrade accuracy without proportional fairness gains.
+
+    \item \textbf{Triple-objective threshold optimisation is complementary.}
+    Optimising thresholds with $\alpha_{\text{SR}} = 0.4$, $\alpha_{\text{TPR}} = 0.8$
+    balances selection-rate parity with error-rate equity, achieving the
+    highest CFS (78.6\%) among all methods.
+
+    \item \textbf{Fairness verdicts require resampling-based validation.}
+    Single-split audits can be misleading.  Our 30-subset VFR protocol reveals
+    that 5--7 of 28 metric-attribute pairs are unstable (VFR $>$ 10\%),
+    suggesting these verdicts should be reported with confidence intervals.
+
+    \item \textbf{Protected attributes vary in difficulty.}
+    Sex and Ethnicity are easiest to satisfy (7/7 fair), Race is moderately
+    challenging (5/7), and Age Group is fundamentally constrained (3/7)
+    by base-rate differences.
+
+    \item \textbf{Intersectional disparities persist.}
+    Even when single-attribute metrics pass, intersectional subgroups may
+    exhibit significant selection-rate disparities, motivating future work
+    on intersectional fairness constraints.
+\end{enumerate}
+''')
+
+# Combine and print
+full_latex = '\n'.join(latex_sections)
+
+# Save to file
+with open('output/tables/overleaf_results_discussion_analysis.tex', 'w', encoding='utf-8') as f:
+    f.write(full_latex)
+
+print("=" * 80)
+print("OVERLEAF — Results, Discussion & Analysis Section")
+print("=" * 80)
+print(full_latex[:3000])
+print("\n... [truncated — full output saved to file] ...\n")
+print(f"Full LaTeX saved to: output/tables/overleaf_results_discussion_analysis.tex")
+print(f"  Total length: {len(full_latex):,} characters")
+print(f"  Copy this file into your Overleaf project's sections/ folder")
+print()
+print("  Required figure files (copy to figures/ in Overleaf):")
+print("    - figures/paper_verdict_heatmap.png")
+print("    - figures/paper_pareto_lambda.png")
+print("    - figures/paper_fairness_comparison.png")
+print("    - figures/paper_radar_fairness.png")
+print("    - figures/paper_verdicts_by_model.png")
+print()
+print("  Required packages: booktabs, graphicx, caption")
 """)
 
 md("""

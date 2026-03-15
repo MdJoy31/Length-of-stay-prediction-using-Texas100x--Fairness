@@ -6,5 +6,5 @@ Mekhaldi et al. (2021),Open,"~5,000",LOS Reg.,GBM,,0,4,No,No
 Pfohl et al. (2021),STARR+Optum+MIMIC,"~200,000",LOS>7d,L2-LR,0.84,7,1,Bootstrap CI,3 sites
 Poulain et al. (2023),MIMIC-III+eICU,"~200,000",Mortality,LR/MLP+FL,0.83,3,2,No,208 sites (FL)
 Tarek et al. (2025),MIMIC-III,"~40,000",LOS,XGBoost,0.86,1,1,Single seed,No
-Our Study (Standard),Texas-100x PUDF,"925,128",LOS>3d,LGB-XGB Blend,0.9527085954335412,7,12,30 seeds+KFold+Bootstrap,441 hospitals
+Our Study (Standard),Texas-100x PUDF,"925,128",LOS>3d,LGB-XGB Blend,0.9526766115264091,7,12,30 seeds+KFold+Bootstrap,441 hospitals
 Our Study (Fair),Texas-100x PUDF,"925,128",LOS>3d,Fair-XGBoost,0.9458926076635251,7,12,30 seeds+KFold+Bootstrap,441 hospitals
