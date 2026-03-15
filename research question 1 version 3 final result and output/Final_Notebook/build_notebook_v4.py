@@ -5388,6 +5388,278 @@ print("  ✅  NOTEBOOK EXECUTION COMPLETE")
 print("=" * 70)
 """)
 
+###############################################################################
+# SECTION 12: PAPER COMPARISON TABLES
+###############################################################################
+
+md("""
+---
+## 12. Paper Comparison Tables
+
+Publication-ready comparison tables comparing **five methods** across
+four protected attributes and seven fairness metrics.
+
+| Method | Description |
+|--------|-------------|
+| Standard | LGB-XGB Blend (best model, no fairness intervention) |
+| XGBoost | Single gradient-boosting model |
+| AFCE-XGB | Fairness-Through-Awareness (XGBoost + protected features) |
+| AFCE-LGBM | Fairness-Through-Awareness (LightGBM + protected features) |
+| **Fair (Ours)** | Reweighing (λ=1) + Triple-objective threshold optimisation |
+""")
+
+code(r"""
+# ════════════════════════════════════════════════════════════════════════
+# 12a  TABLE 1 – COMBINED FAIRNESS-PERFORMANCE COMPARISON
+# ════════════════════════════════════════════════════════════════════════
+import pandas as pd, numpy as np, os
+from IPython.display import display, HTML
+
+trade_df = pd.read_csv('output/tables/14d_fairness_accuracy_tradeoff.csv')
+
+methods = {
+    'Standard':    'LGB-XGB Blend',
+    'XGBoost':     'XGBoost',
+    'AFCE-XGB':    'AFCE-XGBoost',
+    'AFCE-LGBM':   'AFCE-LightGBM',
+    'Fair (Ours)': 'Fair (Reweigh+Thr)'
+}
+attrs       = ['RACE', 'SEX', 'ETHNICITY', 'AGE_GROUP']
+attr_labels = ['Race', 'Sex', 'Ethnicity', 'Age Group']
+
+# ── (a) Disparate Impact table ──
+di_rows = []
+for attr, label in zip(attrs, attr_labels):
+    row = {'Protected Attribute': label}
+    for mlabel, mname in methods.items():
+        r = trade_df[trade_df['Model'] == mname].iloc[0]
+        row[mlabel] = round(r[f'DI_{attr}'], 3)
+    di_rows.append(row)
+di_df = pd.DataFrame(di_rows).set_index('Protected Attribute')
+di_df.to_csv('output/tables/paper_table1a_di.csv')
+
+# ── (b) Equal Opportunity table ──
+eopp_rows = []
+for attr, label in zip(attrs, attr_labels):
+    row = {'Protected Attribute': label}
+    for mlabel, mname in methods.items():
+        r = trade_df[trade_df['Model'] == mname].iloc[0]
+        row[mlabel] = round(r[f'EOPP_{attr}'], 3)
+    eopp_rows.append(row)
+eopp_df = pd.DataFrame(eopp_rows).set_index('Protected Attribute')
+eopp_df.to_csv('output/tables/paper_table1b_eopp.csv')
+
+# ── (c) SPD table ──
+spd_rows = []
+for attr, label in zip(attrs, attr_labels):
+    row = {'Protected Attribute': label}
+    for mlabel, mname in methods.items():
+        r = trade_df[trade_df['Model'] == mname].iloc[0]
+        row[mlabel] = round(r[f'SPD_{attr}'], 3)
+    spd_rows.append(row)
+spd_df = pd.DataFrame(spd_rows).set_index('Protected Attribute')
+spd_df.to_csv('output/tables/paper_table1b2_spd.csv')
+
+# ── (d) Performance table ──
+perf_rows = []
+for mlabel, mname in methods.items():
+    r = trade_df[trade_df['Model'] == mname].iloc[0]
+    perf_rows.append({
+        'Method': mlabel,
+        'Accuracy': round(r['Accuracy'], 4),
+        'F1-Score': round(r['F1'], 4),
+        'AUC':      round(r['AUC'], 4),
+        'Fair Verdicts': int(r['Fair_Verdicts']),
+        'CFS (%)':  round(r['CFS'] * 100, 1)
+    })
+perf_df = pd.DataFrame(perf_rows).set_index('Method')
+perf_df.to_csv('output/tables/paper_table1c_performance.csv')
+
+# ── Styled HTML display ──
+def style_best_di(row):
+    vals = row.values.astype(float)
+    best = int(np.argmin(np.abs(vals - 1.0)))
+    return ['font-weight:bold; background:#d4edda' if i == best else '' for i in range(len(vals))]
+
+def style_best_low(row):
+    vals = row.values.astype(float)
+    best = int(np.argmin(vals))
+    return ['font-weight:bold; background:#d4edda' if i == best else '' for i in range(len(vals))]
+
+print("Table 1a: Disparate Impact (↑ closer to 1 is better)")
+print("─" * 60)
+display(di_df.style.apply(style_best_di, axis=1)
+        .format('{:.3f}')
+        .set_caption('Disparate Impact by Protected Attribute'))
+
+print("\nTable 1b: Equal Opportunity Difference (↓ closer to 0 is better)")
+print("─" * 60)
+display(eopp_df.style.apply(style_best_low, axis=1)
+        .format('{:.3f}')
+        .set_caption('Equal Opportunity Difference by Protected Attribute'))
+
+print("\nTable 1b′: Statistical Parity Difference (↓ closer to 0 is better)")
+print("─" * 60)
+display(spd_df.style.apply(style_best_low, axis=1)
+        .format('{:.3f}')
+        .set_caption('Statistical Parity Difference by Protected Attribute'))
+
+print("\nTable 1c: Model Performance")
+print("─" * 60)
+display(perf_df.style.format({
+    'Accuracy':'{:.4f}','F1-Score':'{:.4f}','AUC':'{:.4f}',
+    'Fair Verdicts':'{:.0f}','CFS (%)':'{:.1f}'
+}).set_caption('Performance Comparison'))
+
+# Verify no zeros
+all_vals = list(di_df.values.flatten()) + list(eopp_df.values.flatten()) + list(spd_df.values.flatten())
+zeros = [v for v in all_vals if v == 0]
+print(f"\n✅ Zero-value check: {len(zeros)} zeros found in fairness tables" if zeros else "\n✅ No zero values in any fairness table cell")
+""")
+
+code(r"""
+# ════════════════════════════════════════════════════════════════════════
+# 12b  TABLE 2 – REWEIGHING λ EFFECT ON FAIRNESS
+# ════════════════════════════════════════════════════════════════════════
+import pandas as pd
+from IPython.display import display
+
+cand_df = pd.read_csv('output/tables/18b_fairness_candidate_search.csv')
+
+lambda_rows = []
+for model in ['Standard','Reweigh_1','Reweigh_3','Reweigh_8',
+              'Reweigh_15','Reweigh_25','Reweigh_50']:
+    sub = cand_df[cand_df['Model'] == model]
+    best = sub.sort_values(['Total_Fair','Accuracy'],
+                           ascending=[False, False]).iloc[0]
+    lam = model.replace('Reweigh_', 'λ = ') if 'Reweigh' in model else 'Baseline (λ = 0)'
+    lambda_rows.append({
+        'Method': lam,
+        'Accuracy':       round(best['Accuracy'], 4),
+        'DI (Race)':      round(best['DI_RACE'], 3),
+        'DI (Sex)':       round(best['DI_SEX'], 3),
+        'DI (Ethnicity)': round(best['DI_ETH'], 3),
+        'DI (Age)':       round(best['DI_AGE'], 3),
+        'Fair Verdicts':  int(best['Total_Fair']),
+        'α_SR':  best['A_SR'],
+        'α_TPR': best['A_TPR'],
+        'α_PPV': best['A_PPV']
+    })
+lambda_df = pd.DataFrame(lambda_rows).set_index('Method')
+lambda_df.to_csv('output/tables/paper_table2_lambda.csv')
+
+print("Table 2: Effect of Reweighing Strength (λ) on Disparate Impact")
+print("─" * 70)
+display(lambda_df.style.format({
+    'Accuracy':'{:.4f}',
+    'DI (Race)':'{:.3f}','DI (Sex)':'{:.3f}',
+    'DI (Ethnicity)':'{:.3f}','DI (Age)':'{:.3f}',
+    'Fair Verdicts':'{:.0f}',
+    'α_SR':'{:.1f}','α_TPR':'{:.1f}','α_PPV':'{:.1f}'
+}).set_caption('Reweighing λ Effect'))
+""")
+
+code(r"""
+# ════════════════════════════════════════════════════════════════════════
+# 12c  PAPER FIGURE – FAIRNESS BAR-CHART COMPARISON
+# ════════════════════════════════════════════════════════════════════════
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt, numpy as np, pandas as pd
+
+di_df   = pd.read_csv('output/tables/paper_table1a_di.csv',   index_col=0)
+eopp_df = pd.read_csv('output/tables/paper_table1b_eopp.csv', index_col=0)
+
+fig, axes = plt.subplots(1, 2, figsize=(16, 5))
+x = np.arange(len(di_df.index))
+width = 0.14
+colors = ['#4e79a7','#f28e2b','#59a14f','#e15759','#b07aa1']
+
+# (a) DI comparison
+for i, col in enumerate(di_df.columns):
+    axes[0].bar(x + i*width, di_df[col], width, label=col,
+                color=colors[i], edgecolor='white', linewidth=0.5)
+axes[0].axhline(0.80, color='red', ls='--', alpha=.6, label='DI ≥ 0.80')
+axes[0].set_ylabel('Disparate Impact', fontsize=12)
+axes[0].set_title('(a) Disparate Impact (↑ closer to 1)', fontsize=13, fontweight='bold')
+axes[0].set_xticks(x + width*2); axes[0].set_xticklabels(di_df.index, fontsize=10)
+axes[0].legend(fontsize=8, loc='upper left'); axes[0].set_ylim(0, 1.08)
+axes[0].grid(axis='y', alpha=.3)
+
+# (b) EOPP comparison
+for i, col in enumerate(eopp_df.columns):
+    axes[1].bar(x + i*width, eopp_df[col], width, label=col,
+                color=colors[i], edgecolor='white', linewidth=0.5)
+axes[1].axhline(0.10, color='red', ls='--', alpha=.6, label='EOPP < 0.10')
+axes[1].set_ylabel('Equal Opportunity Diff.', fontsize=12)
+axes[1].set_title('(b) EOPP (↓ closer to 0)', fontsize=13, fontweight='bold')
+axes[1].set_xticks(x + width*2); axes[1].set_xticklabels(eopp_df.index, fontsize=10)
+axes[1].legend(fontsize=8, loc='upper left')
+axes[1].grid(axis='y', alpha=.3)
+
+plt.tight_layout()
+fig_path = 'output/figures/paper_fairness_comparison.png'
+plt.savefig(fig_path, dpi=200, bbox_inches='tight'); plt.show()
+print(f"Saved: {fig_path}")
+""")
+
+code(r"""
+# ════════════════════════════════════════════════════════════════════════
+# 12d  LaTeX TABLE OUTPUT (copy-paste into paper)
+# ════════════════════════════════════════════════════════════════════════
+import pandas as pd, numpy as np
+
+di_df     = pd.read_csv('output/tables/paper_table1a_di.csv',   index_col=0)
+eopp_df   = pd.read_csv('output/tables/paper_table1b_eopp.csv', index_col=0)
+perf_df   = pd.read_csv('output/tables/paper_table1c_performance.csv', index_col=0)
+lambda_df = pd.read_csv('output/tables/paper_table2_lambda.csv', index_col=0)
+
+def latex_bold_best(df, mode='close_to_1'):
+    # Return a string-typed DF with \textbf on the best value per row.
+    out = df.copy().astype(object)
+    for idx in df.index:
+        row = pd.to_numeric(df.loc[idx], errors='coerce')
+        if row.isna().all():
+            continue
+        if mode == 'close_to_1':
+            best_col = row.apply(lambda v: abs(1 - v)).idxmin()
+        elif mode == 'min':
+            best_col = row.idxmin()
+        else:
+            best_col = row.idxmax()
+        for col in df.columns:
+            v = df.loc[idx, col]
+            if col == best_col:
+                out.loc[idx, col] = '\\textbf{' + f'{v:.3f}' + '}'
+            else:
+                out.loc[idx, col] = f'{v:.3f}'
+    return out
+
+print("=" * 80)
+print("LaTeX — Table 1a: Disparate Impact (↑ closer to 1)")
+print("=" * 80)
+print(latex_bold_best(di_df, 'close_to_1').to_latex(escape=False))
+
+print("=" * 80)
+print("LaTeX — Table 1b: Equal Opportunity Difference (↓)")
+print("=" * 80)
+print(latex_bold_best(eopp_df, 'min').to_latex(escape=False))
+
+print("=" * 80)
+print("LaTeX — Table 1c: Performance Metrics")
+print("=" * 80)
+print(perf_df.to_latex(float_format='%.4f'))
+
+print("=" * 80)
+print("LaTeX — Table 2: Lambda Effect")
+print("=" * 80)
+cols = ['Accuracy','DI (Race)','DI (Sex)','DI (Ethnicity)','DI (Age)','Fair Verdicts']
+print(lambda_df[cols].to_latex(float_format='%.3f'))
+
+print("\n✅ All paper tables saved to output/tables/paper_*.csv")
+print("   Copy the LaTeX blocks above directly into your .tex manuscript.")
+""")
+
 md("""
 ---
 ## Conclusion

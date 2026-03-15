@@ -1,0 +1,5 @@
+Protected Attribute,Standard,XGBoost,AFCE-XGB,AFCE-LGBM,Fair (Ours)
+Race,0.174,0.178,0.197,0.2,0.088
+Sex,0.123,0.123,0.107,0.108,0.052
+Ethnicity,0.078,0.078,0.076,0.075,0.039
+Age Group,0.435,0.435,0.436,0.437,0.208
