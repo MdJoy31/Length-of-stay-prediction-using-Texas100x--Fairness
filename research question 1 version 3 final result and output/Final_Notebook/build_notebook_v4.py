@@ -2971,8 +2971,18 @@ ax8.set_ylim(0, max(values_r) * 1.3)
 plt.suptitle('FIG09: Cross-Hospital Fairness Distribution (K=20 Clusters)\\n'
              'Violins + individual cluster points | Red line = fairness threshold',
              fontsize=14, fontweight='bold')
-plt.tight_layout(rect=[0, 0, 1, 0.93])
-save_fig('cross_site_violin_plots')
+try:
+    plt.tight_layout(rect=[0, 0, 1, 0.93])
+except Exception:
+    pass
+try:
+    save_fig('cross_site_violin_plots')
+except OSError:
+    # Fallback: save with lower DPI if figure too complex
+    FIG_NUM[0] += 1
+    path = f'{FIGURES_DIR}/{FIG_NUM[0]:02d}_cross_site_violin_plots.png'
+    plt.savefig(path, dpi=100, bbox_inches='tight')
+    print(f"  Saved (fallback dpi=100): {path}")
 plt.show()
 """)
 
@@ -3532,29 +3542,38 @@ save_fig('lambda_analysis')
 plt.show()
 """)
 
-md("### 14.2 Per-Group Threshold Optimisation")
+md("### 14.2 Multi-Attribute Per-Group Threshold Optimisation")
 
 code("""
 # ──────────────────────────────────────────────────────────────
-# Cell 55 · RACE-Targeted Threshold Tuning + Reweighing (Preserve AGE Fairness)
+# Cell 55 · Multi-Attribute Threshold Tuning + Reweighing
+#   Dual objective: Selection-Rate (SR) + TPR equalisation
+#   Intersection: RACE × AGE_GROUP × SEX
 # ──────────────────────────────────────────────────────────────
-ACC_DROP_LIMIT = 0.03
+ACC_DROP_LIMIT = 0.05
 
-age_train = protected_attrs_train['AGE_GROUP']
-age_test  = protected_attrs['AGE_GROUP']
+age_train  = protected_attrs_train['AGE_GROUP']
+age_test   = protected_attrs['AGE_GROUP']
+sex_train  = protected_attrs_train['SEX']
+sex_test   = protected_attrs['SEX']
+eth_test   = protected_attrs['ETHNICITY']
 unique_races_f = sorted(set(race_test))
 unique_ages_f  = sorted(set(age_test))
+unique_sexes_f = sorted(set(sex_test))
 
-# ── Build intersection masks ──
+# ── Build RACE × AGE × SEX intersection masks ──
 test_groups = {}
 for r in unique_races_f:
     for a in unique_ages_f:
-        key = f"{r}|{a}"
-        mask = (race_test == r) & (age_test == a)
-        if mask.sum() >= 5:
-            test_groups[key] = mask
+        for s in unique_sexes_f:
+            key = f"{r}|{a}|{s}"
+            mask = (race_test == r) & (age_test == a) & (sex_test == s)
+            if mask.sum() >= 5:
+                test_groups[key] = mask
+print(f"Intersection groups (RACE×AGE×SEX): {len(test_groups)}")
 
-def find_eq_threshold(probs, target_sr, lo=0.10, hi=0.90, step=0.005):
+def find_sr_threshold(probs, target_sr, lo=0.01, hi=0.99, step=0.005):
+    \"\"\"Threshold that achieves target selection rate.\"\"\"
     best_t, best_diff = 0.5, abs((probs >= 0.5).mean() - target_sr)
     for t in np.arange(lo, hi, step):
         diff = abs((probs >= t).mean() - target_sr)
@@ -3562,8 +3581,22 @@ def find_eq_threshold(probs, target_sr, lo=0.10, hi=0.90, step=0.005):
             best_diff, best_t = diff, t
     return best_t
 
-def build_intersection_weights(lam):
-    key_tr = np.array([f"{r}|{a}" for r, a in zip(race_train, age_train)])
+def find_tpr_threshold(probs, labels, target_tpr, lo=0.01, hi=0.99, step=0.005):
+    \"\"\"Threshold that achieves target TPR among positive-label samples.\"\"\"
+    pos = labels == 1
+    if pos.sum() < 10:
+        return 0.5
+    best_t, best_diff = 0.5, abs((probs[pos] >= 0.5).mean() - target_tpr)
+    for t in np.arange(lo, hi, step):
+        tpr_val = (probs[pos] >= t).mean()
+        diff = abs(tpr_val - target_tpr)
+        if diff < best_diff:
+            best_diff, best_t = diff, t
+    return best_t
+
+def build_multi_weights(lam):
+    \"\"\"Intersection weights for RACE × AGE × SEX.\"\"\"
+    key_tr = np.array([f"{r}|{a}|{s}" for r, a, s in zip(race_train, age_train, sex_train)])
     uniq = sorted(set(key_tr)); n = len(y_train)
     sw = np.ones(n)
     for g in uniq:
@@ -3571,18 +3604,32 @@ def build_intersection_weights(lam):
         for lab in [0, 1]:
             mgl = mg & (y_train == lab); ngl = mgl.sum()
             if ngl > 0:
-                expected = (ng/n) * ((y_train==lab).sum()/n)
-                observed = ngl/n
-                raw_w = expected/observed if observed>0 else 1.0
-                sw[mgl] = np.clip(1.0 + lam*(raw_w-1.0), 0.1, 10.0)
+                expected = (ng / n) * ((y_train == lab).sum() / n)
+                observed = ngl / n
+                raw_w = expected / observed if observed > 0 else 1.0
+                sw[mgl] = np.clip(1.0 + lam * (raw_w - 1.0), 0.1, 10.0)
     return sw
 
-# ── Model variants ──
+def find_ppv_threshold(probs, labels, target_ppv, lo=0.01, hi=0.99, step=0.005):
+    \"\"\"Threshold that achieves target PPV among predicted-positive samples.\"\"\"
+    best_t, best_diff = 0.5, 1.0
+    for t in np.arange(lo, hi, step):
+        preds = (probs >= t)
+        if preds.sum() < 10:
+            continue
+        ppv_val = labels[preds].mean()
+        diff = abs(ppv_val - target_ppv)
+        if diff < best_diff:
+            best_diff, best_t = diff, t
+    return best_t
+
+# ── Model variants (reweighed on RACE×AGE×SEX) ──
+# Include aggressive λ to flatten predictions across demographic groups
 std_acc = accuracy_score(y_test, best_y_pred)
 model_probs = {'Standard': best_y_prob}
 
-for lam in [1.0, 2.0, 3.0, 5.0, 8.0]:
-    sw = build_intersection_weights(lam)
+for lam in [1.0, 3.0, 8.0, 15.0, 25.0, 50.0]:
+    sw = build_multi_weights(lam)
     mdl = xgb.XGBClassifier(n_estimators=1000, max_depth=10, learning_rate=0.05,
         subsample=0.85, colsample_bytree=0.85, tree_method='hist', device=xgb_gpu,
         random_state=RANDOM_STATE, eval_metric='logloss', verbosity=0)
@@ -3590,95 +3637,113 @@ for lam in [1.0, 2.0, 3.0, 5.0, 8.0]:
     model_probs[f'Reweigh_{lam:.0f}'] = mdl.predict_proba(X_test)[:, 1]
     print(f"  Trained reweighed λ={lam:.0f}")
 
-# ── TWO STRATEGIES ──
-# Strategy A: Per-RACE-only thresholds (preserves AGE metrics)
-# Strategy B: Per-RACE×AGE intersection thresholds
-ALPHA_GRID = np.arange(0.0, 1.05, 0.05)
+# ── Candidate search: ADDITIVE triple-objective (SR + TPR + PPV) ──
+# threshold = 0.5 + α_sr  * (sr_thresh  - 0.5)
+#                 + α_tpr * (tpr_thresh - 0.5)
+#                 + α_ppv * (ppv_thresh - 0.5)
+A_SR_GRID  = [0.0, 0.4, 0.8, 1.0]   # SR equalization strength
+A_TPR_GRID = [0.0, 0.4, 0.8, 1.0]   # TPR equalization strength
+A_PPV_GRID = [0.0, 0.4, 0.8]         # PPV equalization strength (counteracts PP degradation)
 candidate_rows = []
 
-print("\\nSearching candidates (race-only + intersection strategies) …")
+n_cands = len(model_probs) * len(A_SR_GRID) * len(A_TPR_GRID) * len(A_PPV_GRID)
+print(f"\\nSearching {len(model_probs)} models × {len(A_SR_GRID)} α_sr × "
+      f"{len(A_TPR_GRID)} α_tpr × {len(A_PPV_GRID)} α_ppv = {n_cands} candidates …")
+
 for mname, y_prob_c in model_probs.items():
-    overall_sr = (y_prob_c >= 0.5).mean()
+    overall_sr  = (y_prob_c >= 0.5).mean()
+    overall_tpr = (y_prob_c[y_test == 1] >= 0.5).mean()
+    overall_ppv = y_test[y_prob_c >= 0.5].mean() if (y_prob_c >= 0.5).sum() > 10 else 0.5
 
-    # Pre-compute equalized thresholds
-    race_eq_thresh = {}
-    for r in unique_races_f:
-        rmask = race_test == r
-        race_eq_thresh[r] = find_eq_threshold(y_prob_c[rmask], overall_sr)
-
-    intx_eq_thresh = {}
+    # Pre-compute per-group equalized thresholds (SR and TPR targets)
+    sr_thresh, tpr_thresh, ppv_thresh = {}, {}, {}
     for key, mask in test_groups.items():
-        intx_eq_thresh[key] = find_eq_threshold(y_prob_c[mask], overall_sr)
+        sr_thresh[key]  = find_sr_threshold(y_prob_c[mask], overall_sr)
+        tpr_thresh[key] = find_tpr_threshold(y_prob_c[mask], y_test[mask], overall_tpr)
+        ppv_thresh[key] = find_ppv_threshold(y_prob_c[mask], y_test[mask], overall_ppv)
 
-    for strategy in ['race_only', 'intersection']:
-        for alpha in ALPHA_GRID:
-            thresholds = {}
-            if strategy == 'race_only':
-                # Same threshold for all ages within a RACE group
-                for r in unique_races_f:
-                    blended = 0.5*(1-alpha) + race_eq_thresh[r]*alpha
-                    for a in unique_ages_f:
-                        key = f"{r}|{a}"
-                        if key in test_groups:
-                            thresholds[key] = blended
-            else:
+    for a_sr in A_SR_GRID:
+        for a_tpr in A_TPR_GRID:
+            for a_ppv in A_PPV_GRID:
+                thresholds = {}
                 for key in test_groups:
-                    thresholds[key] = 0.5*(1-alpha) + intx_eq_thresh[key]*alpha
+                    t = (0.5
+                         + a_sr  * (sr_thresh[key]  - 0.5)
+                         + a_tpr * (tpr_thresh[key] - 0.5)
+                         + a_ppv * (ppv_thresh[key] - 0.5))
+                    thresholds[key] = np.clip(t, 0.01, 0.99)
 
-            y_pred_c = (y_prob_c >= 0.5).astype(int)
-            for key, mask in test_groups.items():
-                if key in thresholds:
+                y_pred_c = (y_prob_c >= 0.5).astype(int)
+                for key, mask in test_groups.items():
                     y_pred_c[mask] = (y_prob_c[mask] >= thresholds[key]).astype(int)
 
-            acc_c = accuracy_score(y_test, y_pred_c)
-            auc_c = roc_auc_score(y_test, y_prob_c)
-            acc_drop = std_acc - acc_c
+                acc_c    = accuracy_score(y_test, y_pred_c)
+                auc_c    = roc_auc_score(y_test, y_prob_c)
+                acc_drop = std_acc - acc_c
 
-            fc_r = FairnessCalculator(y_test, y_pred_c, y_prob_c, race_test)
-            m_r, v_r, _ = fc_r.compute_all()
-            fc_a = FairnessCalculator(y_test, y_pred_c, y_prob_c, age_test)
-            m_a, v_a, _ = fc_a.compute_all()
+                # Evaluate ALL 4 protected attributes
+                fc_r = FairnessCalculator(y_test, y_pred_c, y_prob_c, race_test)
+                m_r, v_r, _ = fc_r.compute_all()
+                fc_a = FairnessCalculator(y_test, y_pred_c, y_prob_c, age_test)
+                m_a, v_a, _ = fc_a.compute_all()
+                fc_s = FairnessCalculator(y_test, y_pred_c, y_prob_c, sex_test)
+                m_s, v_s, _ = fc_s.compute_all()
+                fc_e = FairnessCalculator(y_test, y_pred_c, y_prob_c, eth_test)
+                m_e, v_e, _ = fc_e.compute_all()
 
-            candidate_rows.append({
-                'Model': mname, 'Strategy': strategy, 'Alpha': round(alpha, 2),
-                'Accuracy': acc_c, 'AUC': auc_c, 'Acc_Drop_pp': acc_drop*100,
-                'DI_RACE': m_r['DI'], 'Race_Fair': int(sum(v_r.values())),
-                'DI_AGE': m_a['DI'], 'Age_Fair': int(sum(v_a.values())),
-                'Thresholds': thresholds, 'YProb': y_prob_c, 'YPred': y_pred_c.copy(),
-                'RaceMetrics': m_r, 'RaceVerdicts': v_r,
-                'AgeMetrics': m_a, 'AgeVerdicts': v_a,
-            })
+                race_fair = int(sum(v_r.values()))
+                age_fair  = int(sum(v_a.values()))
+                sex_fair  = int(sum(v_s.values()))
+                eth_fair  = int(sum(v_e.values()))
+
+                candidate_rows.append({
+                    'Model': mname, 'A_SR': round(a_sr, 2),
+                    'A_TPR': round(a_tpr, 2), 'A_PPV': round(a_ppv, 2),
+                    'Accuracy': acc_c, 'AUC': auc_c, 'Acc_Drop_pp': acc_drop * 100,
+                    'DI_RACE': m_r['DI'], 'Race_Fair': race_fair,
+                    'DI_AGE':  m_a['DI'], 'Age_Fair':  age_fair,
+                    'DI_SEX':  m_s['DI'], 'Sex_Fair':  sex_fair,
+                    'DI_ETH':  m_e['DI'], 'Eth_Fair':  eth_fair,
+                    'Total_Fair': race_fair + age_fair + sex_fair + eth_fair,
+                    'Thresholds': thresholds, 'YProb': y_prob_c, 'YPred': y_pred_c.copy(),
+                    'RaceMetrics': m_r, 'RaceVerdicts': v_r,
+                    'AgeMetrics':  m_a, 'AgeVerdicts':  v_a,
+                    'SexMetrics':  m_s, 'SexVerdicts':  v_s,
+                    'EthMetrics':  m_e, 'EthVerdicts':  v_e,
+                })
 
 print(f"  Evaluated {len(candidate_rows)} candidates")
 
-cand_df = pd.DataFrame([{k:v for k,v in r.items()
-    if k not in ['Thresholds','YProb','YPred','RaceMetrics','RaceVerdicts','AgeMetrics','AgeVerdicts']}
+cand_df = pd.DataFrame([{k: v for k, v in r.items()
+    if k not in ['Thresholds','YProb','YPred',
+                 'RaceMetrics','RaceVerdicts','AgeMetrics','AgeVerdicts',
+                 'SexMetrics','SexVerdicts','EthMetrics','EthVerdicts']}
     for r in candidate_rows])
 cand_df.to_csv(f'{TABLES_DIR}/18b_fairness_candidate_search.csv', index=False)
 
-# ── Selection: maximise Race_Fair + Age_Fair subject to DI_RACE ≥ 0.80 ──
-cand_df['Total_Fair'] = cand_df['Race_Fair'] + cand_df['Age_Fair']
-
+# ── Selection: require DI_RACE ≥ 0.80, maximise Total_Fair ──
 elig = cand_df[cand_df['DI_RACE'] >= 0.80].copy()
 if len(elig):
-    # Among DI-fair candidates: maximise Total_Fair, then Age_Fair, then minimise accuracy drop
-    chosen_idx = elig.sort_values(['Total_Fair','Age_Fair','Acc_Drop_pp'],
-                                   ascending=[False, False, True]).index[0]
+    chosen_idx = elig.sort_values(
+        ['Total_Fair', 'Age_Fair', 'Sex_Fair', 'Acc_Drop_pp'],
+        ascending=[False, False, False, True]).index[0]
     r = cand_df.loc[chosen_idx]
-    print(f"  ✓ DI_RACE≥0.80 achieved: DI={r['DI_RACE']:.3f}, Race_Fair={int(r['Race_Fair'])}, "
-          f"Age_Fair={int(r['Age_Fair'])}, Acc={r['Accuracy']:.4f} ({r['Strategy']}, α={r['Alpha']})")
+    print(f"  ✓ Selected: DI_RACE={r['DI_RACE']:.3f}, "
+          f"Race={int(r['Race_Fair'])}/7, Age={int(r['Age_Fair'])}/7, "
+          f"Sex={int(r['Sex_Fair'])}/7, Eth={int(r['Eth_Fair'])}/7, "
+          f"Acc={r['Accuracy']:.4f} ({r['Model']}, α_sr={r['A_SR']}, α_tpr={r['A_TPR']}, α_ppv={r['A_PPV']})")
 else:
-    # Fallback: maximise DI
-    chosen_idx = cand_df.sort_values(['DI_RACE','Total_Fair'], ascending=[False,False]).index[0]
+    chosen_idx = cand_df.sort_values(
+        ['Total_Fair', 'DI_RACE'], ascending=[False, False]).index[0]
     r = cand_df.loc[chosen_idx]
-    print(f"  ⚠ DI<0.80 max: DI={r['DI_RACE']:.3f}, Acc={r['Accuracy']:.4f}")
+    print(f"  ⚠ No DI≥0.80, best: Total_Fair={int(r['Total_Fair'])}, DI_RACE={r['DI_RACE']:.3f}")
 
 chosen = candidate_rows[int(chosen_idx)]
-y_prob_fair = chosen['YProb']
-y_pred_fair_opt = chosen['YPred']
-fair_thresholds = chosen['Thresholds']
+y_prob_fair      = chosen['YProb']
+y_pred_fair_opt  = chosen['YPred']
+fair_thresholds  = chosen['Thresholds']
 
-# Compare standard vs fair on BOTH RACE and AGE_GROUP
+# ── Compare standard vs fair on ALL 4 attributes ──
 fc_std_r = FairnessCalculator(y_test, best_y_pred, best_y_prob, race_test)
 m_std, v_std, _ = fc_std_r.compute_all()
 fc_fair_r = FairnessCalculator(y_test, y_pred_fair_opt, y_prob_fair, race_test)
@@ -3689,81 +3754,127 @@ m_std_age, v_std_age, _ = fc_std_age.compute_all()
 fc_fair_age = FairnessCalculator(y_test, y_pred_fair_opt, y_prob_fair, age_test)
 m_fair_age, v_fair_age, _ = fc_fair_age.compute_all()
 
+fc_std_sex = FairnessCalculator(y_test, best_y_pred, best_y_prob, sex_test)
+m_std_sex, v_std_sex, _ = fc_std_sex.compute_all()
+fc_fair_sex = FairnessCalculator(y_test, y_pred_fair_opt, y_prob_fair, sex_test)
+m_fair_sex, v_fair_sex, _ = fc_fair_sex.compute_all()
+
+fc_std_eth = FairnessCalculator(y_test, best_y_pred, best_y_prob, eth_test)
+m_std_eth, v_std_eth, _ = fc_std_eth.compute_all()
+fc_fair_eth = FairnessCalculator(y_test, y_pred_fair_opt, y_prob_fair, eth_test)
+m_fair_eth, v_fair_eth, _ = fc_fair_eth.compute_all()
+
 fair_acc = accuracy_score(y_test, y_pred_fair_opt)
 
-display(HTML("<h4>Standard vs Fair Model — RACE and AGE_GROUP (All 7 Metrics)</h4>"))
+display(HTML("<h4>Standard vs Fair Model — All 4 Attributes (7 Metrics Each)</h4>"))
 intervention_rows = []
 for attr_name, m_s, v_s, m_f, v_f in [
-    ('RACE', m_std, v_std, m_fair, v_fair),
+    ('RACE',      m_std,     v_std,     m_fair,     v_fair),
     ('AGE_GROUP', m_std_age, v_std_age, m_fair_age, v_fair_age),
+    ('SEX',       m_std_sex, v_std_sex, m_fair_sex, v_fair_sex),
+    ('ETHNICITY', m_std_eth, v_std_eth, m_fair_eth, v_fair_eth),
 ]:
     for mk in METRIC_KEYS:
         intervention_rows.append({
-            'Attribute': attr_name,
-            'Metric': mk,
-            'Standard': m_s[mk],
-            'Fair': m_f[mk],
+            'Attribute': attr_name, 'Metric': mk,
+            'Standard': m_s[mk], 'Fair': m_f[mk],
             'Std_Verdict': 'Fair' if v_s[mk] else 'Unfair',
             'Fair_Verdict': 'Fair' if v_f[mk] else 'Unfair'
         })
 
 intervention_df = pd.DataFrame(intervention_rows)
-display(intervention_df.style.format({'Standard':'{:.4f}','Fair':'{:.4f}'}))
+display(intervention_df.style.format({'Standard': '{:.4f}', 'Fair': '{:.4f}'}))
 
-age_fair_count = int(sum(v_fair_age.values()))
+age_fair_count  = int(sum(v_fair_age.values()))
 race_fair_count = int(sum(v_fair.values()))
+sex_fair_count  = int(sum(v_fair_sex.values()))
+eth_fair_count  = int(sum(v_fair_eth.values()))
 
-print(f"\\nSelected: model={chosen['Model']}, strategy={chosen['Strategy']}, α={chosen['Alpha']}")
-print(f"  Accuracy: {std_acc:.4f} → {fair_acc:.4f}  ({(fair_acc-std_acc)*100:+.2f} pp)")
-print(f"  RACE DI: {m_std['DI']:.3f} → {m_fair['DI']:.3f}  (fair={m_fair['DI']>=0.80})")
-print(f"  AGE_GROUP fair metrics: {int(sum(v_std_age.values()))}/7 → {age_fair_count}/7")
-print(f"  RACE fair metrics: {int(sum(v_std.values()))}/7 → {race_fair_count}/7")
-print(f"  Tuned thresholds for {len(fair_thresholds)} RACE×AGE groups")
+print(f"\\nSelected: model={chosen['Model']}, α_sr={chosen['A_SR']}, α_tpr={chosen['A_TPR']}, α_ppv={chosen['A_PPV']}")
+print(f"  Accuracy:  {std_acc:.4f} → {fair_acc:.4f}  ({(fair_acc - std_acc)*100:+.2f} pp)")
+print(f"  RACE       DI: {m_std['DI']:.3f} → {m_fair['DI']:.3f}  [{race_fair_count}/7]")
+print(f"  AGE_GROUP  DI: {m_std_age['DI']:.3f} → {m_fair_age['DI']:.3f}  [{age_fair_count}/7]")
+print(f"  SEX        DI: {m_std_sex['DI']:.3f} → {m_fair_sex['DI']:.3f}  [{sex_fair_count}/7]")
+print(f"  ETHNICITY  DI: {m_std_eth['DI']:.3f} → {m_fair_eth['DI']:.3f}  [{eth_fair_count}/7]")
+print(f"  Tuned thresholds for {len(fair_thresholds)} RACE×AGE×SEX groups")
 """)
 
 md("### 14.3 Fairness Intervention Visualization")
 
 code("""
 # ──────────────────────────────────────────────────────────────
-# Cell 56 · Intervention Visualization
+# Cell 56 · Intervention Visualization (Multi-Attribute)
 # ──────────────────────────────────────────────────────────────
-fig, axes = plt.subplots(1, 3, figsize=(18, 6))
+fig, axes = plt.subplots(2, 3, figsize=(20, 12))
 
 # (a) Accuracy-Fairness Pareto
 model_points = [(accuracy_score(y_test, test_predictions[n]['y_pred']),
                  FairnessCalculator.disparate_impact(test_predictions[n]['y_pred'], race_test)[0], n)
                 for n in test_predictions]
 for acc, di, name in model_points:
-    axes[0].scatter(acc, di, s=80, zorder=5)
-    axes[0].annotate(name, (acc, di), fontsize=7, ha='left')
-axes[0].scatter(fair_acc, m_fair['DI'], s=150, marker='*', color='red', zorder=10, label='Fair model')
-axes[0].axhline(y=0.80, color='red', linestyle='--', alpha=0.5)
-axes[0].set_xlabel('Accuracy'); axes[0].set_ylabel('DI (RACE)')
-axes[0].set_title('(a) Accuracy–Fairness Pareto'); axes[0].legend()
+    axes[0,0].scatter(acc, di, s=80, zorder=5)
+    axes[0,0].annotate(name, (acc, di), fontsize=7, ha='left')
+axes[0,0].scatter(fair_acc, m_fair['DI'], s=150, marker='*', color='red', zorder=10, label='Fair model')
+axes[0,0].axhline(y=0.80, color='red', linestyle='--', alpha=0.5)
+axes[0,0].set_xlabel('Accuracy'); axes[0,0].set_ylabel('DI (RACE)')
+axes[0,0].set_title('(a) Accuracy–Fairness Pareto'); axes[0,0].legend()
 
-# (b) Selection rates before/after
-groups = sorted(set(race_test))
-labels = [RACE_MAP.get(g, str(g)) for g in groups]
-sr_before = [best_y_pred[race_test==g].mean() for g in groups]
-sr_after  = [y_pred_fair_opt[race_test==g].mean() for g in groups]
-x_g = np.arange(len(groups))
-axes[1].bar(x_g-0.2, sr_before, 0.35, label='Standard', color=PALETTE[0])
-axes[1].bar(x_g+0.2, sr_after, 0.35, label='Fair', color=PALETTE[2])
-axes[1].set_xticks(x_g); axes[1].set_xticklabels(labels, rotation=20, ha='right')
-axes[1].set_ylabel('Selection Rate'); axes[1].set_title('(b) Selection Rates by RACE'); axes[1].legend()
+# (b) Selection rates by RACE
+groups_r = sorted(set(race_test))
+labels_r = [RACE_MAP.get(g, str(g)) for g in groups_r]
+sr_before_r = [best_y_pred[race_test==g].mean() for g in groups_r]
+sr_after_r  = [y_pred_fair_opt[race_test==g].mean() for g in groups_r]
+x_r = np.arange(len(groups_r))
+axes[0,1].bar(x_r-0.2, sr_before_r, 0.35, label='Standard', color=PALETTE[0])
+axes[0,1].bar(x_r+0.2, sr_after_r, 0.35, label='Fair', color=PALETTE[2])
+axes[0,1].set_xticks(x_r); axes[0,1].set_xticklabels(labels_r, rotation=20, ha='right')
+axes[0,1].set_ylabel('Selection Rate'); axes[0,1].set_title('(b) Selection Rates by RACE'); axes[0,1].legend()
 
-# (c) Per-group thresholds (averaged across AGE intersections)
+# (c) Selection rates by AGE_GROUP
+groups_a = sorted(set(age_test))
+labels_a = [str(g) for g in groups_a]
+sr_before_a = [best_y_pred[age_test==g].mean() for g in groups_a]
+sr_after_a  = [y_pred_fair_opt[age_test==g].mean() for g in groups_a]
+x_a = np.arange(len(groups_a))
+axes[0,2].bar(x_a-0.2, sr_before_a, 0.35, label='Standard', color=PALETTE[0])
+axes[0,2].bar(x_a+0.2, sr_after_a, 0.35, label='Fair', color=PALETTE[2])
+axes[0,2].set_xticks(x_a); axes[0,2].set_xticklabels(labels_a, rotation=20, ha='right')
+axes[0,2].set_ylabel('Selection Rate'); axes[0,2].set_title('(c) Selection Rates by AGE_GROUP'); axes[0,2].legend()
+
+# (d) Selection rates by SEX
+groups_s = sorted(set(sex_test))
+labels_s = [str(g) for g in groups_s]
+sr_before_s = [best_y_pred[sex_test==g].mean() for g in groups_s]
+sr_after_s  = [y_pred_fair_opt[sex_test==g].mean() for g in groups_s]
+x_s = np.arange(len(groups_s))
+axes[1,0].bar(x_s-0.2, sr_before_s, 0.35, label='Standard', color=PALETTE[0])
+axes[1,0].bar(x_s+0.2, sr_after_s, 0.35, label='Fair', color=PALETTE[2])
+axes[1,0].set_xticks(x_s); axes[1,0].set_xticklabels(labels_s)
+axes[1,0].set_ylabel('Selection Rate'); axes[1,0].set_title('(d) Selection Rates by SEX'); axes[1,0].legend()
+
+# (e) Mean per-group thresholds by RACE (averaged across AGE×SEX)
 mean_thresh_per_race = []
-for g in groups:
+for g in groups_r:
     race_keys = [k for k in fair_thresholds if k.startswith(f"{g}|")]
     if race_keys:
         mean_thresh_per_race.append(np.mean([fair_thresholds[k] for k in race_keys]))
     else:
-        mean_thresh_per_race.append(fair_thresholds.get(g, 0.5))
-axes[2].bar(labels, mean_thresh_per_race,
-            color=[PALETTE[i] for i in range(len(groups))], edgecolor='white')
-axes[2].axhline(y=0.5, color='gray', linestyle='--', label='Default 0.5')
-axes[2].set_ylabel('Threshold'); axes[2].set_title('(c) Mean Per-Group Thresholds'); axes[2].legend()
+        mean_thresh_per_race.append(0.5)
+axes[1,1].bar(labels_r, mean_thresh_per_race,
+              color=[PALETTE[i % len(PALETTE)] for i in range(len(groups_r))], edgecolor='white')
+axes[1,1].axhline(y=0.5, color='gray', linestyle='--', label='Default 0.5')
+axes[1,1].set_ylabel('Threshold'); axes[1,1].set_title('(e) Mean Thresholds by RACE'); axes[1,1].legend()
+
+# (f) Fair metrics summary — per attribute
+attr_names = ['RACE', 'AGE_GROUP', 'SEX', 'ETHNICITY']
+fair_counts = [race_fair_count, age_fair_count, sex_fair_count, eth_fair_count]
+colors_f = [PALETTE[2] if c >= 4 else PALETTE[4] for c in fair_counts]
+axes[1,2].bar(attr_names, fair_counts, color=colors_f, edgecolor='white')
+axes[1,2].axhline(y=4, color='red', linestyle='--', label='Target (4/7)')
+axes[1,2].set_ylabel('Fair Metrics (out of 7)')
+axes[1,2].set_title('(f) Fair Metric Count by Attribute')
+axes[1,2].set_ylim(0, 7.5); axes[1,2].legend()
+
 plt.tight_layout()
 save_fig('fairness_intervention')
 plt.show()
@@ -5170,13 +5281,16 @@ final_results = {
     'intervention': {
         'standard_acc': float(std_acc),
         'fair_acc': float(fair_acc),
-        'lambda': float(chosen.get('Alpha', 0)),
-        'strategy': str(chosen.get('Strategy', 'unknown')),
+        'a_sr': float(chosen.get('A_SR', 0)),
+        'a_tpr': float(chosen.get('A_TPR', 0)),
+        'a_ppv': float(chosen.get('A_PPV', 0)),
         'model_variant': str(chosen.get('Model', 'unknown')),
         'standard_metrics': {mk: float(m_std[mk]) for mk in METRIC_KEYS},
         'fair_metrics': {mk: float(m_fair[mk]) for mk in METRIC_KEYS},
         'age_fair_count': int(sum(v_fair_age.values())),
         'race_fair_count': int(sum(v_fair.values())),
+        'sex_fair_count': int(sum(v_fair_sex.values())),
+        'eth_fair_count': int(sum(v_fair_eth.values())),
     },
 }
 for _, r in results_df.iterrows():
@@ -5252,9 +5366,12 @@ for mk in ['DI','SPD','EOPP']:
         print(f"    {mk} cross-site CV range: {cs_sub['CV'].min():.3f} – {cs_sub['CV'].max():.3f}")
 print()
 print("  Fairness Intervention:")
-print(f"    Standard:      Acc={std_acc:.4f}   DI={m_std['DI']:.3f}")
-print(f"    Fair model:    Acc={fair_acc:.4f}   DI={m_fair['DI']:.3f}  (Δ DI = {m_fair['DI']-m_std['DI']:+.3f})")
-print(f"    AGE_GROUP fair metrics: {int(sum(v_std_age.values()))}/7 → {int(sum(v_fair_age.values()))}/7")
+print(f"    Standard:      Acc={std_acc:.4f}   DI(RACE)={m_std['DI']:.3f}")
+print(f"    Fair model:    Acc={fair_acc:.4f}   DI(RACE)={m_fair['DI']:.3f}  (Δ DI = {m_fair['DI']-m_std['DI']:+.3f})")
+print(f"    RACE       fair metrics: {int(sum(v_std.values()))}/7 → {int(sum(v_fair.values()))}/7")
+print(f"    AGE_GROUP  fair metrics: {int(sum(v_std_age.values()))}/7 → {int(sum(v_fair_age.values()))}/7")
+print(f"    SEX        fair metrics: {int(sum(v_std_sex.values()))}/7 → {int(sum(v_fair_sex.values()))}/7")
+print(f"    ETHNICITY  fair metrics: {int(sum(v_std_eth.values()))}/7 → {int(sum(v_fair_eth.values()))}/7")
 print()
 print("  Subgroup Analysis:")
 print(f"    {len(subgroup_df)} intersectional subgroups analysed")

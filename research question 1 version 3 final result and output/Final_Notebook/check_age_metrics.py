@@ -16,7 +16,7 @@ for attr in ['RACE', 'SEX', 'ETHNICITY', 'AGE_GROUP']:
     print(f"\n=== {attr} (best model: {best}) ===")
     if attr in r['fairness'].get(best, {}):
         metrics = r['fairness'][best][attr]
-        thresholds = {'DI': 0.80, 'SPD': 0.10, 'EOPP': 0.10, 'EOD': 0.10, 
+        thresholds = {'DI': 0.80, 'SPD': 0.10, 'EOPP': 0.10, 'EOD': 0.10,
                       'TI': 0.10, 'PP': 0.10, 'CAL': 0.05}
         abs_metrics = {'SPD', 'EOPP', 'PP'}  # these use absolute value
         n_fair = 0
@@ -43,7 +43,7 @@ for attr in ['RACE', 'SEX', 'ETHNICITY', 'AGE_GROUP']:
 
 # Also check ALL models for AGE_GROUP
 print("\n\n=== ALL MODELS AGE_GROUP FAIRNESS ===")
-thresholds = {'DI': 0.80, 'SPD': 0.10, 'EOPP': 0.10, 'EOD': 0.10, 
+thresholds = {'DI': 0.80, 'SPD': 0.10, 'EOPP': 0.10, 'EOD': 0.10,
               'TI': 0.10, 'PP': 0.10, 'CAL': 0.05}
 for model_name, attrs in r['fairness'].items():
     if 'AGE_GROUP' in attrs:
