@@ -9,6 +9,7 @@ Sex,Female,339288,36.67%,0.518
 Ethnicity,Hispanic,670586,72.49%,0.471
 Ethnicity,Non-Hispanic,254542,27.51%,0.397
 Age Group,Age_65_Plus,397070,42.92%,0.606
-Age Group,Age_40_64,281409,30.42%,0.418
-Age Group,Age_19_39,208528,22.54%,0.207
-Age Group,Age_0_18,38121,4.12%,0.403
+Age Group,Age_40_54,151673,16.39%,0.359
+Age Group,Age_18_39,208528,22.54%,0.207
+Age Group,Age_0_17,38121,4.12%,0.403
+Age Group,Age_55_64,129736,14.02%,0.488
