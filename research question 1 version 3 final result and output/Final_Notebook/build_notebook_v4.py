@@ -5504,15 +5504,66 @@ print(f"  Protected attrs:   RACE, SEX, ETHNICITY, AGE_GROUP")
 print(f"  Figures generated: {n_figures}")
 print(f"  Tables saved:      {n_tables}")
 print()
-print("  Per-Attribute Fairness (Best Model):")
+
+# ── Show BOTH baseline AND fair model DI clearly ──
+print("  " + "─" * 66)
+print("  ★  FAIR MODEL — Disparate Impact (DI ≥ 0.80 = FAIR)")
+print("  " + "─" * 66)
+fair_metrics_all = {
+    'RACE':      m_fair,
+    'SEX':       m_fair_sex,
+    'ETHNICITY': m_fair_eth,
+    'AGE_GROUP': m_fair_age,
+}
+fair_verdicts_all = {
+    'RACE':      v_fair,
+    'SEX':       v_fair_sex,
+    'ETHNICITY': v_fair_eth,
+    'AGE_GROUP': v_fair_age,
+}
+for attr in ['RACE','SEX','ETHNICITY','AGE_GROUP']:
+    fm = fair_metrics_all[attr]
+    fv = fair_verdicts_all[attr]
+    di_val = fm['DI']
+    n_fair = sum(fv.values())
+    tag = '✅ FAIR' if di_val >= 0.80 else '❌ UNFAIR'
+    flag = f"✓ {n_fair}/7" if n_fair >= 4 else f"✗ {n_fair}/7"
+    print(f"    {attr:<12s}: DI = {di_val:.3f} {tag}   SPD={fm['SPD']:.3f}  EOPP={fm['EOPP']:.3f}  "
+          f"EOD={fm['EOD']:.3f}  TI={fm['TI']:.3f}  PP={fm['PP']:.3f}  CAL={fm['CAL']:.3f}  [{flag} metrics fair]")
+print(f"    Fair Model Accuracy: {fair_acc:.4f}")
+print()
+
+print("  " + "─" * 66)
+print("  ☐  BASELINE (Best Model: " + best_model_name + ") — pre-intervention")
+print("  " + "─" * 66)
 for attr in ['RACE','SEX','ETHNICITY','AGE_GROUP']:
     f = all_fairness[best_model_name][attr]
     v = all_verdicts[best_model_name][attr]
+    di_val = f['DI']
     n_fair = sum(v.values())
-    flag = f"✓ {n_fair}/7 FAIR" if n_fair >= 4 else f"✗ {n_fair}/7 FAIR"
-    print(f"    {attr:<12s}: DI={f['DI']:.3f}  SPD={f['SPD']:.3f}  EOPP={f['EOPP']:.3f}  "
-          f"EOD={f['EOD']:.3f}  TI={f['TI']:.3f}  PP={f['PP']:.3f}  CAL={f['CAL']:.3f}  [{flag}]")
+    tag = '✅ FAIR' if di_val >= 0.80 else '❌ UNFAIR'
+    flag = f"✓ {n_fair}/7" if n_fair >= 4 else f"✗ {n_fair}/7"
+    print(f"    {attr:<12s}: DI = {di_val:.3f} {tag}   SPD={f['SPD']:.3f}  EOPP={f['EOPP']:.3f}  "
+          f"EOD={f['EOD']:.3f}  TI={f['TI']:.3f}  PP={f['PP']:.3f}  CAL={f['CAL']:.3f}  [{flag} metrics fair]")
+print(f"    Baseline Accuracy: {std_acc:.4f}")
 print()
+
+print("  " + "─" * 66)
+print("  Δ  IMPROVEMENT (Baseline → Fair Model)")
+print("  " + "─" * 66)
+base_di = {'RACE': all_fairness[best_model_name]['RACE']['DI'],
+           'SEX': all_fairness[best_model_name]['SEX']['DI'],
+           'ETHNICITY': all_fairness[best_model_name]['ETHNICITY']['DI'],
+           'AGE_GROUP': all_fairness[best_model_name]['AGE_GROUP']['DI']}
+for attr in ['RACE','SEX','ETHNICITY','AGE_GROUP']:
+    d_old = base_di[attr]
+    d_new = fair_metrics_all[attr]['DI']
+    delta = d_new - d_old
+    print(f"    {attr:<12s}: DI {d_old:.3f} → {d_new:.3f}  (Δ = {delta:+.3f})")
+print(f"    Accuracy:     {std_acc:.4f} → {fair_acc:.4f}  (Δ = {(fair_acc-std_acc)*100:+.2f} pp)")
+print(f"    Verdicts:     {int(sum(v_std.values()))+int(sum(v_std_age.values()))+int(sum(v_std_sex.values()))+int(sum(v_std_eth.values()))}/28 → {int(sum(v_fair.values()))+int(sum(v_fair_age.values()))+int(sum(v_fair_sex.values()))+int(sum(v_fair_eth.values()))}/28")
+print()
+
 n_total_vfr = len(vfr_df)
 n_strict_stable = (vfr_df['VFR'] == 0).sum()
 n_pract_stable = (vfr_df['VFR'] <= 0.10).sum()   # ≥90% resampling consensus (≥27/30 agree)
@@ -5538,18 +5589,6 @@ for mk in ['DI','SPD','EOPP']:
     cs_sub = cs_summary_df[cs_summary_df['Metric']==mk]
     if len(cs_sub):
         print(f"    {mk} cross-site CV range: {cs_sub['CV'].min():.3f} – {cs_sub['CV'].max():.3f}")
-print()
-print("  Fairness Intervention:")
-print(f"    Standard:      Acc={std_acc:.4f}   DI(RACE)={m_std['DI']:.3f}")
-print(f"    Fair model:    Acc={fair_acc:.4f}   DI(RACE)={m_fair['DI']:.3f}  (Δ DI = {m_fair['DI']-m_std['DI']:+.3f})")
-print(f"    RACE       fair metrics: {int(sum(v_std.values()))}/7 → {int(sum(v_fair.values()))}/7")
-print(f"    AGE_GROUP  fair metrics: {int(sum(v_std_age.values()))}/7 → {int(sum(v_fair_age.values()))}/7")
-print(f"    SEX        fair metrics: {int(sum(v_std_sex.values()))}/7 → {int(sum(v_fair_sex.values()))}/7")
-print(f"    ETHNICITY  fair metrics: {int(sum(v_std_eth.values()))}/7 → {int(sum(v_fair_eth.values()))}/7")
-print()
-print("  Subgroup Analysis:")
-print(f"    {len(subgroup_df)} intersectional subgroups analysed")
-print(f"    Selection rate range: [{subgroup_df['Selection_Rate'].min():.3f}, {subgroup_df['Selection_Rate'].max():.3f}]")
 print()
 print("  AFCE (Fairness-Through-Awareness):")
 for name in afce_predictions:
@@ -6446,6 +6485,566 @@ plt.savefig(fig_path3, dpi=200, bbox_inches='tight'); plt.show()
 print(f"Saved: {fig_path3}")
 """)
 
+md("""
+### 12.k — Accuracy vs Fairness by Subgroup & Why Multiple Metrics Matter
+
+The following tables demonstrate:
+1. **How accuracy and fairness vary across subgroups** — showing why a single aggregate metric is insufficient
+2. **Why multiple fairness metrics are needed** — different metrics give contradictory verdicts for the same subgroup
+3. **The exact accuracy cost for each unit of fairness gain**
+4. **Hyperparameter configuration** of the chosen fair model
+""")
+
+code(r"""
+# ════════════════════════════════════════════════════════════════════════
+# 12k1  TABLE 8 – ACCURACY vs FAIRNESS BY SUBGROUP (Standard vs Fair)
+# ════════════════════════════════════════════════════════════════════════
+import pandas as pd, numpy as np
+from IPython.display import display, HTML
+import matplotlib; matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
+trade_df = pd.read_csv('output/tables/14d_fairness_accuracy_tradeoff.csv')
+
+# ── Table 8a: Accuracy vs Fairness Metrics for each Protected Attribute ──
+attrs       = ['RACE', 'SEX', 'ETHNICITY', 'AGE_GROUP']
+attr_labels = ['Race', 'Sex', 'Ethnicity', 'Age Group']
+metrics     = ['DI', 'SPD', 'EOPP', 'EOD', 'TI', 'PP', 'CAL']
+thresholds  = {'DI': 0.80, 'SPD': 0.10, 'EOPP': 0.10, 'EOD': 0.10,
+               'TI': 0.10, 'PP': 0.10, 'CAL': 0.05}
+
+std_row  = trade_df[trade_df['Model'] == 'LGB-XGB Blend'].iloc[0]
+fair_row = trade_df[trade_df['Model'] == 'Fair (Reweigh+Thr)'].iloc[0]
+
+rows_8a = []
+for attr, albl in zip(attrs, attr_labels):
+    # Standard model
+    std_fairs = sum(1 for m in metrics
+                    if (m == 'DI' and std_row[f'{m}_{attr}'] >= thresholds[m])
+                    or (m != 'DI' and abs(std_row[f'{m}_{attr}']) < thresholds[m]))
+    fair_fairs = sum(1 for m in metrics
+                     if (m == 'DI' and fair_row[f'{m}_{attr}'] >= thresholds[m])
+                     or (m != 'DI' and abs(fair_row[f'{m}_{attr}']) < thresholds[m]))
+    rows_8a.append({
+        'Attribute': albl,
+        'Std Acc': round(std_row['Accuracy'], 4),
+        'Fair Acc': round(fair_row['Accuracy'], 4),
+        'Δ Acc (pp)': round((fair_row['Accuracy'] - std_row['Accuracy']) * 100, 2),
+        'Std DI': round(std_row[f'DI_{attr}'], 3),
+        'Fair DI': round(fair_row[f'DI_{attr}'], 3),
+        'Δ DI': round(fair_row[f'DI_{attr}'] - std_row[f'DI_{attr}'], 3),
+        'Std Fair/7': std_fairs,
+        'Fair Fair/7': fair_fairs,
+        'Δ Verdicts': fair_fairs - std_fairs
+    })
+
+t8a = pd.DataFrame(rows_8a).set_index('Attribute')
+t8a.to_csv('output/tables/paper_table8a_accuracy_vs_fairness_subgroup.csv')
+
+print("Table 8a: Accuracy vs Fairness — Per Protected Attribute (Standard → Fair)")
+print("═" * 90)
+display(t8a.style.format({
+    'Std Acc': '{:.4f}', 'Fair Acc': '{:.4f}', 'Δ Acc (pp)': '{:+.2f}',
+    'Std DI': '{:.3f}', 'Fair DI': '{:.3f}', 'Δ DI': '{:+.3f}',
+    'Std Fair/7': '{:.0f}', 'Fair Fair/7': '{:.0f}', 'Δ Verdicts': '{:+.0f}'
+}).set_caption('Accuracy vs Fairness Change Per Attribute'))
+
+# ── Table 8b: Full metric value matrix (Fair model, all 7 metrics × 4 attrs) ──
+rows_8b = []
+for attr, albl in zip(attrs, attr_labels):
+    row = {'Attribute': albl}
+    for m in metrics:
+        val = fair_row[f'{m}_{attr}']
+        # Clamp near-zero to 0.001 and near-one to 0.999 to avoid misleading 0/1
+        if m == 'DI':
+            val = max(0.001, min(val, 0.999))
+            is_fair = val >= thresholds[m]
+        else:
+            val_abs = abs(val)
+            val_abs = max(0.001, min(val_abs, 0.999))
+            is_fair = val_abs < thresholds[m]
+        tag = '✓' if is_fair else '✗'
+        row[m] = f"{val:.3f} {tag}" if m == 'DI' else f"{abs(val):.3f} {tag}"
+    rows_8b.append(row)
+
+t8b = pd.DataFrame(rows_8b).set_index('Attribute')
+t8b.to_csv('output/tables/paper_table8b_fair_model_all_metrics.csv')
+
+print("\nTable 8b: Fair Model — Complete Metric Values (7 Metrics × 4 Attributes)")
+print("═" * 90)
+print("  ✓ = FAIR, ✗ = UNFAIR  |  DI ≥ 0.80, |SPD| < 0.10, |EOPP| < 0.10,")
+print("  |EOD| < 0.10, TI < 0.10, |PP| < 0.10, CAL < 0.05")
+
+def color_fair_tag(val):
+    if isinstance(val, str):
+        if '✓' in val:
+            return 'background-color: #d4edda; color: #155724'
+        elif '✗' in val:
+            return 'background-color: #f8d7da; color: #721c24'
+    return ''
+
+display(t8b.style.map(color_fair_tag).set_caption(
+    'Fair Model — All 7 Fairness Metrics × 4 Protected Attributes'))
+
+# ── Figure: Accuracy-Fairness Scatter for all models ──
+fig, axes = plt.subplots(1, 4, figsize=(22, 5), sharey=True)
+model_names_short = {
+    'LGB-XGB Blend': 'LGB-XGB', 'XGBoost': 'XGBoost',
+    'LightGBM': 'LightGBM', 'CatBoost': 'CatBoost',
+    'Random Forest': 'RF', 'GradientBoosting': 'GBC',
+    'HistGradientBoosting': 'HistGBC', 'DecisionTree': 'DTree',
+    'DNN (PyTorch)': 'DNN', 'Stacking Ensemble': 'Stack',
+    'AFCE-XGBoost': 'AFCE-X', 'AFCE-LightGBM': 'AFCE-L',
+    'Fair (Reweigh+Thr)': 'Fair (Ours)'
+}
+
+for idx, (attr, albl) in enumerate(zip(attrs, attr_labels)):
+    ax = axes[idx]
+    for _, r in trade_df.iterrows():
+        name = model_names_short.get(r['Model'], r['Model'][:8])
+        di = r[f'DI_{attr}']
+        acc = r['Accuracy']
+        color = '#e15759' if di < 0.80 else '#59a14f'
+        marker = '*' if 'Fair' in r['Model'] else 'o'
+        size = 200 if 'Fair' in r['Model'] else 80
+        ax.scatter(acc, di, c=color, marker=marker, s=size, edgecolors='black',
+                   linewidths=0.5, zorder=5)
+        ax.annotate(name, (acc, di), textcoords="offset points",
+                    xytext=(5, 5), fontsize=7, alpha=0.8)
+    ax.axhline(0.80, color='red', ls='--', alpha=0.5, lw=1)
+    ax.set_xlabel('Accuracy', fontsize=10)
+    if idx == 0:
+        ax.set_ylabel('Disparate Impact', fontsize=10)
+    ax.set_title(f'{albl}', fontsize=12, fontweight='bold')
+    ax.grid(alpha=0.3)
+    ax.set_ylim(0, 1.1)
+
+plt.suptitle('Accuracy vs DI — All Models × All Attributes (★ = Fair Model)',
+             fontsize=14, fontweight='bold', y=1.02)
+plt.tight_layout()
+fig_path = 'output/figures/paper_accuracy_vs_di_scatter.png'
+plt.savefig(fig_path, dpi=200, bbox_inches='tight'); plt.show()
+print(f"\nSaved: {fig_path}")
+""")
+
+code(r"""
+# ════════════════════════════════════════════════════════════════════════
+# 12k2  TABLE 9 – WHY MULTIPLE FAIRNESS METRICS ARE NEEDED
+#        Shows metric disagreement: same model, same attribute, different verdicts
+# ════════════════════════════════════════════════════════════════════════
+import pandas as pd, numpy as np
+from IPython.display import display, HTML
+import matplotlib; matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
+trade_df = pd.read_csv('output/tables/14d_fairness_accuracy_tradeoff.csv')
+
+attrs       = ['RACE', 'SEX', 'ETHNICITY', 'AGE_GROUP']
+attr_labels = ['Race', 'Sex', 'Ethnicity', 'Age Group']
+metrics     = ['DI', 'SPD', 'EOPP', 'EOD', 'TI', 'PP', 'CAL']
+thresholds  = {'DI': 0.80, 'SPD': 0.10, 'EOPP': 0.10, 'EOD': 0.10,
+               'TI': 0.10, 'PP': 0.10, 'CAL': 0.05}
+
+# ── Table 9a: Metric Disagreement Matrix ──
+# For each model × attribute: count how many metrics say FAIR vs UNFAIR
+disagree_rows = []
+for _, r in trade_df.iterrows():
+    for attr, albl in zip(attrs, attr_labels):
+        fair_count = 0
+        unfair_count = 0
+        verdicts = {}
+        for m in metrics:
+            val = r[f'{m}_{attr}']
+            if m == 'DI':
+                is_fair = val >= thresholds[m]
+            else:
+                is_fair = abs(val) < thresholds[m]
+            verdicts[m] = 'F' if is_fair else 'U'
+            if is_fair:
+                fair_count += 1
+            else:
+                unfair_count += 1
+        # Only include if there's a split verdict (not all same)
+        if 0 < fair_count < 7:
+            disagree_rows.append({
+                'Model': r['Model'].replace('LGB-XGB Blend','LGB-XGB').replace('(Reweigh+Thr)','(Fair)'),
+                'Attribute': albl,
+                'DI': verdicts['DI'], 'SPD': verdicts['SPD'],
+                'EOPP': verdicts['EOPP'], 'EOD': verdicts['EOD'],
+                'TI': verdicts['TI'], 'PP': verdicts['PP'],
+                'CAL': verdicts['CAL'],
+                'Fair/7': fair_count,
+                'Split': f'{fair_count}F / {unfair_count}U'
+            })
+
+disagree_df = pd.DataFrame(disagree_rows)
+disagree_df.to_csv('output/tables/paper_table9a_metric_disagreement.csv', index=False)
+
+# Show representative examples
+print("Table 9a: WHY MULTIPLE FAIRNESS METRICS ARE NEEDED")
+print("         Metric Disagreement — Same Model, Same Attribute, Contradictory Verdicts")
+print("═" * 100)
+print("  If we used only ONE metric (e.g., DI), we would miss unfairness detected by other metrics.")
+print("  If we used only EOPP, we would flag models as unfair that are actually fair on DI/SPD/TI.")
+print()
+
+# Show 3 key examples: LGB-XGB Blend for all 4 attributes
+key_examples = disagree_df[disagree_df['Model'] == 'LGB-XGB'].head(4)
+if len(key_examples) == 0:
+    key_examples = disagree_df.head(8)
+
+def color_fu(val):
+    if val == 'F':
+        return 'background-color: #d4edda; color: #155724; font-weight: bold'
+    elif val == 'U':
+        return 'background-color: #f8d7da; color: #721c24'
+    return ''
+
+display(key_examples.set_index(['Model','Attribute']).style.map(
+    color_fu, subset=['DI','SPD','EOPP','EOD','TI','PP','CAL']
+).set_caption('Metric Disagreement — Baseline LGB-XGB Blend'))
+
+# Show Fair model too
+fair_examples = disagree_df[disagree_df['Model'] == 'Fair (Fair)']
+if len(fair_examples):
+    print("\nFair Model — remaining metric splits:")
+    display(fair_examples.set_index(['Model','Attribute']).style.map(
+        color_fu, subset=['DI','SPD','EOPP','EOD','TI','PP','CAL']
+    ).set_caption('Metric Disagreement — Fair Model'))
+
+# ── Table 9b: Summary — How often each metric agrees/disagrees with majority ──
+summary_rows = []
+for m in metrics:
+    n_agree = 0
+    n_total = 0
+    for _, r in trade_df.iterrows():
+        for attr in attrs:
+            val = r[f'{m}_{attr}']
+            if m == 'DI':
+                m_verdict = val >= thresholds[m]
+            else:
+                m_verdict = abs(val) < thresholds[m]
+            # Majority verdict
+            fairs = sum(1 for mk in metrics
+                       if (mk == 'DI' and r[f'{mk}_{attr}'] >= thresholds[mk])
+                       or (mk != 'DI' and abs(r[f'{mk}_{attr}']) < thresholds[mk]))
+            majority = fairs >= 4
+            if m_verdict == majority:
+                n_agree += 1
+            n_total += 1
+    summary_rows.append({
+        'Metric': m,
+        'Threshold': thresholds[m],
+        'Type': 'Selection Rate' if m in ['DI','SPD'] else 'Error Rate' if m in ['EOPP','EOD'] else 'Information' if m == 'TI' else 'Calibration',
+        'Agrees with Majority': f"{n_agree}/{n_total} ({n_agree/n_total*100:.0f}%)",
+        'Disagrees': f"{n_total-n_agree}/{n_total} ({(n_total-n_agree)/n_total*100:.0f}%)"
+    })
+
+summary_9b = pd.DataFrame(summary_rows).set_index('Metric')
+summary_9b.to_csv('output/tables/paper_table9b_metric_agreement_summary.csv')
+
+print("\nTable 9b: Metric Agreement with Majority Verdict (across all models × attributes)")
+print("═" * 90)
+print("  Shows how often each individual metric agrees with the majority (≥4/7) verdict.")
+print("  A metric that always agrees adds no extra information — metrics that sometimes")
+print("  DISAGREE justify using multiple metrics.")
+display(summary_9b.style.set_caption(
+    'How Often Each Metric Agrees with the Majority Verdict'))
+
+# ── Table 9c: Specific examples where DI says FAIR but another metric says UNFAIR ──
+print("\nTable 9c: Cases Where DI = FAIR but Other Metrics = UNFAIR")
+print("═" * 70)
+print("  Demonstrates that relying on DI alone would miss unfairness:")
+di_fair_other_unfair = []
+for _, r in trade_df.iterrows():
+    for attr, albl in zip(attrs, attr_labels):
+        di_val = r[f'DI_{attr}']
+        if di_val >= 0.80:  # DI says FAIR
+            unfair_others = []
+            for m in ['SPD','EOPP','EOD','PP','CAL']:
+                val = abs(r[f'{m}_{attr}'])
+                if val >= thresholds[m]:
+                    unfair_others.append(f"{m}={val:.3f}")
+            if unfair_others:
+                di_fair_other_unfair.append({
+                    'Model': r['Model'].replace('LGB-XGB Blend','LGB-XGB').replace('(Reweigh+Thr)','(Fair)'),
+                    'Attribute': albl,
+                    'DI': round(di_val, 3),
+                    'Unfair Metrics': ', '.join(unfair_others)
+                })
+
+if di_fair_other_unfair:
+    t9c = pd.DataFrame(di_fair_other_unfair)
+    t9c.to_csv('output/tables/paper_table9c_di_fair_others_unfair.csv', index=False)
+    display(t9c.head(15).style.set_caption('DI = FAIR but Other Metrics UNFAIR'))
+else:
+    print("  No cases found (rare scenario)")
+
+# ── Figure: Metric disagreement heatmap ──
+fig, ax = plt.subplots(figsize=(12, 5))
+# Count disagreement per metric pair
+from itertools import combinations
+metric_pairs = list(combinations(metrics, 2))
+disagree_matrix = np.zeros((len(metrics), len(metrics)))
+
+for _, r in trade_df.iterrows():
+    for attr in attrs:
+        verdicts = {}
+        for m in metrics:
+            v = r[f'{m}_{attr}']
+            if m == 'DI':
+                verdicts[m] = v >= thresholds[m]
+            else:
+                verdicts[m] = abs(v) < thresholds[m]
+        for i, m1 in enumerate(metrics):
+            for j, m2 in enumerate(metrics):
+                if verdicts[m1] != verdicts[m2]:
+                    disagree_matrix[i][j] += 1
+
+im = ax.imshow(disagree_matrix, cmap='YlOrRd', aspect='auto')
+ax.set_xticks(range(len(metrics))); ax.set_xticklabels(metrics, fontsize=10)
+ax.set_yticks(range(len(metrics))); ax.set_yticklabels(metrics, fontsize=10)
+for i in range(len(metrics)):
+    for j in range(len(metrics)):
+        ax.text(j, i, f'{int(disagree_matrix[i][j])}', ha='center', va='center',
+                fontsize=9, color='white' if disagree_matrix[i][j] > disagree_matrix.max()*0.6 else 'black')
+ax.set_title('Metric Disagreement Frequency\n(How often two metrics give opposite verdicts across all models × attributes)',
+             fontsize=12, fontweight='bold')
+plt.colorbar(im, ax=ax, shrink=0.8, label='# Disagreements')
+plt.tight_layout()
+fig_path = 'output/figures/paper_metric_disagreement_heatmap.png'
+plt.savefig(fig_path, dpi=200, bbox_inches='tight'); plt.show()
+print(f"\nSaved: {fig_path}")
+""")
+
+code(r"""
+# ════════════════════════════════════════════════════════════════════════
+# 12k3  TABLE 10 – ACCURACY LOSS/GAIN PER FAIRNESS IMPROVEMENT
+# ════════════════════════════════════════════════════════════════════════
+import pandas as pd, numpy as np
+from IPython.display import display, HTML
+import matplotlib; matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
+trade_df = pd.read_csv('output/tables/14d_fairness_accuracy_tradeoff.csv')
+attrs = ['RACE', 'SEX', 'ETHNICITY', 'AGE_GROUP']
+attr_labels = ['Race', 'Sex', 'Ethnicity', 'Age Group']
+metrics = ['DI', 'SPD', 'EOPP', 'EOD', 'TI', 'PP', 'CAL']
+thresholds  = {'DI': 0.80, 'SPD': 0.10, 'EOPP': 0.10, 'EOD': 0.10,
+               'TI': 0.10, 'PP': 0.10, 'CAL': 0.05}
+
+std_row  = trade_df[trade_df['Model'] == 'LGB-XGB Blend'].iloc[0]
+comparisons = {
+    'Fair (Ours)': trade_df[trade_df['Model'] == 'Fair (Reweigh+Thr)'].iloc[0],
+    'AFCE-XGBoost': trade_df[trade_df['Model'] == 'AFCE-XGBoost'].iloc[0],
+    'AFCE-LightGBM': trade_df[trade_df['Model'] == 'AFCE-LightGBM'].iloc[0],
+    'XGBoost': trade_df[trade_df['Model'] == 'XGBoost'].iloc[0],
+}
+
+rows_10 = []
+for method, mrow in comparisons.items():
+    acc_loss = (std_row['Accuracy'] - mrow['Accuracy']) * 100  # pp lost
+    f1_loss = (std_row['F1'] - mrow['F1']) * 100
+    std_verdicts = int(std_row['Fair_Verdicts'])
+    new_verdicts = int(mrow['Fair_Verdicts'])
+    verdict_gain = new_verdicts - std_verdicts
+
+    # Per-attribute DI improvement
+    di_gains = {albl: round(mrow[f'DI_{attr}'] - std_row[f'DI_{attr}'], 3)
+                for attr, albl in zip(attrs, attr_labels)}
+    avg_di_gain = np.mean(list(di_gains.values()))
+
+    rows_10.append({
+        'Method': method,
+        'Acc Loss (pp)': round(acc_loss, 2),
+        'F1 Loss (pp)': round(f1_loss, 2),
+        'DI Gain (Race)': di_gains['Race'],
+        'DI Gain (Sex)': di_gains['Sex'],
+        'DI Gain (Ethnic.)': di_gains['Ethnicity'],
+        'DI Gain (Age)': di_gains['Age Group'],
+        'Avg DI Gain': round(avg_di_gain, 3),
+        'Verdict Gain': verdict_gain,
+        'DI/pp Acc': round(avg_di_gain / acc_loss, 3) if acc_loss > 0.01 else 'N/A',
+    })
+
+t10 = pd.DataFrame(rows_10).set_index('Method')
+t10.to_csv('output/tables/paper_table10_accuracy_cost_fairness_gain.csv')
+
+print("Table 10: Accuracy Cost vs Fairness Gain (relative to Standard LGB-XGB Blend)")
+print("═" * 100)
+print("  Shows exactly how much accuracy you lose for each unit of DI fairness gained.")
+print("  'DI/pp Acc' = average DI improvement per percentage point of accuracy lost")
+display(t10.style.format({
+    'Acc Loss (pp)': '{:.2f}', 'F1 Loss (pp)': '{:.2f}',
+    'DI Gain (Race)': '{:+.3f}', 'DI Gain (Sex)': '{:+.3f}',
+    'DI Gain (Ethnic.)': '{:+.3f}', 'DI Gain (Age)': '{:+.3f}',
+    'Avg DI Gain': '{:+.3f}', 'Verdict Gain': '{:+d}'
+}, na_rep='N/A').set_caption(
+    'Accuracy Cost vs Fairness Gain per Method'))
+
+# ── Figure: Grouped bar chart showing trade-off ──
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 5))
+methods_list = list(comparisons.keys())
+
+# Left: Accuracy loss
+acc_losses = [round((std_row['Accuracy'] - comparisons[m]['Accuracy']) * 100, 2) for m in methods_list]
+colors_loss = ['#e15759' if v > 2 else '#f28e2b' if v > 0 else '#59a14f' for v in acc_losses]
+bars1 = ax1.barh(methods_list, acc_losses, color=colors_loss, edgecolor='white')
+for i, v in enumerate(acc_losses):
+    ax1.text(v + 0.05, i, f'{v:.2f} pp', va='center', fontsize=10)
+ax1.set_xlabel('Accuracy Loss (percentage points)', fontsize=11)
+ax1.set_title('(a) Accuracy Cost', fontsize=13, fontweight='bold')
+ax1.grid(axis='x', alpha=0.3)
+ax1.invert_xaxis()
+
+# Right: Average DI gain
+avg_gains = [round(np.mean([comparisons[m][f'DI_{a}'] - std_row[f'DI_{a}'] for a in attrs]), 3)
+             for m in methods_list]
+colors_gain = ['#59a14f' if v > 0 else '#e15759' for v in avg_gains]
+bars2 = ax2.barh(methods_list, avg_gains, color=colors_gain, edgecolor='white')
+for i, v in enumerate(avg_gains):
+    ax2.text(v + 0.002, i, f'{v:+.3f}', va='center', fontsize=10)
+ax2.set_xlabel('Average DI Improvement', fontsize=11)
+ax2.set_title('(b) Fairness Gain', fontsize=13, fontweight='bold')
+ax2.grid(axis='x', alpha=0.3)
+
+plt.suptitle('Accuracy Cost vs Fairness Gain — Method Comparison',
+             fontsize=14, fontweight='bold', y=1.02)
+plt.tight_layout()
+fig_path = 'output/figures/paper_accuracy_cost_fairness_gain.png'
+plt.savefig(fig_path, dpi=200, bbox_inches='tight'); plt.show()
+print(f"\nSaved: {fig_path}")
+""")
+
+code(r"""
+# ════════════════════════════════════════════════════════════════════════
+# 12k4  TABLE 11 – HYPERPARAMETER CONFIGURATION
+# ════════════════════════════════════════════════════════════════════════
+import pandas as pd, numpy as np
+from IPython.display import display, HTML
+
+cand_df = pd.read_csv('output/tables/18b_fairness_candidate_search.csv')
+
+# ── Table 11a: Optimal hyperparameters for the chosen Fair model ──
+print("Table 11a: Hyperparameter Configuration — Chosen Fair Model")
+print("═" * 80)
+
+# Find the chosen candidate (the one used for Fair model)
+# It's the first row when sorted by the selection criteria
+elig = cand_df[
+    (cand_df['DI_RACE'] >= 0.80) &
+    (cand_df['DI_SEX']  >= 0.80) &
+    (cand_df['DI_ETH']  >= 0.80) &
+    (cand_df['DI_AGE']  >= 0.80)
+]
+chosen_cand = elig.sort_values(
+    ['Total_Fair','Age_Fair','Race_Fair','Acc_Drop_pp'],
+    ascending=[False, False, False, True]
+).iloc[0]
+
+hyper_rows = [
+    {'Parameter': 'Reweighing Strength (λ)', 'Value': chosen_cand['Model'].replace('Reweigh_',''),
+     'Description': 'Kamiran-Calders reweighing multiplier applied to training sample weights'},
+    {'Parameter': 'α_SR (Selection Rate)', 'Value': str(chosen_cand['A_SR']),
+     'Description': 'Weight for selection-rate-equalising threshold in per-group optimisation'},
+    {'Parameter': 'α_TPR (True Positive Rate)', 'Value': str(chosen_cand['A_TPR']),
+     'Description': 'Weight for TPR-equalising threshold in per-group optimisation'},
+    {'Parameter': 'α_PPV (Positive Pred. Value)', 'Value': str(chosen_cand['A_PPV']),
+     'Description': 'Weight for PPV-equalising threshold in per-group optimisation'},
+    {'Parameter': 'Threshold Strategy', 'Value': 'Triple-Objective Blend',
+     'Description': 'Per-group threshold = 0.5 + α_SR*(sr_t−0.5) + α_TPR*(tpr_t−0.5) + α_PPV*(ppv_t−0.5)'},
+    {'Parameter': 'Group Granularity', 'Value': 'RACE × AGE × SEX',
+     'Description': 'Thresholds optimised at intersection of 3 protected attributes'},
+    {'Parameter': 'Total Candidates Evaluated', 'Value': str(len(cand_df)),
+     'Description': f'8 α_SR × 4 α_TPR × 3 α_PPV × 7 models = {len(cand_df)} combinations'},
+    {'Parameter': 'Candidates with All DI ≥ 0.80', 'Value': str(len(elig)),
+     'Description': 'Candidates meeting universal DI fairness threshold'},
+    {'Parameter': 'Selection Criterion', 'Value': 'Max Total_Fair → Age_Fair → Race_Fair → Min Acc_Drop',
+     'Description': 'Lexicographic: maximise fair verdicts, then minimise accuracy loss'},
+]
+
+t11a = pd.DataFrame(hyper_rows)
+t11a.to_csv('output/tables/paper_table11a_hyperparameters.csv', index=False)
+display(t11a.style.hide(axis='index').set_caption(
+    'Hyperparameter Configuration — Chosen Fair Model'))
+
+# ── Table 11b: Top-10 candidate configurations ──
+print("\nTable 11b: Top-10 Fair Candidates (all with DI ≥ 0.80 for all 4 attributes)")
+print("═" * 80)
+
+top10 = elig.sort_values(
+    ['Total_Fair','Accuracy'],
+    ascending=[False, False]
+).head(10)
+
+display_cols = ['Model','A_SR','A_TPR','A_PPV','Accuracy',
+                'DI_RACE','DI_SEX','DI_ETH','DI_AGE','Total_Fair','Acc_Drop_pp']
+avail = [c for c in display_cols if c in top10.columns]
+
+t11b = top10[avail].copy()
+t11b.columns = [c.replace('DI_RACE','DI(Race)').replace('DI_SEX','DI(Sex)')
+                  .replace('DI_ETH','DI(Eth)').replace('DI_AGE','DI(Age)')
+                  .replace('Total_Fair','Verdicts').replace('Acc_Drop_pp','ΔAcc(pp)')
+                for c in t11b.columns]
+t11b.to_csv('output/tables/paper_table11b_top10_candidates.csv', index=False)
+
+display(t11b.reset_index(drop=True).style.format({
+    'Accuracy': '{:.4f}', 'DI(Race)': '{:.3f}', 'DI(Sex)': '{:.3f}',
+    'DI(Eth)': '{:.3f}', 'DI(Age)': '{:.3f}',
+    'Verdicts': '{:.0f}', 'ΔAcc(pp)': '{:.2f}'
+}, na_rep='—').set_caption('Top-10 Candidates with All 4 DI ≥ 0.80'))
+""")
+
+code(r"""
+# ════════════════════════════════════════════════════════════════════════
+# 12k5  ZERO / EXTREME VALUE AUDIT
+# ════════════════════════════════════════════════════════════════════════
+import pandas as pd, numpy as np, os, glob
+
+print("═" * 80)
+print("  ZERO / EXTREME VALUE AUDIT")
+print("  Checking all output tables for misleading 0.000 or 1.000 values")
+print("═" * 80)
+
+csv_files = sorted(glob.glob('output/tables/*.csv'))
+issues = []
+for fpath in csv_files:
+    try:
+        df_chk = pd.read_csv(fpath)
+        for col in df_chk.select_dtypes(include=[np.number]).columns:
+            zeros = (df_chk[col].abs() < 1e-6).sum()
+            ones  = ((df_chk[col] - 1.0).abs() < 1e-6).sum()
+            if zeros > 0 and col not in ['Subset','Seed','Index','A_TPR','A_PPV','A_SR']:
+                issues.append(f"  ⚠ {os.path.basename(fpath)} → {col}: {zeros} near-zero value(s)")
+            if ones > 0 and col not in ['Subset','Seed','Index']:
+                pass  # 1.0 can be legitimate (e.g., DI=1.0 means perfect parity)
+    except Exception:
+        pass
+
+if issues:
+    print(f"\n  Found {len(issues)} potential zero-value issues:")
+    for iss in issues[:20]:
+        print(iss)
+    print("\n  Note: Zero values in α_SR/α_TPR/α_PPV are legitimate (those are hyperparams).")
+    print("  Zero values in fairness metrics like TI or PP can be legitimate for near-perfect parity.")
+    print("  Only a concern if DI=0.000 or Accuracy=0.000 (which would indicate a bug).")
+else:
+    print("\n  ✅ No concerning zero values found in any output table.")
+
+# Check specifically for DI=0 or DI=1 (misleading)
+trade_df = pd.read_csv('output/tables/14d_fairness_accuracy_tradeoff.csv')
+di_cols = [c for c in trade_df.columns if c.startswith('DI_')]
+for col in di_cols:
+    bad_zeros = trade_df[trade_df[col].abs() < 0.001]
+    bad_ones  = trade_df[(trade_df[col] - 1.0).abs() < 0.001]
+    if len(bad_zeros):
+        print(f"  ⚠ WARNING: {col} has {len(bad_zeros)} value(s) = 0.000 (misleading)")
+    if len(bad_ones):
+        print(f"  ℹ NOTE: {col} has {len(bad_ones)} value(s) ≈ 1.000 (perfect parity — likely legitimate)")
+
+print("\n  ✅ Zero/extreme value audit complete.")
+""")
+
 code(r"""
 # ════════════════════════════════════════════════════════════════════════
 # 12k  OVERLEAF — RESULTS, DISCUSSION & ANALYSIS SECTION (LaTeX)
@@ -7145,8 +7744,8 @@ length-of-stay prediction using the Texas-100x PUDF dataset (925,569 records fro
 6. **Intersectional Analysis:**  25-30+ subgroup combinations analysed, revealing
    disparities hidden by single-attribute analysis.
 
-7. **Intervention:**  Lambda-reweighing (λ=5) + per-group threshold optimisation
-   improves DI with < 1 pp accuracy loss.
+7. **Intervention:**  Lambda-reweighing (λ=1) + per-group threshold optimisation
+   achieves **all 4 DI ≥ 0.80 (FAIR)** with ~5 pp accuracy cost — the optimal fairness-accuracy trade-off.
 
 ### Output Files:
 - **Figures:** `output/figures/` — all visualisations as high-resolution PNGs

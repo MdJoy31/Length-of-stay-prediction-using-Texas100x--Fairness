@@ -1,0 +1,10 @@
+Parameter,Value,Description
+Reweighing Strength (λ),1,Kamiran-Calders reweighing multiplier applied to training sample weights
+α_SR (Selection Rate),0.8,Weight for selection-rate-equalising threshold in per-group optimisation
+α_TPR (True Positive Rate),0.0,Weight for TPR-equalising threshold in per-group optimisation
+α_PPV (Positive Pred. Value),0.0,Weight for PPV-equalising threshold in per-group optimisation
+Threshold Strategy,Triple-Objective Blend,Per-group threshold = 0.5 + α_SR*(sr_t−0.5) + α_TPR*(tpr_t−0.5) + α_PPV*(ppv_t−0.5)
+Group Granularity,RACE × AGE × SEX,Thresholds optimised at intersection of 3 protected attributes
+Total Candidates Evaluated,672,8 α_SR × 4 α_TPR × 3 α_PPV × 7 models = 672 combinations
+Candidates with All DI ≥ 0.80,51,Candidates meeting universal DI fairness threshold
+Selection Criterion,Max Total_Fair → Age_Fair → Race_Fair → Min Acc_Drop,"Lexicographic: maximise fair verdicts, then minimise accuracy loss"
