@@ -7614,9 +7614,10 @@ latex_sections.append(r'''
 
 Our seven-metric auditing framework reveals nuances that any
 single metric would miss.  The Standard LGB-XGB Blend achieves
-21/28 fair verdicts yet fails on DI for Race (0.798, below the
-0.80 four-fifths threshold), a violation invisible to
-EOPP-only or SPD-only audits.  DI and SPD capture
+18/28 fair verdicts yet fails on DI for Race (0.654),
+Sex (0.762), and Age (0.291) — violations that an
+EOPP-only audit would miss, since EOPP is \emph{FAIR} for Race
+(0.049) and Sex (0.035).  DI and SPD capture
 \emph{selection-rate} parity, EOPP and EOD focus on
 \emph{error-rate} equity, TI gives an information-theoretic
 lens, and PP/CAL assess predictive calibration.  The Composite
@@ -7705,8 +7706,8 @@ Isotonic calibration per
 subgroup was applied as an additional post-processing step.
 While within-group reliability curves improved, no UNFAIR
 verdict was converted to FAIR under the adopted thresholds.
-The residual calibration gaps for Race (CAL\,=\,0.216) and
-Age\_Group (CAL\,=\,0.250) are driven by structural base-rate
+The residual calibration gaps for Race (CAL\,=\,0.169) and
+Age\_Group (CAL\,=\,0.257) are driven by structural base-rate
 heterogeneity rather than model miscalibration, consistent with
 the impossibility constraints discussed above.
 
