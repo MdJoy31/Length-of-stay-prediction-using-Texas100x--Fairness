@@ -1,10 +1,15 @@
-Study,Dataset,N,Task,Best_Model,AUC,N_Fairness_Metrics,N_Models,Stability_Test,Cross_Site
-Jain et al. (2024),NY SPARCS,"2,300,000",LOS Reg.,CatBoost,,0,5,No,No
-Jaotombo et al. (2022),French PMSI,"73,182",PLOS>14d,GB,0.81,0,5,No,No
-Zeleke et al. (2023),Bologna ED,"~15,000",PLOS>6d,GB,0.78,0,6,No,No
-Mekhaldi et al. (2021),Open,"~5,000",LOS Reg.,GBM,,0,4,No,No
-Pfohl et al. (2021),STARR+Optum+MIMIC,"~200,000",LOS>7d,L2-LR,0.84,7,1,Bootstrap CI,3 sites
-Poulain et al. (2023),MIMIC-III+eICU,"~200,000",Mortality,LR/MLP+FL,0.83,3,2,No,208 sites (FL)
-Tarek et al. (2025),MIMIC-III,"~40,000",LOS,XGBoost,0.86,1,1,Single seed,No
-Our Study (Standard),Texas-100x PUDF,"925,128",LOS>3d,LGB-XGB Blend,0.9526814810655468,7,12,30 seeds+KFold+Bootstrap,441 hospitals
-Our Study (Fair),Texas-100x PUDF,"925,128",LOS>3d,Fair-XGBoost,0.9455753220986414,7,12,30 seeds+KFold+Bootstrap,441 hospitals
+Study,Dataset,N,Task,Best_Model,AUC,Accuracy,N_Fairness_Metrics,N_Protected_Attrs,N_Models,Stability_Test,Cross_Site
+Rajkomar et al. (2018),UCSF+UCM (2 sites),"216,000",LOS (multi),Deep Learning,0.86,,0,0,1,No,2 sites
+Harutyunyan et al. (2019),MIMIC-III,"~42,000",LOS+Mortality,LSTM,,,0,0,1,No,No
+Jain et al. (2024),NY SPARCS,"2,300,000",LOS Reg.,CatBoost,,,0,0,5,No,No
+Lee et al. (2024),OMOP-CDM (2 sites),"~80,000",LOS 3-class,LR/XGBoost,,,0,0,3,External val.,2 sites
+Jaotombo et al. (2022),French PMSI,"73,182",PLOS>14d,GB,0.81,,0,0,5,No,No
+Zeleke et al. (2023),Bologna ED,"~15,000",PLOS>6d,GB,0.78,,0,0,6,No,No
+Mekhaldi et al. (2021),Open,"~5,000",LOS Reg.,GBM,,,0,0,4,No,No
+Feng et al. (2022),GWTG-HF,"210,000",LOS>7d+Mort.,RF/GBDT,,,3,2,5,No,No
+Pfohl et al. (2021),STARR+Optum+MIMIC,"~200,000",LOS>7d,L2-LR,0.84,,7,3,1,Bootstrap CI,3 sites
+Poulain et al. (2023),MIMIC-III+eICU,"~200,000",Mortality,LR/MLP+FL,0.83,,3,3,2,No,208 sites (FL)
+Meng et al. (2022),MIMIC-IV,"~73,000",ICU Mortality,5 DL models,,,4,5,5,No,No
+Tarek et al. (2025),MIMIC-III,"~40,000",LOS,XGBoost,0.86,,1,1,1,Single seed,No
+Our Study (Standard),Texas-100x PUDF,"925,128",LOS>3d,LGB-XGB Blend,0.9527087450567469,0.8776009858074001,7,4,12,30 seeds+KFold+Bootstrap,441 hospitals
+Our Study (Fair),Texas-100x PUDF,"925,128",LOS>3d,Fair-XGBoost,0.9527087450567469,0.8281268578470052,7,4,12,30 seeds+KFold+Bootstrap,441 hospitals

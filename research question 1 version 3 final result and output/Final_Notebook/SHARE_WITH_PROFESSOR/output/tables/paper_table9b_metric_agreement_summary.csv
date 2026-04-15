@@ -1,0 +1,8 @@
+Metric,Threshold,Type,Agrees with Majority,Disagrees
+DI,0.8,Selection Rate,34/60 (57%),26/60 (43%)
+SPD,0.1,Selection Rate,35/60 (58%),25/60 (42%)
+EOPP,0.1,Error Rate,58/60 (97%),2/60 (3%)
+EOD,0.1,Error Rate,58/60 (97%),2/60 (3%)
+TI,0.1,Information,40/60 (67%),20/60 (33%)
+PP,0.1,Calibration,43/60 (72%),17/60 (28%)
+CAL,0.05,Calibration,41/60 (68%),19/60 (32%)

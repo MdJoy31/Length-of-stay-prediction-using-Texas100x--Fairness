@@ -7,7 +7,7 @@ LightGBM,Sex,U,U,F,F,F,F,F,5,5F / 2U
 LightGBM,Age Group,U,U,U,U,F,F,U,2,2F / 5U
 AFCE-LightGBM,Race,U,U,F,F,F,F,U,4,4F / 3U
 AFCE-LightGBM,Sex,U,U,F,F,F,F,F,5,5F / 2U
-AFCE-LightGBM,Age Group,U,U,U,U,F,F,U,2,2F / 5U
+AFCE-LightGBM,Age Group,U,U,U,U,F,F,F,3,3F / 4U
 XGBoost,Race,U,U,F,F,F,F,U,4,4F / 3U
 XGBoost,Sex,U,U,F,F,F,F,F,5,5F / 2U
 XGBoost,Age Group,U,U,U,U,F,F,F,3,3F / 4U
@@ -36,7 +36,6 @@ DecisionTree,Ethnicity,F,F,F,F,F,F,U,6,6F / 1U
 DecisionTree,Age Group,U,U,U,U,F,U,U,1,1F / 6U
 DNN (PyTorch),Race,U,U,U,U,F,F,U,2,2F / 5U
 DNN (PyTorch),Sex,U,U,F,F,F,F,F,5,5F / 2U
-DNN (PyTorch),Ethnicity,U,F,F,F,F,F,F,6,6F / 1U
 DNN (PyTorch),Age Group,U,U,U,U,F,F,U,2,2F / 5U
 Fair (Fair),Race,F,F,F,F,F,U,U,5,5F / 2U
 Fair (Fair),Sex,F,F,F,F,F,U,U,5,5F / 2U

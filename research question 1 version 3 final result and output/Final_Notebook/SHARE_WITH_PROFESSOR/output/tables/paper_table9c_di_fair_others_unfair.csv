@@ -1,0 +1,6 @@
+Model,Attribute,DI,Unfair Metrics
+Stacking Ensemble,Ethnicity,0.827,CAL=0.080
+DecisionTree,Ethnicity,0.829,CAL=0.060
+Fair (Fair),Race,0.908,"EOD=0.124, PP=0.263, CAL=0.245"
+Fair (Fair),Sex,0.964,PP=0.148
+Fair (Fair),Age Group,0.801,"EOPP=0.166, EOD=0.188, PP=0.459, CAL=0.065"

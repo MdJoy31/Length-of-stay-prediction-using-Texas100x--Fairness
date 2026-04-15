@@ -1,0 +1,50 @@
+Model,Attribute,DI,SPD,EOPP,EOD,TI,PP,CAL,Fair/7,Split
+LGB-XGB,Race,U,U,F,F,F,F,U,4,4F / 3U
+LGB-XGB,Sex,U,U,F,F,F,F,F,5,5F / 2U
+LGB-XGB,Age Group,U,U,U,U,F,F,U,2,2F / 5U
+LightGBM,Race,U,U,F,F,F,U,U,3,3F / 4U
+LightGBM,Sex,U,U,F,F,F,F,F,5,5F / 2U
+LightGBM,Age Group,U,U,U,U,F,F,U,2,2F / 5U
+AFCE-LightGBM,Race,U,U,F,F,F,F,U,4,4F / 3U
+AFCE-LightGBM,Sex,U,U,F,F,F,F,F,5,5F / 2U
+AFCE-LightGBM,Age Group,U,U,U,U,F,F,U,2,2F / 5U
+XGBoost,Race,U,U,F,F,F,F,U,4,4F / 3U
+XGBoost,Sex,U,U,F,F,F,F,F,5,5F / 2U
+XGBoost,Age Group,U,U,U,U,F,F,F,3,3F / 4U
+AFCE-XGBoost,Race,U,U,F,F,F,F,U,4,4F / 3U
+AFCE-XGBoost,Sex,U,U,F,F,F,F,F,5,5F / 2U
+AFCE-XGBoost,Age Group,U,U,U,U,F,F,F,3,3F / 4U
+Stacking Ensemble,Race,U,U,F,F,F,F,U,4,4F / 3U
+Stacking Ensemble,Sex,U,U,F,F,F,F,U,4,4F / 3U
+Stacking Ensemble,Ethnicity,F,F,F,F,F,F,U,6,6F / 1U
+Stacking Ensemble,Age Group,U,U,U,U,F,F,U,2,2F / 5U
+GradientBoosting,Race,U,U,F,F,F,F,U,4,4F / 3U
+GradientBoosting,Sex,U,U,F,F,F,F,F,5,5F / 2U
+GradientBoosting,Age Group,U,U,U,U,F,F,U,2,2F / 5U
+HistGradientBoosting,Race,U,U,F,F,F,F,U,4,4F / 3U
+HistGradientBoosting,Sex,U,U,F,F,F,F,F,5,5F / 2U
+HistGradientBoosting,Age Group,U,U,U,U,F,F,U,2,2F / 5U
+Random Forest,Race,U,U,F,F,F,F,U,4,4F / 3U
+Random Forest,Sex,U,U,F,F,F,F,F,5,5F / 2U
+Random Forest,Age Group,U,U,U,U,F,F,U,2,2F / 5U
+CatBoost,Race,U,U,F,F,F,F,U,4,4F / 3U
+CatBoost,Sex,U,U,F,F,F,F,F,5,5F / 2U
+CatBoost,Age Group,U,U,U,U,F,F,U,2,2F / 5U
+DecisionTree,Race,U,U,F,F,F,F,U,4,4F / 3U
+DecisionTree,Sex,U,U,F,F,F,F,F,5,5F / 2U
+DecisionTree,Ethnicity,F,F,F,F,F,F,U,6,6F / 1U
+DecisionTree,Age Group,U,U,U,U,F,U,U,1,1F / 6U
+DNN (PyTorch),Race,U,U,U,U,F,U,U,1,1F / 6U
+DNN (PyTorch),Sex,U,U,F,F,F,F,F,5,5F / 2U
+DNN (PyTorch),Age Group,U,U,U,U,F,F,U,2,2F / 5U
+Fair (Fair),Race,F,F,F,U,F,U,U,4,4F / 3U
+Fair (Fair),Sex,F,F,F,F,F,U,F,6,6F / 1U
+Fair (Fair),Age Group,F,F,U,U,F,U,U,3,3F / 4U
+AdaBoost,Race,U,U,U,U,F,U,U,1,1F / 6U
+AdaBoost,Sex,U,U,F,F,F,F,U,4,4F / 3U
+AdaBoost,Ethnicity,U,F,F,F,F,F,U,5,5F / 2U
+AdaBoost,Age Group,U,U,U,U,F,F,U,2,2F / 5U
+Logistic Regression,Race,U,U,U,U,F,F,U,2,2F / 5U
+Logistic Regression,Sex,U,U,F,U,F,F,U,3,3F / 4U
+Logistic Regression,Ethnicity,U,U,F,F,F,F,U,4,4F / 3U
+Logistic Regression,Age Group,U,U,U,U,F,F,U,2,2F / 5U
