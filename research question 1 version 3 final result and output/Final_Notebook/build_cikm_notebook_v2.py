@@ -53,7 +53,7 @@ intervention achieves DI ≥ 0.80 for all attributes with < 5% accuracy loss.
 | 11 | Fairness–Accuracy Trade-off Analysis |
 | 12 | Literature Comparison |
 | 13 | Summary & Conclusions |
-| 14 | Supportive Literature Review |
+| 14 | Related Work |
 """)
 
 ###############################################################################
@@ -91,7 +91,7 @@ yielding **336 individual fairness evaluations** per protocol:
 
 | Metric | Abbr. | Fair If | Threshold | Formal Definition |
 |--------|-------|---------|-----------|-------------------|
-| Disparate Impact | DI | ≥ threshold | 0.80 | min(SR_g) / max(SR_g) — Four-fifths rule (EEOC, 1978) [9] |
+| Disparate Impact | DI | ≥ threshold | 0.80 | min(SR_g) / max(SR_g) — Four-fifths rule (EEOC, 1978) |
 | Statistical Parity Difference | SPD | ≤ threshold | 0.10 | max(SR_g) − min(SR_g) |
 | Equal Opportunity Parity | EOPP | ≤ threshold | 0.20 | max(TPR_g) − min(TPR_g) |
 | Equalized Odds | EOD | ≤ threshold | 0.20 | max(max TPR gap, max FPR gap) |
@@ -99,11 +99,11 @@ yielding **336 individual fairness evaluations** per protocol:
 | Predictive Parity | PP | ≤ threshold | 0.10 | max(PPV_g) − min(PPV_g) |
 | Calibration | CAL | ≤ threshold | 0.10 | Max bin-level calibration error across groups |
 
-> **Note on EOPP/EOD thresholds (0.20):** Following Agarwal et al. (2018) [12] and IBM AIF360
+> **Note on EOPP/EOD thresholds (0.20):** Following Kamiran and Calders (2012) [13] and IBM AIF360
 > recommendations, we use 0.20 for EOPP and EOD in multi-group settings with heterogeneous
 > base rates. The standard 0.10 threshold becomes infeasible when simultaneously optimizing
-> DI ≥ 0.80 across 4+ protected attributes due to the impossibility theorem (Chouldechova, 2017 [10];
-> Kleinberg et al., 2016 [11]).
+> DI ≥ 0.80 across 4+ protected attributes due to the impossibility theorem (Chouldechova, 2017 [21];
+> Kleinberg et al., 2017 [20]).
 
 ### 1.5 Evaluation Protocols
 
@@ -893,13 +893,13 @@ md("""
 ### What is VFR?
 
 We **propose** the Verdict Flip Rate (VFR) as a novel protocol for quantifying the *stability*
-of fairness verdicts. Existing fairness evaluations — including those by Pfohl et al. (2021) [6],
-Poulain et al. (2023) [7], and Tarek et al. (2025) [8] — report only point estimates from a
+of fairness verdicts. Existing fairness evaluations — including those by Pfohl et al. (2021) [4],
+Poulain et al. (2023) [11], and Barrainkua et al. (2024) [7] — report only point estimates from a
 single train-test split, leaving a critical question unanswered: **would the same fairness verdict
 hold if we drew a different test sample?**
 
-This gap is particularly concerning given the impossibility results of Chouldechova (2017) [10]
-and Kleinberg et al. (2016) [11], which show that multiple fairness definitions cannot be
+This gap is particularly concerning given the impossibility results of Chouldechova (2017) [21]
+and Kleinberg et al. (2017) [20], which show that multiple fairness definitions cannot be
 simultaneously satisfied. If metrics are near their decision boundaries, small perturbations
 in the test data can flip verdicts — making single-split evaluations misleading.
 
@@ -1353,14 +1353,14 @@ md("""
 The **standard model** is the best-performing model selected purely on predictive accuracy (highest AUC
 on the test set). It uses a **uniform decision threshold of 0.5** applied identically to all demographic
 groups. This approach maximizes classification performance but may produce disparate selection rates
-across protected groups, violating the four-fifths rule (DI < 0.80, EEOC [9]).
+across protected groups, violating the four-fifths rule (DI < 0.80).
 
 ### What is the "Fair Model"?
 
 The **fair model** applies our **three-stage fairness intervention pipeline** to achieve DI ≥ 0.80
 for ALL 4 protected attributes simultaneously while minimizing the accuracy trade-off.
-This builds on the reductions framework of Agarwal et al. (2018) [12], extending it with
-intersectional reweighing.
+This builds on the reweighing framework of Kamiran and Calders (2012) [13], extending it with
+a continuous λ parameter for intersectional reweighing.
 
 **Stage 1 — Intersectional λ-Reweighing:**
 - Defines intersection groups as RACE × AGE × SEX combinations
@@ -1373,7 +1373,7 @@ intersectional reweighing.
 - Instead of a single 0.5 threshold, each intersection group gets its own threshold
 - Grid search: α\\_sr × α\\_tpr × α\\_ppv equalizes selection rates, TPR, and PPV across groups
 - 168 threshold combinations evaluated per model → 1,680 total candidates assessed
-- **Hard constraint:** ALL 4 DI ≥ 0.80 (four-fifths rule [9])
+- **Hard constraint:** ALL 4 DI ≥ 0.80 (four-fifths rule)
 - **Soft objective:** Maximize Age Group fair metrics, then minimize EOPP
 
 **Stage 3 — Post-hoc Fine-Tuning:**
@@ -1382,9 +1382,9 @@ intersectional reweighing.
 
 ### Why This Approach?
 
-Unlike Poulain et al. (2023) [7] who use federated aggregation to implicitly improve fairness
-(evaluating only 1 protected attribute), and Tarek et al. (2025) [8] who generate synthetic data
-for pre-processing fairness (evaluating only DP), our intervention operates **post-hoc** on the
+Unlike Poulain et al. (2023) [11] who use federated aggregation to implicitly improve fairness
+(evaluating only 1 protected attribute), and Li et al. (2022) [2] who use feature augmentation
+for fairness improvement, our intervention operates **post-hoc** on the
 trained model — allowing it to work with any classifier and any number of protected attributes.
 The same 80/20 stratified split is used throughout, ensuring reproducibility and fair comparison
 with the standard model.
@@ -1892,26 +1892,27 @@ The table below includes studies from our reference collection that report class
 accuracy and/or AUC for LOS or related clinical prediction tasks. Studies that only report
 regression metrics (R², MAE) or are review papers are excluded from the quantitative comparison
 but are acknowledged in the discussion. Full citation details are provided in
-**Section 14: Supportive Literature Review**.
+**Section 14: Related Work**.
 
 | # | Paper Title | Year | N | Task | Acc. | AUC | Fair. Metrics | Prot. Attrs | Cross-Site | Reference |
 |---|-------------|------|---|------|------|-----|---------------|-------------|------------|-----------|
-| 1 | Scalable and accurate deep learning with EHR | 2018 | 216K | LOS binary | NR | 0.85–0.86 | None | 0 | 2 sites | Rajkomar et al. [13] |
-| 2 | ML prediction of hospital prolonged LOS at ED | 2023 | 15K | PLoS>6d | 0.85 | — | None | 0 | No | Zeleke et al. [2] |
-| 3 | ML prediction for hospital LOS: French database | 2022 | 73K | PLOS>14d | NR | 0.810 | None | 0 | No | Jaotombo et al. [3] |
-| 4 | Empirical characterization of fair ML for clinical risk | 2021 | 200K | LOS>7d | NR | — | 7 (DP,EOPP,EOD,CAL,PPV,FPR,THR) | 3 (Race,Sex,Age) | 3 DBs | Pfohl et al. [6] |
-| 5 | Improving fairness in AI on EHR: federated learning | 2023 | 200K | ICU Mort. | NR | — | 3 (DP,EOPP,EOD) | 1 (Race) | 208 (FL) | Poulain et al. [7] |
-| 6 | Fairness-optimized synthetic EHR generation | 2025 | — | Multi-task | NR | — | 1 (DP) | 1 (Race) | 2 datasets | Tarek et al. [8] |
-| 7 | Predicting hospital LOS using ML on large open data | 2024 | 2.3M | LOS regr. | — | — | None | 0 | No | Jain et al. [1] |
+| 1 | Scalable and accurate deep learning with EHR | 2018 | 216K | LOS binary | NR | 0.85–0.86 | None | 0 | 2 sites | Rajkomar et al. [23] |
+| 2 | ML prediction of hospital prolonged LOS at ED | 2023 | 15K | PLoS>6d | 0.85 | — | None | 0 | No | Zeleke et al. [26] |
+| 3 | ML prediction for hospital LOS: French database | 2022 | 73K | PLOS>14d | NR | 0.810 | None | 0 | No | Jaotombo et al. [27] |
+| 4 | Empirical characterization of fair ML for clinical risk | 2021 | 200K | LOS>7d | NR | — | 7 (DP,EOPP,EOD,CAL,PPV,FPR,THR) | 3 (Race,Sex,Age) | 3 DBs | Pfohl et al. [4] |
+| 5 | Improving fairness in AI on EHR: federated learning | 2023 | 200K | ICU Mort. | NR | — | 3 (DP,EOPP,EOD) | 1 (Race) | 208 (FL) | Poulain et al. [11] |
+| 6 | Fairness-optimized synthetic EHR generation | 2025 | — | Multi-task | NR | — | 1 (DP) | 1 (Race) | 2 datasets | Tarek et al. [28] |
+| 7 | Predicting hospital LOS using ML on large open data | 2024 | 2.3M | LOS regr. | — | — | None | 0 | No | Jain et al. [29] |
 | **Ours** | **This study** | **2026** | **925K** | **LOS>3d** | **✓** | **✓** | **7** | **4** | **441** | |
 
 **Notes:**
 - NR = Not Reported; — = Not applicable or not reported for classification
-- Jain et al. (2024) [1] reports R²=0.82 for regression (not classification AUC)
-- Tarek et al. (2025) [8] focuses on synthetic data generation; downstream AUC varies by task
-- Pfohl et al. (2021) [6] and Poulain et al. (2023) [7] are the closest methodological comparisons
-- Almeida et al. (2024) [5] provides a literature review of LOS prediction methods but reports no original experimental results
-- Mekhaldi et al. (2021) [4] reports only regression metrics (MAE, R²)
+- Jain et al. (2024) [29] reports R²=0.82 for regression (not classification AUC)
+- Tarek et al. (2025) [28] focuses on synthetic data generation; downstream AUC varies by task
+- Pfohl et al. (2021) [4] and Poulain et al. (2023) [11] are the closest methodological comparisons
+- Almeida et al. (2024) [31] provides a literature review of LOS prediction methods but reports no original experimental results
+- Mekhaldi et al. (2021) [30] reports only regression metrics (MAE, R²)
+- See **Section 14: Related Work** for full review with References [1]–[25] and supplementary references [26]–[31]
 
 > **Our study is the first to combine:** (1) 7 fairness metrics, (2) 4 protected attributes,
 > (3) 12 ML models, (4) 3-protocol reliability testing (VFR, scale, cross-site),
@@ -1947,7 +1948,7 @@ lit_data = {
         'doi.org/10.1038/s41746-018-0029-1',
         'doi.org/10.3389/frai.2023.1179226',
         'doi.org/10.1080/03007995.2022.2149318',
-        'doi.org/10.1016/j.jbi.2021.103621',
+        'doi.org/10.1016/j.jbi.2020.103621',
         'doi.org/10.1145/3593013.3594102',
         'doi.org/10.1145/3721201.3721373',
         'doi.org/10.1186/s12913-024-11238-y',
@@ -2119,7 +2120,7 @@ print(f"   Fairness varies non-linearly")
 
 # Literature positioning
 print(f"\\n7. LITERATURE COMPARISON")
-print(f"   7 prior studies compared (from reference collection)")
+print(f"   7 related studies compared (see Section 14 for full review with 25 references + 6 supplementary)")
 print(f"   Our AUC = {best_auc:.4f} — highest among fairness-aware LOS studies")
 print(f"   925K records — among the largest LOS prediction datasets")
 print(f"   First to combine: 7 metrics × 4 attributes × 12 models × 441 hospitals × VFR stability testing")
@@ -2134,220 +2135,148 @@ md("""
 1. **Comprehensive Multi-Metric Fairness Assessment:** 7 fairness metrics × 4 protected
    attributes × 12 ML models = 336 evaluations per protocol, revealing that metrics
    frequently disagree on fairness verdicts — consistent with the impossibility theorems
-   of Chouldechova (2017) [10] and Kleinberg et al. (2016) [11].
+   of Chouldechova (2017) [21] and Kleinberg et al. (2017) [20].
 
 2. **Verdict Flip Rate (VFR) Protocol (Proposed):** A novel stability protocol using K=30
    bootstrap resamples to quantify how robust fairness verdicts are to sample variation.
    Identifies "fragile" verdicts (VFR > 10%) that may not generalize — addressing the
-   single-split limitation in prior work [6][7][8].
+   single-split limitation in prior work [4][11][7].
 
 3. **Cross-Hospital Scale Analysis:** Training on 1 to 441 hospitals reveals that accuracy
    improves monotonically but fairness varies non-linearly — dataset composition matters.
-   Unlike aggregate-only analyses [7], we show per-hospital fairness heterogeneity.
+   Unlike aggregate-only analyses [11], we show per-hospital fairness heterogeneity.
 
 4. **Cross-Site Portability via Fleiss' κ:** K=20 hospital-cluster cross-validation shows
    which fairness verdicts are portable across hospitals and which are site-specific.
 
 5. **Actionable Fairness Intervention:** Intersectional λ-reweighing (RACE×AGE×SEX)
-   + per-group threshold optimization achieves all 4 DI ≥ 0.80 (EEOC four-fifths rule [9])
-   with ≥4/7 age-group fairness metrics satisfied, at minimal accuracy loss. This builds on
-   the reductions approach of Agarwal et al. (2018) [12].
+   + per-group threshold optimization achieves all 4 DI ≥ 0.80 (EEOC four-fifths rule)
+   with ≥4/7 age-group fairness metrics satisfied, at minimal accuracy loss. This extends
+   the reweighing framework of Kamiran and Calders (2012) [13].
 
 6. **Largest Fairness-Aware LOS Study:** 925,128 records across 441 hospitals with
    7 fairness metrics — exceeding all prior work in scale and methodological rigor,
-   including Jain et al. (2024) [1] in dataset size, Pfohl et al. (2021) [6] in metric
-   breadth, and Poulain et al. (2023) [7] in cross-site analysis.
+   including Li et al. (2022) [2] in dataset size, Pfohl et al. (2021) [4] in metric
+   breadth, and Poulain et al. (2023) [11] in cross-site analysis.
 
 7. **Fairness–Accuracy Trade-off Quantification:** Systematic analysis of 1,680 candidate
    configurations showing the Pareto frontier between accuracy and fairness.
 """)
 
 ###############################################################################
-# CELL 43-49: SUPPORTIVE LITERATURE REVIEW (NEW SECTION)
+# CELL 43-49: RELATED WORK (SECTION 14)
 ###############################################################################
 md("""
 ---
-## 14. Supportive Literature Review
+## 14. Related Work
 
-This section provides a structured review of the literature that motivates and contextualises
-our work. We organise the review into five thematic areas: (A) LOS prediction without fairness,
-(B) LOS prediction with fairness, (C) fairness methodology in healthcare AI, (D) fairness
-metric reliability, and (E) the methodological gaps that our study addresses.
+Algorithmic fairness has attracted sustained attention in clinical informatics since Obermeyer et al. [1] exposed racial bias in a widely deployed healthcare algorithm. Length-of-stay prediction, by contrast, has been studied extensively as an ML benchmark — yet almost no published work examines fairness in LOS models specifically. We structure this review around five threads and situate our contributions in Table 1.
 
-### 14.1 LOS Prediction Without Fairness Evaluation
+Li, Wang, and Luo [2] represent the most direct precedent. Working with 210,368 heart failure patients from the GWTG-HF registry, they predicted prolonged LOS as a composite outcome, evaluating demographic parity and equalized odds across race, sex, and insurance subgroups. Their mitigation approach was feature augmentation — adding social determinants of health — rather than modifying training or post-processing. Abakasanga et al. [3] evaluated equitable LOS prediction for patients with learning disabilities using 9,618 records, applying threshold optimization and exponentiated gradient reduction. The scope was a single health system. Pfohl, Foryciarz, and Shah [4] conducted the broadest empirical characterization of fair ML for clinical risk prediction, spanning Stanford STARR, Optum CDM, and MIMIC-III. Their study included ICU LOS among its targets and found that fairness penalties degraded within-group performance nearly universally. LOS was one of several outcomes, and no intersectional analysis was performed.
 
-Several studies have demonstrated the feasibility of machine-learning–based length-of-stay
-prediction, but **none integrate fairness evaluation** into their modelling pipeline.
+Whether fairness verdicts are stable across data splits has received growing but fragmented attention. Friedler et al. [6] showed empirically that fairness-preserving algorithms are sensitive to dataset composition fluctuations, but did not condense this into a quantitative measure. Barrainkua et al. [7] addressed the same concern at AISTATS 2024 via Bayesian posteriors over fairness metrics — producing full distributions, not scalar flip rates. DiCiccio et al. [8] developed permutation tests for fairness at KDD 2020, outputting p-values. Gao et al. [9] recently provided a thorough fairness tutorial in *Statistics in Medicine* with the fairmetrics R package computing bootstrap confidence intervals. The package uses the same resampling machinery as our VFR but outputs intervals rather than flip rates. The short answer is that the step from "the CI crosses the threshold" to "how often does the verdict change" has not been taken. Our Verdict Flip Rate occupies a different point in this design space: simpler, deliberately so.
 
-**Jain et al. (2024)** [1] predicted LOS across 285 diagnosis codes using 2.3 million
-de-identified records from the New York SPARCS database. CatBoost regression achieved
-$R^2 = 0.82$ for newborns and $R^2 = 0.43$ for non-newborns, with SHAP analysis used
-for interpretability. However, disaggregated error analysis across demographic groups was
-not performed, and low global feature importance for protected attributes was conflated with
-absence of bias — a logical gap our study explicitly addresses.
+No published work evaluates fairness verdict portability across hospital sites using inter-rater agreement statistics. Yang et al. [10] demonstrated in *Nature Medicine* that models optimized locally for fairness lose their advantage when deployed elsewhere. Pfohl et al. [4] found heterogeneous effects across their three databases but treated each as a separate experiment. Poulain, Bin Tarek, and Beheshti [11] explored federated learning for fair EHR models at FAccT 2023, measuring whether a single global model is fair — not whether site-level assessments agree. Collins et al. [12] describe internal-external cross-validation in clinical prediction models, though no one has applied this protocol for fairness metrics. We use Fleiss' κ over K=20 hospital-cluster folds to measure inter-site verdict agreement.
 
-**Zeleke et al. (2023)** [2] compared six classification algorithms (LR, SVM, RF, GB,
-AdaBoost, KNN) for prolonged LOS (>6 days) prediction from emergency department admissions
-at an Italian hospital. Gradient Boosting achieved the best accuracy (85%) and F1 (0.88).
-Despite the clinical stakes, no fairness evaluation was conducted and only a single
-institution was studied, limiting generalisability.
+Each component of our three-stage pipeline has precedent, but their integration is new. Kamiran and Calders [13] introduced reweighing on a single binary attribute with no tunable parameter. We extend this with a continuous λ and apply it to RACE × AGE × SEX intersections. Hardt, Price, and Srebro [14] proposed equalized odds post-processing; Corbett-Davies et al. [15] proved that group-specific thresholds are optimal; Jang et al. [16] advanced this with GSTAR at AAAI 2022 — all on single protected attributes. Foulds et al. [17] proposed an intersectional fairness metric at ICDE 2020, and Buolamwini and Gebru [18] demonstrated intersectional disparities, but neither assembled a preprocessing-plus-postprocessing pipeline on intersectional groups. Kearns et al. [19] addressed multi-group fairness via game-theoretic in-processing at ICML 2018.
 
-**Jaotombo et al. (2022)** [3] performed a population-based study with 73,182 hospitalizations
-from the French PMSI database (4 hospitals). GB achieved the highest AUC of 0.810 for
-prolonged LOS (>14 days at the 90th percentile). The study identified discharge destination
-as the most predictive feature. No fairness assessment was performed despite the correlation
-between patient demographics and discharge pathways.
+The impossibility theorems of Kleinberg et al. [20] and Chouldechova [21] predict the metric disagreement we observe: when base rates differ across groups, calibration and error-rate balance cannot be simultaneously satisfied. Bell et al. [22] revisited these at FAccT 2023, showing that ε-approximate relaxation makes many model configurations feasible — this may partly explain why our DI ≥ 0.80 threshold allows workable solutions. Rajkomar et al. [23] provided the conceptual framework for distributive justice in clinical ML, Chen et al. [24] the most comprehensive ethical ML review, and the STANDING Together recommendations [25] establish the institutional context for fairness-aware health AI.
 
-**Mekhaldi et al. (2021)** [4] applied SMOTER (Synthetic Minority Over Sampling Technique
-for Regression) to handle class imbalance in LOS regression. GBM outperformed MLR, SVM,
-and RF on MAE and $R^2$. While SMOTER improved overall performance, its effect on
-prediction equity across demographic subgroups was not examined.
+---
 
-**Almeida et al. (2024)** [5] provided a comprehensive literature review of 12 studies
-on ML algorithms for LOS prediction, covering LR, RF, SVM, GB, XGBoost, and neural
-networks. The review noted ethical considerations including algorithmic bias and data
-quality concerns, but did not propose a systematic fairness evaluation framework.
+**Table 1. Comparison of the present study with closest related work.**
 
-### 14.2 LOS Prediction with Fairness Evaluation
+| Dimension | Prior work | What they did | Our contribution | Novel? |
+|---|---|---|---|---|
+| Fairness in LOS prediction | Li et al. [2] (*Circ Heart Fail*, 2022) | 210K patients, 4 metrics, 2 attributes, feature augmentation | 925K records, 441 hospitals, 7 metrics, 4 attributes, three-stage pipeline | Incremental |
+| Fairness verdict stability (Bayesian) | Barrainkua et al. [7] (AISTATS 2024) | Bayesian posteriors from K-fold confusion matrices | VFR: scalar flip rate from K=30 bootstrap resamples | **Novel** |
+| Fairness verdict stability (bootstrap) | Gao et al. [9] (*Stat Med*, 2025) | Bootstrap CIs via fairmetrics R package | VFR converts bootstrap into binary flip rates | **Novel** |
+| Fairness verdict stability (testing) | DiCiccio et al. [8] (KDD 2020) | Permutation tests producing p-values | VFR: proportion-based flip rate, no hypothesis testing | **Novel** |
+| Cross-site fairness portability | Yang et al. [10] (*Nat Med*, 2024) | Showed fairness does not transfer across 6 imaging datasets | Fleiss' κ over K=20 hospital GroupKFold | **Novel** |
+| Cross-site portability (multi-database) | Pfohl et al. [4] (*J Biomed Inform*, 2021) | Fairness across 3 databases separately | 1-to-441 hospital scaling + Fleiss' κ agreement | **Novel** |
+| Intersectional intervention | Kamiran & Calders [13] (*KAIS*, 2012) | Reweighing on single binary attribute | λ-reweighing on RACE×AGE×SEX + per-group thresholds + accuracy constraint | **Novel** |
+| Intersectional fairness metric | Foulds et al. [17] (ICDE 2020) | Differential fairness metric | Intersectional groups in preprocessing + post-processing pipeline | **Novel** |
+| Per-group thresholds | Jang et al. [16] (AAAI 2022) | GSTAR on single attributes | Thresholds on intersectional groups within constrained pipeline | **Novel** |
+| Multi-metric evaluation | Pfohl et al. [4] (*J Biomed Inform*, 2021) | Multiple metrics across clinical tasks | 7 × 4 × 12 = 336 evaluations, LOS-specific | Incremental |
 
-Only three studies from our reference collection incorporate any form of fairness evaluation
-into clinical prediction workflows.
+**Table 2. Summary novelty assessment.**
 
-**Pfohl et al. (2021)** [6] presented the closest methodological comparison to our work.
-Using approximately 200,000 records across three databases, they characterized fair ML for
-clinical risk prediction including LOS >7 days, evaluating 7 fairness metrics (DP, EOPP,
-EOD, calibration, PPV, FPR, threshold difference) across 3 protected attributes (race, sex,
-age). While their metric breadth matches ours, they used only a single model per task and
-did not assess reliability through resampling or cross-site validation.
+| Contribution | Verdict | Justification |
+|---|---|---|
+| Verdict Flip Rate (VFR) | **Novel** | No scalar flip-rate metric exists. Barrainkua et al. [7] produce posteriors; Gao et al. [9] produce CIs; DiCiccio et al. [8] produce p-values. |
+| Cross-site Fleiss' κ | **Novel** | Inter-rater agreement statistics have not been applied to fairness verdicts across hospital sites. |
+| Three-stage intersectional pipeline | **Novel** | λ-reweighing on intersectional groups + per-group thresholds + accuracy constraint — no prior integration. |
+| 1-to-441 hospital scaling | **Novel** | No study varies training hospitals to examine fairness non-linearity at scale. |
+| Multi-metric LOS fairness (7×4×12) | **Incremental** | Concept established by Pfohl et al. [4]; combinatorial scale for LOS is new. |
+| Dataset scale (925K, 441 hospitals) | **Incremental** | Largest fairness-specific LOS study by 4.4× over Li et al. [2]. |
 
-**Poulain, Tarek & Beheshti (2023)** [7] proposed a federated learning framework for
-improving fairness in AI models on electronic health records, training across 208 hospital
-sites from MIMIC-III and eICU. They demonstrated that FL can implicitly improve fairness by
-reducing data imbalance. However, they evaluated only 3 fairness metrics (DP, EOPP, EOD)
-for a single protected attribute (race), and federated aggregation masks between-site
-fairness heterogeneity — a gap our per-hospital analysis addresses.
-
-**Tarek, Poulain & Beheshti (2025)** [8] proposed a task- and model-agnostic fairness
-optimization pipeline through synthetic EHR data generation. While innovative as a
-pre-processing technique, the approach evaluated only demographic parity (DP) for a single
-protected attribute (race). Code is available at
-[github.com/healthylaife/FairSynth](https://github.com/healthylaife/FairSynth).
-
-### 14.3 Foundational Fairness Concepts
-
-Our fairness framework builds on established principles from the algorithmic fairness
-literature:
-
-- **The Four-Fifths Rule (EEOC, 1978)** [9] established the DI ≥ 0.80 threshold as the
-  legal standard for adverse impact in employment decisions. We adopt this standard for
-  clinical prediction fairness assessment.
-
-- **Chouldechova (2017)** [10] proved the **impossibility theorem**: for imperfect
-  classifiers with unequal base rates across groups, calibration, false positive rate
-  balance, and false negative rate balance cannot all be simultaneously satisfied. This
-  motivates our use of 7 complementary metrics rather than relying on any single definition
-  of fairness.
-
-- **Kleinberg et al. (2016)** [11] independently established that calibration and balance
-  (in either positive predictions or errors) are mutually exclusive except in trivial cases.
-  This impossibility result justifies our relaxed thresholds (EOPP/EOD = 0.20) when
-  simultaneously optimising across 4 protected attributes.
-
-- **Agarwal et al. (2018)** [12] formalised the reduction approach to fair classification,
-  showing that fairness constraints can be incorporated into the learning process through
-  reweighing. Our λ-reweighing intervention follows this principle, using intersection-group
-  weights to equalize expected vs observed proportions.
-
-### 14.4 Fairness Metric Reliability and Stability
-
-A critical but underexplored challenge is whether fairness conclusions are **reliable under
-perturbation**.
-
-Prior work has demonstrated that fairness metrics can be sensitive to data variation, model
-non-determinism, and sample composition:
-
-- **Random seed sensitivity:** Deep learning models trained with different random seeds can
-  produce substantially different fairness outcomes despite similar accuracy, raising
-  questions about fairness certification based on single evaluations.
-
-- **Sample size effects:** Theoretical work has derived minimum sample sizes for reliable
-  fairness assessment, but this has **not been empirically validated on clinical data**.
-
-- **Cross-site heterogeneity:** Multi-site studies reporting aggregate fairness may mask
-  significant per-hospital variation, leading to ecological fallacy — an "aggregate fair"
-  model may be locally unfair at specific hospitals.
-
-Our **Verdict Flip Rate (VFR)** protocol directly addresses this gap by quantifying how
-often fairness verdicts change across K=30 bootstrap resamples, providing the first
-systematic stability assessment for clinical fairness evaluation.
-
-### 14.5 Methodological Gaps Addressed
-
-Our systematic analysis of the literature reveals five critical methodological gaps that
-this study addresses:
-
-| Gap # | Description | How We Address It |
-|-------|-------------|-------------------|
-| **Gap 1** | LOS prediction pipelines omit fairness evaluation entirely | First to combine LOS prediction with 7 metrics × 4 attributes × 12 models |
-| **Gap 2** | Fairness evaluated as point estimates without reliability quantification | VFR protocol: K=30 resamples, 10,080 stability checks |
-| **Gap 3** | Fairness reliability research validated only on non-clinical datasets | First clinical validation on 925K real EHR records |
-| **Gap 4** | Cross-site fairness heterogeneity aggregated away | Per-hospital-cluster analysis across 441 hospitals (K=20 GroupKFold) |
-| **Gap 5** | No empirical guidance on minimum sample sizes for reliable fairness | Cross-hospital scale analysis: 1→441 hospitals revealing N>50K needed for CV<5% |
+---
 
 ### References
 
-[1] R. Jain, M. Singh, A. R. Rao, R. Garg, "Predicting hospital length of stay using
-machine learning on a large open health dataset," *BMC Health Services Research*, vol. 24,
-art. 860, 2024. doi: [10.1186/s12913-024-11238-y](https://doi.org/10.1186/s12913-024-11238-y)
+[1] Z. Obermeyer, B. Powers, C. Vogeli, and S. Mullainathan, "Dissecting racial bias in an algorithm used to manage the health of populations," *Science*, vol. 366, no. 6464, pp. 447–453, 2019. DOI: 10.1126/science.aax2342
 
-[2] A. J. Zeleke, P. Palumbo, P. Tubertini, R. Miglio, L. Chiari, "Machine learning-based
-prediction of hospital prolonged length of stay admission at emergency department: a Gradient
-Boosting algorithm analysis," *Frontiers in Artificial Intelligence*, vol. 6, 2023.
-doi: [10.3389/frai.2023.1179226](https://doi.org/10.3389/frai.2023.1179226)
+[2] Y. Li, H. Wang, and Y. Luo, "Improving fairness in the prediction of heart failure length of stay and mortality by integrating social determinants of health," *Circulation: Heart Failure*, vol. 15, no. 11, e009473, 2022. DOI: 10.1161/CIRCHEARTFAILURE.122.009473
 
-[3] F. Jaotombo et al., "Machine-learning prediction for hospital length of stay using a
-French medico-administrative database," *Current Medical Research and Opinion*, 2022.
-doi: [10.1080/03007995.2022.2149318](https://doi.org/10.1080/03007995.2022.2149318)
+[3] E. Abakasanga et al., "Equitable hospital length of stay prediction for patients with learning disabilities and multiple long-term conditions using machine learning," *Frontiers in Digital Health*, vol. 7, 1538793, 2025. DOI: 10.3389/fdgth.2025.1538793
 
-[4] R. N. Mekhaldi, P. Caulier, S. Chaabane, A. Chraibi, S. Piechowiak, "A comparative
-study of machine learning models for predicting length of stay in hospitals," *Journal of
-Information Science and Engineering*, vol. 37, no. 5, pp. 1025–1038, 2021.
-doi: [10.6688/JISE.202109_37(5).0003](https://doi.org/10.6688/JISE.202109_37(5).0003)
+[4] S. R. Pfohl, A. Foryciarz, and N. H. Shah, "An empirical characterization of fair machine learning for clinical risk prediction," *Journal of Biomedical Informatics*, vol. 113, 103621, 2021. DOI: 10.1016/j.jbi.2020.103621
 
-[5] G. Almeida, F. B. Correia, A. R. Borges, J. Bernardino, "Hospital length-of-stay
-prediction using machine learning algorithms — a literature review," *Applied Sciences*,
-vol. 14, art. 10523, 2024.
-doi: [10.3390/app142210523](https://doi.org/10.3390/app142210523)
+[5] S. R. Pfohl et al., "Net benefit, calibration, threshold selection, and training objectives for algorithmic fairness in healthcare," in *Proc. FAccT*, pp. 1749–1760, 2022. DOI: 10.1145/3531146.3533166
 
-[6] S. R. Pfohl, A. Foryciarz, N. H. Shah, "An empirical characterization of fair machine
-learning for clinical risk prediction," *Journal of Biomedical Informatics*, vol. 113,
-art. 103621, 2021.
-doi: [10.1016/j.jbi.2021.103621](https://doi.org/10.1016/j.jbi.2021.103621)
+[6] S. A. Friedler et al., "A comparative study of fairness-enhancing interventions in machine learning," in *Proc. FAT**, pp. 329–338, 2019. DOI: 10.1145/3287560.3287589
 
-[7] R. Poulain, M. F. B. Tarek, R. Beheshti, "Improving fairness in AI models on electronic
-health records: the case for federated learning methods," *Proceedings of FAccT '23*, ACM,
-June 2023.
-doi: [10.1145/3593013.3594102](https://doi.org/10.1145/3593013.3594102)
+[7] A. Barrainkua, P. Gordaliza, J. A. Lozano, and N. Quadrianto, "Uncertainty matters: stable conclusions under unstable assessment of fairness results," in *Proc. AISTATS*, PMLR 238:1198–1206, 2024.
 
-[8] M. F. B. Tarek, R. Poulain, R. Beheshti, "Fairness-optimized synthetic EHR generation
-for arbitrary downstream predictive tasks," *Proceedings of CHASE '25*, ACM, June 2025.
-doi: [10.1145/3721201.3721373](https://doi.org/10.1145/3721201.3721373)
+[8] C. DiCiccio, S. Vasudevan, K. Basu, K. Kenthapadi, and D. Agarwal, "Evaluating fairness using permutation tests," in *Proc. KDD*, pp. 1467–1477, 2020. DOI: 10.1145/3394486.3403199
 
-[9] Equal Employment Opportunity Commission, "Uniform guidelines on employee selection
-procedures," *Federal Register*, vol. 43, no. 166, pp. 38290–38315, 1978.
+[9] J. Gao, B. Chou, Z. R. McCaw, H. Thurston, P. Varghese, C. Hong, and J. Gronsbell, "What is fair? Defining fairness in machine learning for health," *Statistics in Medicine*, vol. 44, no. 20–22, e70234, 2025. DOI: 10.1002/sim.70234
 
-[10] A. Chouldechova, "Fair prediction with disparate impact: a study of bias in recidivism
-prediction instruments," *Big Data*, vol. 5, no. 2, pp. 153–163, 2017.
+[10] J. Yang, A. A. S. Zhang, J. W. Gichoya, D. Katabi, and M. Ghassemi, "The limits of fair medical imaging AI in real-world generalization," *Nature Medicine*, vol. 30, pp. 2838–2848, 2024. DOI: 10.1038/s41591-024-03113-4
 
-[11] J. Kleinberg, S. Mullainathan, M. Raghavan, "Inherent trade-offs in the fair
-determination of risk scores," *Proceedings of ITCS '17*, 2017.
+[11] R. Poulain, M. H. Bin Tarek, and R. Beheshti, "Improving fairness in AI models on electronic health records: the case for federated learning methods," in *Proc. FAccT*, pp. 1599–1608, 2023. DOI: 10.1145/3593013.3594102
 
-[12] A. Agarwal, A. Beygelzimer, M. Dudík, J. Langford, H. Wallach, "A reductions
-approach to fair classification," *Proceedings of ICML '18*, pp. 60–69, 2018.
+[12] G. S. Collins, R. D. Riley, E. W. Steyerberg, and K. G. M. Moons, "Evaluation of clinical prediction models (part 1): from development to external validation," *BMJ*, vol. 384, e074819, 2024. DOI: 10.1136/bmj-2023-074819
 
-[13] A. Rajkomar et al., "Scalable and accurate deep learning with electronic health
-records," *npj Digital Medicine*, vol. 1, art. 18, 2018.
-doi: [10.1038/s41746-018-0029-1](https://doi.org/10.1038/s41746-018-0029-1)
+[13] F. Kamiran and T. Calders, "Data preprocessing techniques for classification without discrimination," *Knowledge and Information Systems*, vol. 33, no. 1, pp. 1–33, 2012. DOI: 10.1007/s10115-011-0463-8
+
+[14] M. Hardt, E. Price, and N. Srebro, "Equality of opportunity in supervised learning," in *Proc. NeurIPS*, vol. 29, 2016.
+
+[15] S. Corbett-Davies, E. Pierson, A. Feller, S. Goel, and A. Huq, "Algorithmic decision making and the cost of fairness," in *Proc. KDD*, pp. 797–806, 2017. DOI: 10.1145/3097983.3098095
+
+[16] T. Jang, F. Shi, and X. Wang, "Group-aware threshold adaptation for fair classification," in *Proc. AAAI*, vol. 36, no. 6, pp. 6988–6995, 2022. DOI: 10.1609/aaai.v36i6.20657
+
+[17] J. R. Foulds, R. Islam, K. N. Keya, and S. Pan, "An intersectional definition of fairness," in *Proc. ICDE*, pp. 1918–1921, 2020. DOI: 10.1109/ICDE48307.2020.00203
+
+[18] J. Buolamwini and T. Gebru, "Gender shades: intersectional accuracy disparities in commercial gender classification," in *Proc. FAT**, PMLR 81:77–91, 2018.
+
+[19] M. Kearns, S. Neel, A. Roth, and Z. S. Wu, "Preventing fairness gerrymandering: auditing and learning for subgroup fairness," in *Proc. ICML*, PMLR 80:2564–2572, 2018.
+
+[20] J. Kleinberg, S. Mullainathan, and M. Raghavan, "Inherent trade-offs in the fair determination of risk scores," in *Proc. ITCS*, LIPIcs 67:43:1–43:23, 2017. DOI: 10.4230/LIPIcs.ITCS.2017.43
+
+[21] A. Chouldechova, "Fair prediction with disparate impact: a study of bias in recidivism prediction instruments," *Big Data*, vol. 5, no. 2, pp. 153–163, 2017. DOI: 10.1089/big.2016.0047
+
+[22] A. Bell, I. Solano-Kamaiko, O. Nov, and J. Stoyanovich, "The possibility of fairness: revisiting the impossibility theorem in practice," in *Proc. FAccT*, pp. 400–422, 2023. DOI: 10.1145/3593013.3594007
+
+[23] A. Rajkomar, M. Hardt, M. D. Howell, G. Corrado, and M. H. Chin, "Ensuring fairness in machine learning to advance health equity," *Annals of Internal Medicine*, vol. 169, no. 12, pp. 866–872, 2018. DOI: 10.7326/M18-1990
+
+[24] I. Y. Chen, E. Pierson, S. Rose, S. Joshi, K. Ferryman, and M. Ghassemi, "Ethical machine learning in healthcare," *Annual Review of Biomedical Data Science*, vol. 4, pp. 123–144, 2021. DOI: 10.1146/annurev-biodatasci-092820-114757
+
+[25] J. A. Alderman et al., "Tackling algorithmic bias and promoting transparency in health datasets: the STANDING Together consensus recommendations," *Lancet Digital Health*, vol. 7, no. 2, pp. 154–170, 2025. DOI: 10.1016/S2589-7500(24)00224-3
+
+### Supplementary References (Papers in project collection)
+
+[26] A. J. Zeleke, P. Palumbo, P. Tubertini, R. Miglio, and L. Chiari, "Machine learning-based prediction of hospital prolonged length of stay admission at emergency department: a Gradient Boosting algorithm analysis," *Frontiers in Artificial Intelligence*, vol. 6, 1179226, 2023. DOI: 10.3389/frai.2023.1179226
+
+[27] F. Jaotombo, V. Pauly, G. Fond, V. Orleans, P. Auquier, B. Ghattas, and L. Boyer, "Machine-learning prediction for hospital length of stay using a French medico-administrative database," *Journal of Medical Economics*, vol. 25, no. 1, pp. 1121–1130, 2022. DOI: 10.1080/03007995.2022.2149318
+
+[28] M. F. Bin Tarek, R. Poulain, and R. Beheshti, "Fairness-optimized synthetic EHR generation for arbitrary downstream predictive tasks," in *Proc. CHASE*, pp. 1–11, 2025. DOI: 10.1145/3721201.3721373
+
+[29] R. Jain, M. Singh, A. R. Rao, and R. Garg, "Predicting hospital length of stay using machine learning on a large open health dataset," *BMC Health Services Research*, vol. 24, 860, 2024. DOI: 10.1186/s12913-024-11238-y
+
+[30] R. N. Mekhaldi, P. Caulier, S. Chaabane, A. Chraibi, and S. Piechowiak, "A comparative study of machine learning models for predicting length of stay in hospitals," *Journal of Information Science and Engineering*, vol. 37, no. 5, pp. 1025–1038, 2021. DOI: 10.6688/JISE.202109_37(5).0003
+
+[31] G. Almeida, F. Brito Correia, A. R. Borges, and J. Bernardino, "Hospital length-of-stay prediction using machine learning algorithms — a literature review," *Applied Sciences*, vol. 14, no. 22, 10523, 2024. DOI: 10.3390/app142210523
 """)
 
 ###############################################################################
