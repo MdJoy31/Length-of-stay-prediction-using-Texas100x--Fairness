@@ -40,6 +40,7 @@ intervention achieves DI ≥ 0.80 for all attributes with < 5% accuracy loss.
 
 | Section | Content |
 |---------|---------|
+| — | **Key Contribution:** Verdict Flip Rate (VFR) — A Novel Stability Protocol |
 | 1 | Experimental Methodology |
 | 2 | Setup & Data Loading |
 | 3 | Exploratory Data Analysis |
@@ -57,10 +58,114 @@ intervention achieves DI ≥ 0.80 for all attributes with < 5% accuracy loss.
 """)
 
 ###############################################################################
+# CELL 1b: KEY CONTRIBUTION — VFR INTRODUCTION (BEFORE METHOD)
+###############################################################################
+md("""
+## Key Contribution: Verdict Flip Rate (VFR) — A Novel Stability Protocol
+
+### The Problem: Are Fairness Verdicts Reliable?
+
+Most fairness studies in healthcare ML report a single point-estimate verdict — "fair" or "unfair" —
+based on one train-test split. But this conceals a critical vulnerability: **those verdicts can be
+fragile**. A model deemed "fair" (e.g., DI = 0.81) on one test set may flip to "unfair" (DI = 0.79)
+on a slightly different sample, simply because the metric value sits near the decision threshold.
+
+No existing study in fairness-aware Length-of-Stay (LOS) prediction — including Pfohl et al. [4],
+Poulain et al. [11], and Barrainkua et al. [7] — quantifies this instability. All report fixed-split
+verdicts and assume they generalise.
+
+### What is VFR?
+
+The **Verdict Flip Rate (VFR)** is a protocol we propose to measure the *stability* (or fragility)
+of a fairness verdict under bootstrap resampling. Given K resampled test sets, VFR captures how
+often the fair/unfair label flips:
+
+$$\\text{VFR}(m, a) = \\frac{\\min(n_{\\text{fair}},\\; K - n_{\\text{fair}})}{K}$$
+
+where $n_{\\text{fair}}$ is the count of resamples in which metric $m$ on attribute $a$ passes its
+fairness threshold.
+
+- **VFR = 0** → verdict never flips — perfectly stable
+- **VFR ≤ 0.10** → verdict robust to sample variation — practically stable
+- **VFR > 0.10** → verdict sensitive to sample composition — fragile
+- **VFR = 0.50** → verdict flips on every other resample — maximally unreliable
+
+### How is VFR Unique?
+
+| Aspect | Prior Work | Our VFR Protocol |
+|--------|-----------|------------------|
+| **Evaluation style** | Single train-test split | K=30 bootstrap resamples |
+| **What is measured** | Point-estimate of metric value | Stability of the fair/unfair *verdict* |
+| **Scope** | 1–2 metrics, 1–2 attributes | 7 metrics × 4 attributes × 12 models = 336 verdicts |
+| **Scale** | Single evaluation | 10,080 stability checks (336 × 30 resamples) |
+| **Outcome** | "DI = 0.82, therefore fair" | "DI verdict is fair in 29/30 resamples (VFR = 0.03) — stable" |
+| **Stability measure** | None | VFR + stability margin (σ distance from threshold) |
+
+To our knowledge, **VFR is the first protocol to quantify the resampling stability of fairness
+verdicts** in the healthcare ML literature.
+
+### What Will VFR Reveal in This Study?
+
+1. **Stability classification:** For each of 336 model-metric-attribute combinations, VFR tells us
+   whether the verdict is *stable*, *fragile*, or *perfectly stable*.
+2. **Hidden fragility:** Some metrics that appear "fair" on a single split are actually fragile —
+   their verdicts flip frequently across resamples.
+3. **Metric disagreement amplification:** The impossibility theorem (Chouldechova, 2017 [21];
+   Kleinberg et al., 2017 [20]) guarantees metric disagreement; VFR quantifies how *reliably*
+   metrics disagree.
+4. **Practical deployment guidance:** Only metrics with low VFR should be trusted for regulatory
+   or clinical deployment decisions.
+5. **Three-dimensional reliability picture:** Combined with cross-hospital scale analysis
+   (Section 8) and Fleiss' κ portability analysis (Section 9), VFR provides a comprehensive
+   reliability assessment: *metric stability × scale sensitivity × site portability*.
+""")
+
+###############################################################################
 # CELL 2: EXPERIMENTAL METHODOLOGY (NEW)
 ###############################################################################
 md("""
 ## 1. Experimental Methodology
+
+### Overall Experiment Pipeline
+
+Our experiment follows a six-stage pipeline designed to comprehensively evaluate both
+**predictive performance** and **algorithmic fairness** of LOS prediction models:
+
+```
+Stage 1: Data Preparation
+  Texas PUDF 2019 → 925,128 records × 441 hospitals
+  → Binary target: LOS > 3 days
+  → 80/20 stratified train-test split
+      ↓
+Stage 2: Model Training & Evaluation
+  12 ML models trained on same split
+  → Performance: Accuracy, AUC, F1
+  → Best model selected by AUC
+      ↓
+Stage 3: Fairness Assessment
+  7 fairness metrics × 4 protected attributes
+  → 336 individual fairness verdicts
+  → Identifies which models/attributes are unfair
+      ↓
+Stage 4: Verdict Stability (VFR)
+  K=30 bootstrap resamples × 336 verdicts
+  → 10,080 stability checks
+  → Separates stable from fragile verdicts
+      ↓
+Stage 5: Cross-Site Reliability
+  Scale analysis (1→441 hospitals)
+  + Fleiss' κ portability (K=20 GroupKFold)
+  → Tests deployment readiness
+      ↓
+Stage 6: Fairness Intervention
+  Intersectional λ-reweighing + per-group thresholds
+  → Achieves DI ≥ 0.80 for ALL 4 attributes
+  → Quantifies accuracy-fairness trade-off
+```
+
+This pipeline ensures that fairness is not evaluated in isolation but is tested for
+**stability** (VFR), **scalability** (cross-hospital), and **portability** (cross-site) —
+addressing gaps left by prior single-split, single-site studies.
 
 ### 1.1 Dataset
 - **Source:** Texas Inpatient Public Use Data File (PUDF), 2019, provided by the Texas Health Care Information Collection (THCIC)
@@ -130,6 +235,30 @@ Our three-stage intervention converts a standard (accuracy-maximising) model int
    calibration per age group to further reduce EOPP and improve TI.
 
 **Selection criterion:** ALL 4 DI ≥ 0.80 (hard constraint) → maximize Age Group fair metrics → minimize EOPP → maximize accuracy.
+
+### 1.7 Machine Learning Models
+
+We train **12 diverse models** spanning linear, tree-based, boosting, bagging, and ensemble families
+to ensure our fairness findings are not artefacts of a single model architecture:
+
+| # | Model | Family | Key Characteristic |
+|---|-------|--------|--------------------|
+| 1 | Logistic Regression | Linear | Interpretable baseline; calibrated probabilities |
+| 2 | Decision Tree | Tree | Single tree; high variance reference |
+| 3 | Random Forest | Bagging | Variance reduction via bootstrap aggregation |
+| 4 | Gradient Boosting | Boosting | Sequential error correction; strong on tabular data |
+| 5 | AdaBoost | Boosting | Adaptive reweighting of misclassified samples |
+| 6 | Bagging Classifier | Bagging | Bootstrap aggregation of base estimators |
+| 7 | XGBoost | Boosting | Regularised gradient boosting; often state-of-the-art |
+| 8 | LightGBM | Boosting | Histogram-based; fast training on large datasets |
+| 9 | CatBoost | Boosting | Ordered boosting; handles categorical features natively |
+| 10 | Extra Trees | Bagging | Extremely randomised splits; reduces variance further |
+| 11 | HistGradientBoosting | Boosting | Sklearn's native histogram-based gradient boosting |
+| 12 | Stacking Ensemble | Ensemble | Meta-learner combining top-5 models |
+
+**Why 12 models?** Fairness properties can vary substantially across model families. A model that is
+fair under one architecture may be unfair under another. By evaluating 12 models simultaneously,
+we avoid the common pitfall of reporting fairness results that are specific to a single model choice.
 """)
 
 ###############################################################################
