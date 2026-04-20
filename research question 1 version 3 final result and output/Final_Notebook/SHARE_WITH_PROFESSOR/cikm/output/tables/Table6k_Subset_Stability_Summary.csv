@@ -1,0 +1,12 @@
+Quantity,Standard,Fair,Δ
+N subsets compared,20,20,
+Accuracy  mean ± SD,0.8442 ± 0.0094,0.7903 ± 0.0112,-0.0539
+Accuracy  min – max,0.8231 – 0.8660,0.7727 – 0.8106,
+AUROC     mean ± SD,0.9278 ± 0.0056,0.9107 ± 0.0067,-0.0171
+Fair verdicts /28  mean ± SD,9.20 ± 2.28,12.15 ± 2.66,+2.95
+Fair verdicts /28  min – max,5 – 14,6 – 17,
+All 4 DI ≥ 0.80 (subsets),0/20,12/20,
+VFR %  mean ± SD (28 pairs),11.4 ± 14.9,9.5 ± 11.2,-2.0
+VFR %  max (worst metric),50.0,35.0,-15.0
+High-reliability cells (VFR <10%),14/28,17/28,
+Unstable cells (VFR >30%),5/28,2/28,
