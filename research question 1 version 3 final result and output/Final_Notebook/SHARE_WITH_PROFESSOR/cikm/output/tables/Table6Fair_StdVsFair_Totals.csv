@@ -1,0 +1,5 @@
+Attribute,Standard_N_fair_at_mean,Fair_N_fair_at_mean,Delta,Standard_DI_mean,Fair_DI_mean
+RACE,0/7,2/7,2,0.648,0.838
+SEX,3/7,4/7,1,0.757,0.953
+ETHNICITY,5/7,5/7,0,0.824,0.918
+AGE_GROUP,1/7,2/7,1,0.254,0.841
