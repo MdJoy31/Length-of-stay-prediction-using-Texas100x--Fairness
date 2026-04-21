@@ -1,0 +1,8 @@
+Metric,Role,Min-N guideline,Cross-site κ class,When to use
+DI,Primary,"18,000",Moderate,Default metric for regulatory compliance and cross-site comparisons
+SPD,Primary,"28,750",Low,Use alongside DI for comprehensive group-level fairness assessment
+EOPP,Primary,"50,000",High,Use alongside DI for comprehensive group-level fairness assessment
+EOD,Complementary,"50,000",High,"When both TPR and FPR parity matter (e.g., clinical risk scoring)"
+TI,Diagnostic,"3,250",High,Detect individual-level prediction inconsistencies across groups
+PP,Complementary,"50,000",Moderate,"When predictive value equality is required (e.g., resource allocation)"
+CAL,Diagnostic,"50,000",Low,Assess calibration fairness across probability ranges

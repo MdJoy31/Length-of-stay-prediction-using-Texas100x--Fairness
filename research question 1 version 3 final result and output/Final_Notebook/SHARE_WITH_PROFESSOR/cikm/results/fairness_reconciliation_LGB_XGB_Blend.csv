@@ -1,0 +1,29 @@
+Attribute,Metric,Value (Table 7),Threshold,Pass?,Bootstrap sigma (inferred from Table 11),Margin (sigma),Stability,Table 11 pass count (x/30),Table 10 VFR (%)
+Race,DI,0.652,0.8,Fail,NA (p=0 or 1),inf/-inf,Very stable (p=0 or 1),0,0.0
+Race,SPD,0.176,0.1,Fail,NA (p=0 or 1),inf/-inf,Very stable (p=0 or 1),0,0.0
+Race,EOPP,0.053,0.1,Pass,0.5619,0.08,Unstable,16,46.7
+Race,EOD,0.053,0.1,Pass,0.1091,0.43,Unstable,20,33.3
+Race,TI,0.005,0.1,Pass,NA (p=0 or 1),inf/-inf,Very stable (p=0 or 1),30,0.0
+Race,PP,0.095,0.1,Pass,0.0298,0.17,Unstable,17,43.3
+Race,CAL,0.245,0.05,Fail,NA (p=0 or 1),inf/-inf,Very stable (p=0 or 1),0,0.0
+Sex,DI,0.761,0.8,Fail,0.0213,-1.83,Marginal,1,3.3
+Sex,SPD,0.124,0.1,Fail,0.0131,-1.83,Marginal,1,3.3
+Sex,EOPP,0.036,0.1,Pass,NA (p=0 or 1),inf/-inf,Very stable (p=0 or 1),30,0.0
+Sex,EOD,0.049,0.1,Pass,NA (p=0 or 1),inf/-inf,Very stable (p=0 or 1),30,0.0
+Sex,TI,0.005,0.1,Pass,NA (p=0 or 1),inf/-inf,Very stable (p=0 or 1),30,0.0
+Sex,PP,0.004,0.1,Pass,NA (p=0 or 1),inf/-inf,Very stable (p=0 or 1),30,0.0
+Sex,CAL,0.026,0.05,Pass,0.0187,1.28,Marginal,27,10.0
+Ethnicity,DI,0.83,0.8,Pass,0.02,1.5,Marginal,28,6.7
+Ethnicity,SPD,0.078,0.1,Pass,0.012,1.83,Marginal,29,3.3
+Ethnicity,EOPP,0.019,0.1,Pass,NA (p=0 or 1),inf/-inf,Very stable (p=0 or 1),30,0.0
+Ethnicity,EOD,0.029,0.1,Pass,NA (p=0 or 1),inf/-inf,Very stable (p=0 or 1),30,0.0
+Ethnicity,TI,0.003,0.1,Pass,NA (p=0 or 1),inf/-inf,Very stable (p=0 or 1),30,0.0
+Ethnicity,PP,0.001,0.1,Pass,NA (p=0 or 1),inf/-inf,Very stable (p=0 or 1),30,0.0
+Ethnicity,CAL,0.034,0.05,Pass,0.0144,1.11,Marginal,26,13.3
+Age Group,DI,0.291,0.8,Fail,NA (p=0 or 1),inf/-inf,Very stable (p=0 or 1),0,0.0
+Age Group,SPD,0.436,0.1,Fail,NA (p=0 or 1),inf/-inf,Very stable (p=0 or 1),0,0.0
+Age Group,EOPP,0.184,0.1,Fail,NA (p=0 or 1),inf/-inf,Very stable (p=0 or 1),0,0.0
+Age Group,EOD,0.184,0.1,Fail,NA (p=0 or 1),inf/-inf,Very stable (p=0 or 1),0,0.0
+Age Group,TI,0.014,0.1,Pass,NA (p=0 or 1),inf/-inf,Very stable (p=0 or 1),30,0.0
+Age Group,PP,0.07,0.1,Pass,0.0482,0.62,Unstable,22,26.7
+Age Group,CAL,0.065,0.05,Fail,NA (p=0 or 1),inf/-inf,Very stable (p=0 or 1),0,0.0

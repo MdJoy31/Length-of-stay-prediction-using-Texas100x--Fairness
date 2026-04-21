@@ -1,4 +1,4 @@
-Attribute,N_fair_metrics_at_mean,Mean_pass_rate_across_clusters_%
+Attribute,N_fair_at_mean,Mean_pass_rate_across_clusters_%
 RACE,0/7,12.9
 SEX,3/7,50.7
 ETHNICITY,5/7,58.6

@@ -1,0 +1,29 @@
+Attribute,Metric,Value (Table 7),Threshold (standard),Pass (standard thresholds),Pass (notebook 0.20/0.10),Verdicts match across thresholds?,Table 11 pass count,Table 10 VFR reported (%),VFR computed from Table 11 (%),Table 10<->11 consistent?,Near threshold (|v-tau|/tau<0.2),Table7<->Table11 hard contradiction?
+Race,DI,0.652,above 0.8,Fail,Fail,Yes,0/30,0.0,0.0,Yes,Yes,No
+Race,SPD,0.176,below 0.1,Fail,Fail,Yes,0/30,0.0,0.0,Yes,No,No
+Race,EOPP,0.053,below 0.1,Pass,Pass,Yes,16/30,46.7,46.7,Yes,No,No
+Race,EOD,0.053,below 0.1,Pass,Pass,Yes,20/30,33.3,33.3,Yes,No,No
+Race,TI,0.005,below 0.1,Pass,Pass,Yes,30/30,0.0,0.0,Yes,No,No
+Race,PP,0.095,below 0.1,Pass,Pass,Yes,17/30,43.3,43.3,Yes,Yes,No
+Race,CAL,0.245,below 0.05,Fail,Fail,Yes,0/30,0.0,0.0,Yes,No,No
+Sex,DI,0.761,above 0.8,Fail,Fail,Yes,1/30,3.3,3.3,Yes,Yes,No
+Sex,SPD,0.124,below 0.1,Fail,Fail,Yes,1/30,3.3,3.3,Yes,No,No
+Sex,EOPP,0.036,below 0.1,Pass,Pass,Yes,30/30,0.0,0.0,Yes,No,No
+Sex,EOD,0.049,below 0.1,Pass,Pass,Yes,30/30,0.0,0.0,Yes,No,No
+Sex,TI,0.005,below 0.1,Pass,Pass,Yes,30/30,0.0,0.0,Yes,No,No
+Sex,PP,0.004,below 0.1,Pass,Pass,Yes,30/30,0.0,0.0,Yes,No,No
+Sex,CAL,0.026,below 0.05,Pass,Pass,Yes,27/30,10.0,10.0,Yes,No,No
+Ethnicity,DI,0.83,above 0.8,Pass,Pass,Yes,28/30,6.7,6.7,Yes,Yes,No
+Ethnicity,SPD,0.078,below 0.1,Pass,Pass,Yes,29/30,3.3,3.3,Yes,No,No
+Ethnicity,EOPP,0.019,below 0.1,Pass,Pass,Yes,30/30,0.0,0.0,Yes,No,No
+Ethnicity,EOD,0.029,below 0.1,Pass,Pass,Yes,30/30,0.0,0.0,Yes,No,No
+Ethnicity,TI,0.003,below 0.1,Pass,Pass,Yes,30/30,0.0,0.0,Yes,No,No
+Ethnicity,PP,0.001,below 0.1,Pass,Pass,Yes,30/30,0.0,0.0,Yes,No,No
+Ethnicity,CAL,0.034,below 0.05,Pass,Pass,Yes,26/30,13.3,13.3,Yes,No,No
+Age Group,DI,0.291,above 0.8,Fail,Fail,Yes,0/30,0.0,0.0,Yes,No,No
+Age Group,SPD,0.436,below 0.1,Fail,Fail,Yes,0/30,0.0,0.0,Yes,No,No
+Age Group,EOPP,0.184,below 0.1,Fail,Pass,NO,0/30,0.0,0.0,Yes,No,No
+Age Group,EOD,0.184,below 0.1,Fail,Pass,NO,0/30,0.0,0.0,Yes,No,No
+Age Group,TI,0.014,below 0.1,Pass,Pass,Yes,30/30,0.0,0.0,Yes,No,No
+Age Group,PP,0.07,below 0.1,Pass,Pass,Yes,22/30,26.7,26.7,Yes,No,No
+Age Group,CAL,0.065,below 0.05,Fail,Pass,NO,0/30,0.0,0.0,Yes,No,No

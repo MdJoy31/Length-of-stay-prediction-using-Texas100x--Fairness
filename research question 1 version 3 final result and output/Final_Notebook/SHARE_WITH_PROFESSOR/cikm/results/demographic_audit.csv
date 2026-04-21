@@ -1,0 +1,10 @@
+Attribute,Code,Claimed Label (main.tex),N,Proportion (%),LOS>3d rate (%),% with ETHNICITY=1,Plausible?
+Race,0,Other/Unknown,3474,0.38,33.4,33.8,Uncertain
+Race,1,Native American,16404,1.77,41.0,96.8,No
+Race,2,Asian/Pacific Islander,115212,12.45,52.3,99.4,No
+Race,3,Black,603368,65.22,45.3,83.1,No
+Race,4,White,186670,20.18,40.4,20.0,Yes
+Sex,0,Female,339288,36.67,51.8,,Yes
+Sex,1,Male,585840,63.33,41.1,,Yes
+Ethnicity,0,Non-Hispanic,254542,27.51,39.7,,Yes
+Ethnicity,1,Hispanic,670586,72.49,47.1,,Yes

@@ -7,4 +7,4 @@ Poulain (2023),Improving fairness in AI models on electronic health records: the
 Tarek (2025),Fairness-optimized synthetic EHR generation for arbitrary downstream predictive tasks,doi.org/10.1145/3721201.3721373,,,,1,"DP (group fairness, Race)",1,1,2
 Jain (2024),Predicting hospital length of stay using machine learning on a large open health dataset,doi.org/10.1186/s12913-024-11238-y,2300000.0,,,0,None — SHAP analysis but no fairness metrics,0,6,0
 Ours (Standard),This study — Standard model,,925128.0,0.8501453849729227,0.9315547735603353,7,"DI,SPD,EOPP,EOD,TI,PP,CAL (Race,Sex,Eth,Age)",4,12,441
-Ours (Fair),This study — Fair model,,925128.0,0.8059245727627469,0.9315547735603353,7,"DI,SPD,EOPP,EOD,TI,PP,CAL (Race,Sex,Eth,Age)",4,12,441
+Ours (Fair),This study — Fair model,,925128.0,0.8001848388875077,0.9315547735603353,7,"DI,SPD,EOPP,EOD,TI,PP,CAL (Race,Sex,Eth,Age)",4,12,441

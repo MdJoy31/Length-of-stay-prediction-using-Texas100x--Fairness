@@ -1,0 +1,18 @@
+[15:38:15] Loading notebook CIKM_2026_LOS_Fairness.ipynb
+[15:38:15] Total cells: 50
+[15:44:56] EXCEPTION at 400.6s: Kernel died
+Traceback (most recent call last):
+  File "D:\Research study\Research question ML\fairness_project_v2\fairness_project_v1\research question 1 version 3 final result and output\Final_Notebook\SHARE_WITH_PROFESSOR\cikm\_scripts\run_notebook.py", line 33, in <module>
+    client.execute()
+  File "D:\Research study\Research question ML\fairness_project_v2\.venv\Lib\site-packages\jupyter_core\utils\__init__.py", line 165, in wrapped
+    return loop.run_until_complete(inner)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\rakib\AppData\Local\Programs\Python\Python311\Lib\asyncio\base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "D:\Research study\Research question ML\fairness_project_v2\.venv\Lib\site-packages\nbclient\client.py", line 709, in async_execute
+    await self.async_execute_cell(
+  File "D:\Research study\Research question ML\fairness_project_v2\.venv\Lib\site-packages\nbclient\client.py", line 1009, in async_execute_cell
+    raise DeadKernelError("Kernel died") from None
+nbclient.exceptions.DeadKernelError: Kernel died
+[15:44:56] Executed notebook saved to CIKM_2026_LOS_Fairness.executed.ipynb

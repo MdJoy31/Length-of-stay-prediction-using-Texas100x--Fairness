@@ -1,0 +1,61 @@
+D:\Research study\Research question ML\fairness_project_v2\fairness_project_v1\.venv\Lib\site-packages\sklearn\utils\validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+D:\Research study\Research question ML\fairness_project_v2\fairness_project_v1\.venv\Lib\site-packages\sklearn\utils\validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+D:\Research study\Research question ML\fairness_project_v2\fairness_project_v1\.venv\Lib\site-packages\sklearn\utils\validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+D:\Research study\Research question ML\fairness_project_v2\fairness_project_v1\.venv\Lib\site-packages\sklearn\utils\validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+D:\Research study\Research question ML\fairness_project_v2\fairness_project_v1\.venv\Lib\site-packages\sklearn\utils\validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+D:\Research study\Research question ML\fairness_project_v2\fairness_project_v1\.venv\Lib\site-packages\sklearn\utils\validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+D:\Research study\Research question ML\fairness_project_v2\fairness_project_v1\.venv\Lib\site-packages\sklearn\utils\validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+D:\Research study\Research question ML\fairness_project_v2\fairness_project_v1\.venv\Lib\site-packages\sklearn\utils\validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+D:\Research study\Research question ML\fairness_project_v2\fairness_project_v1\.venv\Lib\site-packages\sklearn\utils\validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+D:\Research study\Research question ML\fairness_project_v2\fairness_project_v1\.venv\Lib\site-packages\sklearn\utils\validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+D:\Research study\Research question ML\fairness_project_v2\fairness_project_v1\.venv\Lib\site-packages\sklearn\utils\validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+D:\Research study\Research question ML\fairness_project_v2\fairness_project_v1\.venv\Lib\site-packages\sklearn\utils\validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+D:\Research study\Research question ML\fairness_project_v2\fairness_project_v1\.venv\Lib\site-packages\sklearn\utils\validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+D:\Research study\Research question ML\fairness_project_v2\fairness_project_v1\.venv\Lib\site-packages\sklearn\utils\validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+D:\Research study\Research question ML\fairness_project_v2\fairness_project_v1\.venv\Lib\site-packages\sklearn\utils\validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+D:\Research study\Research question ML\fairness_project_v2\fairness_project_v1\.venv\Lib\site-packages\sklearn\utils\validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+D:\Research study\Research question ML\fairness_project_v2\fairness_project_v1\.venv\Lib\site-packages\sklearn\utils\validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+D:\Research study\Research question ML\fairness_project_v2\fairness_project_v1\.venv\Lib\site-packages\sklearn\utils\validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+D:\Research study\Research question ML\fairness_project_v2\fairness_project_v1\.venv\Lib\site-packages\sklearn\utils\validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+D:\Research study\Research question ML\fairness_project_v2\fairness_project_v1\.venv\Lib\site-packages\sklearn\utils\validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+Data: D:\Research study\Research question ML\fairness_project_v2\fairness_project_v1\research question 1 version 3 final result and output\Final_Notebook\SHARE_WITH_PROFESSOR\cikm\..\..\..\..\data\texas_100x.csv
+Rows: 925,128  Hospitals: 441  Features: 7
+Fair Cross-Site Portability: K=20 GroupKFold  (lam=1.0, a_SR=0.8)
+  Fold 2/20: Acc=0.7881 DI: R=0.776 S=0.965 E=0.960 A=0.913  t+=25s
+  Fold 4/20: Acc=0.7996 DI: R=0.892 S=0.956 E=0.911 A=0.893  t+=33s
+  Fold 6/20: Acc=0.7766 DI: R=0.921 S=0.898 E=0.827 A=0.836  t+=41s
+  Fold 8/20: Acc=0.7850 DI: R=0.907 S=0.979 E=0.939 A=0.835  t+=49s
+  Fold 10/20: Acc=0.7979 DI: R=0.853 S=0.951 E=0.927 A=0.786  t+=58s
+  Fold 12/20: Acc=0.7848 DI: R=0.897 S=0.906 E=0.999 A=0.819  t+=67s
+  Fold 14/20: Acc=0.7921 DI: R=0.938 S=0.983 E=0.952 A=0.709  t+=77s
+  Fold 16/20: Acc=0.7938 DI: R=0.769 S=0.984 E=0.823 A=0.803  t+=92s
+  Fold 18/20: Acc=0.7869 DI: R=0.779 S=0.939 E=0.930 A=0.844  t+=122s
+  Fold 20/20: Acc=0.7727 DI: R=0.800 S=0.949 E=0.997 A=0.894  t+=142s
+Completed in 142.1s  -> cikm_cross_site_portability_FAIR.csv
+
+Attribute totals (Standard vs Fair, cross-site mean):
+Attribute Standard_N_fair_at_mean Fair_N_fair_at_mean  Delta  Standard_DI_mean  Fair_DI_mean
+     RACE                     0/7                 2/7      2             0.648         0.838
+      SEX                     3/7                 4/7      1             0.757         0.953
+ETHNICITY                     5/7                 5/7      0             0.824         0.918
+AGE_GROUP                     1/7                 2/7      1             0.254         0.841
