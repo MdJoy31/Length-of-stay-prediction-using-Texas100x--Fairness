@@ -1,0 +1,8 @@
+Metric,P1_Max_VFR_pct,P2_Min_N_range,P3_kappa,P3_mean_CV,Overall_Reliability
+DI,41.4,"5,000–185,026",0.204,0.21,Low–moderate
+SPD,29.2,"5,000–185,026",0.215,0.41,Low–moderate
+EOPP,47.4,"100,000–185,026",0.674,0.52,Low–moderate
+EOD,46.2,"50,000–185,026",0.601,0.43,Low–moderate
+TI,0.0,"185,026–185,026",1.0,1.03,High
+PP,47.0,"185,026–185,026",0.235,0.8,Low–moderate
+CAL,45.4,"185,026–185,026",0.016,0.48,Low

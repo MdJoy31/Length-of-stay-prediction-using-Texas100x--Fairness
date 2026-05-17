@@ -1,0 +1,18 @@
+D:\Research study\Research question ML\fairness_project_v2\.venv\Lib\site-packages\nbformat\__init__.py:96: MissingIDFieldWarning: Cell is missing an id field, this will become a hard error in future nbformat versions. You may want to use `normalize()` on your notebooks before validations (available since nbformat 5.1.4). Previous versions of nbformat are fixing this issue transparently, and will stop doing so in the future.
+  validate(nb)
+[0s] Cells: 48
+[0s] Run 9: config-4 fallback when calibration breaks all-4-DI
+D:\Research study\Research question ML\fairness_project_v2\.venv\Lib\site-packages\zmq\_future.py:718: RuntimeWarning: Proactor event loop does not implement add_reader family of methods required for zmq. Registering an additional selector thread for add_reader support via tornado. Use `asyncio.set_event_loop_policy(WindowsSelectorEventLoopPolicy())` to avoid this warning.
+  self._get_loop()
+Traceback (most recent call last):
+  File "D:\Research study\Research question ML\fairness_project_v2\.venv\Lib\site-packages\joblib\externals\loky\backend\resource_tracker.py", line 319, in main
+    del registry[rtype][name]
+        ~~~~~~~~~~~~~~~^^^^^^
+KeyError: 'C:\\Users\\rakib\\AppData\\Local\\Temp\\joblib_memmapping_folder_35688_6340e4a69d6b468bb3a58d701ff21e2a_bd7fb208cd1846708bbdba389a202205'
+Traceback (most recent call last):
+  File "D:\Research study\Research question ML\fairness_project_v2\.venv\Lib\site-packages\joblib\externals\loky\backend\resource_tracker.py", line 319, in main
+    del registry[rtype][name]
+        ~~~~~~~~~~~~~~~^^^^^^
+KeyError: 'C:\\Users\\rakib\\AppData\\Local\\Temp\\joblib_memmapping_folder_35688_c00aa10e65ca42c1a0d937dda1529c2e_c5c30f6f8389466381fd98c450437e6c'
+[906s] DONE
+[906s] Wrote CIKM_2026_LOS_Fairness_FINAL.ipynb

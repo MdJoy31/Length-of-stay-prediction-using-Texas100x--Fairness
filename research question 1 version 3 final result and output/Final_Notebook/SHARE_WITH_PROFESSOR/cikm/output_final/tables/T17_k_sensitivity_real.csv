@@ -1,0 +1,8 @@
+Metric,K10_kappa,K10_class,K20_kappa,K20_class,K40_kappa,K40_class
+DI,0.219,fair,0.204,fair,0.227,fair
+SPD,0.132,slight,0.215,fair,0.227,fair
+EOPP,1.0,almost perfect,0.674,substantial,0.508,moderate
+EOD,0.9,almost perfect,0.601,substantial,0.402,moderate
+TI,1.0,almost perfect,1.0,almost perfect,1.0,almost perfect
+PP,0.134,slight,0.235,fair,0.387,fair
+CAL,-0.034,below chance,0.016,slight,0.027,slight

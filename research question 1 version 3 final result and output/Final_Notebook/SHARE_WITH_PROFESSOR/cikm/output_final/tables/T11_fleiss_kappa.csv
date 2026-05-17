@@ -1,0 +1,13 @@
+Metric,Fleiss_kappa,Class,N_items,N_raters
+DI,0.204,fair,4,20
+SPD,0.215,fair,4,20
+EOPP,0.674,substantial,4,20
+EOD,0.601,substantial,4,20
+TI,1.0,almost perfect,4,20
+PP,0.235,fair,4,20
+CAL,0.016,slight,4,20
+_OVERALL_,0.506,moderate,28,20
+_attr_RACE,0.432,moderate,7,20
+_attr_SEX,0.33,fair,7,20
+_attr_ETHNICITY,0.126,slight,7,20
+_attr_AGE_GROUP,0.631,substantial,7,20

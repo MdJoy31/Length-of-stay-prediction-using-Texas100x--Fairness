@@ -1,0 +1,5 @@
+Attribute,DI,DI_Pass,SPD,SPD_Pass,EOPP,EOPP_Pass,EOD,EOD_Pass,TI,TI_Pass,PP,PP_Pass,CAL,CAL_Pass,Fair_k_over_7
+RACE,0.644,False,0.18,False,0.03,True,0.034,True,0.0,True,0.062,True,0.026,True,5/7
+SEX,0.763,False,0.123,False,0.033,True,0.05,True,0.0,True,0.003,True,0.016,True,5/7
+ETHNICITY,0.831,True,0.078,True,0.02,True,0.028,True,0.0,True,0.003,True,0.014,True,7/7
+AGE_GROUP,0.299,False,0.43,False,0.172,False,0.172,False,0.0,True,0.073,True,0.016,True,3/7

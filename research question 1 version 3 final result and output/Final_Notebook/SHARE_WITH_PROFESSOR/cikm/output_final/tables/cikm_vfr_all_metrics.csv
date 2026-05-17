@@ -1,0 +1,337 @@
+Model,Attribute,Metric,Pass,VFR
+Logistic Regression,RACE,DI,4,0.008
+Logistic Regression,RACE,SPD,4,0.008
+Logistic Regression,RACE,EOPP,95,0.19
+Logistic Regression,RACE,EOD,36,0.072
+Logistic Regression,RACE,TI,500,0.0
+Logistic Regression,RACE,PP,167,0.334
+Logistic Regression,RACE,CAL,214,0.428
+Logistic Regression,SEX,DI,0,0.0
+Logistic Regression,SEX,SPD,0,0.0
+Logistic Regression,SEX,EOPP,417,0.166
+Logistic Regression,SEX,EOD,5,0.01
+Logistic Regression,SEX,TI,500,0.0
+Logistic Regression,SEX,PP,500,0.0
+Logistic Regression,SEX,CAL,500,0.0
+Logistic Regression,ETHNICITY,DI,17,0.034
+Logistic Regression,ETHNICITY,SPD,66,0.132
+Logistic Regression,ETHNICITY,EOPP,491,0.018
+Logistic Regression,ETHNICITY,EOD,490,0.02
+Logistic Regression,ETHNICITY,TI,500,0.0
+Logistic Regression,ETHNICITY,PP,500,0.0
+Logistic Regression,ETHNICITY,CAL,500,0.0
+Logistic Regression,AGE_GROUP,DI,0,0.0
+Logistic Regression,AGE_GROUP,SPD,0,0.0
+Logistic Regression,AGE_GROUP,EOPP,0,0.0
+Logistic Regression,AGE_GROUP,EOD,0,0.0
+Logistic Regression,AGE_GROUP,TI,500,0.0
+Logistic Regression,AGE_GROUP,PP,354,0.292
+Logistic Regression,AGE_GROUP,CAL,331,0.338
+Decision Tree,RACE,DI,9,0.018
+Decision Tree,RACE,SPD,14,0.028
+Decision Tree,RACE,EOPP,136,0.272
+Decision Tree,RACE,EOD,104,0.208
+Decision Tree,RACE,TI,500,0.0
+Decision Tree,RACE,PP,211,0.422
+Decision Tree,RACE,CAL,469,0.062
+Decision Tree,SEX,DI,0,0.0
+Decision Tree,SEX,SPD,1,0.002
+Decision Tree,SEX,EOPP,500,0.0
+Decision Tree,SEX,EOD,500,0.0
+Decision Tree,SEX,TI,500,0.0
+Decision Tree,SEX,PP,500,0.0
+Decision Tree,SEX,CAL,500,0.0
+Decision Tree,ETHNICITY,DI,419,0.162
+Decision Tree,ETHNICITY,SPD,489,0.022
+Decision Tree,ETHNICITY,EOPP,500,0.0
+Decision Tree,ETHNICITY,EOD,500,0.0
+Decision Tree,ETHNICITY,TI,500,0.0
+Decision Tree,ETHNICITY,PP,500,0.0
+Decision Tree,ETHNICITY,CAL,500,0.0
+Decision Tree,AGE_GROUP,DI,0,0.0
+Decision Tree,AGE_GROUP,SPD,0,0.0
+Decision Tree,AGE_GROUP,EOPP,0,0.0
+Decision Tree,AGE_GROUP,EOD,0,0.0
+Decision Tree,AGE_GROUP,TI,500,0.0
+Decision Tree,AGE_GROUP,PP,197,0.394
+Decision Tree,AGE_GROUP,CAL,482,0.036
+Random Forest,RACE,DI,11,0.022
+Random Forest,RACE,SPD,12,0.024
+Random Forest,RACE,EOPP,166,0.332
+Random Forest,RACE,EOD,128,0.256
+Random Forest,RACE,TI,500,0.0
+Random Forest,RACE,PP,204,0.408
+Random Forest,RACE,CAL,341,0.318
+Random Forest,SEX,DI,0,0.0
+Random Forest,SEX,SPD,0,0.0
+Random Forest,SEX,EOPP,500,0.0
+Random Forest,SEX,EOD,500,0.0
+Random Forest,SEX,TI,500,0.0
+Random Forest,SEX,PP,500,0.0
+Random Forest,SEX,CAL,500,0.0
+Random Forest,ETHNICITY,DI,337,0.326
+Random Forest,ETHNICITY,SPD,456,0.088
+Random Forest,ETHNICITY,EOPP,500,0.0
+Random Forest,ETHNICITY,EOD,500,0.0
+Random Forest,ETHNICITY,TI,500,0.0
+Random Forest,ETHNICITY,PP,500,0.0
+Random Forest,ETHNICITY,CAL,499,0.002
+Random Forest,AGE_GROUP,DI,0,0.0
+Random Forest,AGE_GROUP,SPD,0,0.0
+Random Forest,AGE_GROUP,EOPP,0,0.0
+Random Forest,AGE_GROUP,EOD,0,0.0
+Random Forest,AGE_GROUP,TI,500,0.0
+Random Forest,AGE_GROUP,PP,417,0.166
+Random Forest,AGE_GROUP,CAL,312,0.376
+Gradient Boosting,RACE,DI,17,0.034
+Gradient Boosting,RACE,SPD,24,0.048
+Gradient Boosting,RACE,EOPP,151,0.302
+Gradient Boosting,RACE,EOD,100,0.2
+Gradient Boosting,RACE,TI,500,0.0
+Gradient Boosting,RACE,PP,192,0.384
+Gradient Boosting,RACE,CAL,431,0.138
+Gradient Boosting,SEX,DI,0,0.0
+Gradient Boosting,SEX,SPD,0,0.0
+Gradient Boosting,SEX,EOPP,499,0.002
+Gradient Boosting,SEX,EOD,459,0.082
+Gradient Boosting,SEX,TI,500,0.0
+Gradient Boosting,SEX,PP,500,0.0
+Gradient Boosting,SEX,CAL,500,0.0
+Gradient Boosting,ETHNICITY,DI,207,0.414
+Gradient Boosting,ETHNICITY,SPD,354,0.292
+Gradient Boosting,ETHNICITY,EOPP,500,0.0
+Gradient Boosting,ETHNICITY,EOD,500,0.0
+Gradient Boosting,ETHNICITY,TI,500,0.0
+Gradient Boosting,ETHNICITY,PP,500,0.0
+Gradient Boosting,ETHNICITY,CAL,500,0.0
+Gradient Boosting,AGE_GROUP,DI,0,0.0
+Gradient Boosting,AGE_GROUP,SPD,0,0.0
+Gradient Boosting,AGE_GROUP,EOPP,0,0.0
+Gradient Boosting,AGE_GROUP,EOD,0,0.0
+Gradient Boosting,AGE_GROUP,TI,500,0.0
+Gradient Boosting,AGE_GROUP,PP,443,0.114
+Gradient Boosting,AGE_GROUP,CAL,475,0.05
+AdaBoost,RACE,DI,13,0.026
+AdaBoost,RACE,SPD,14,0.028
+AdaBoost,RACE,EOPP,127,0.254
+AdaBoost,RACE,EOD,82,0.164
+AdaBoost,RACE,TI,500,0.0
+AdaBoost,RACE,PP,119,0.238
+AdaBoost,RACE,CAL,0,0.0
+AdaBoost,SEX,DI,0,0.0
+AdaBoost,SEX,SPD,0,0.0
+AdaBoost,SEX,EOPP,477,0.046
+AdaBoost,SEX,EOD,4,0.008
+AdaBoost,SEX,TI,500,0.0
+AdaBoost,SEX,PP,500,0.0
+AdaBoost,SEX,CAL,0,0.0
+AdaBoost,ETHNICITY,DI,61,0.122
+AdaBoost,ETHNICITY,SPD,123,0.246
+AdaBoost,ETHNICITY,EOPP,495,0.01
+AdaBoost,ETHNICITY,EOD,495,0.01
+AdaBoost,ETHNICITY,TI,500,0.0
+AdaBoost,ETHNICITY,PP,500,0.0
+AdaBoost,ETHNICITY,CAL,0,0.0
+AdaBoost,AGE_GROUP,DI,0,0.0
+AdaBoost,AGE_GROUP,SPD,0,0.0
+AdaBoost,AGE_GROUP,EOPP,0,0.0
+AdaBoost,AGE_GROUP,EOD,0,0.0
+AdaBoost,AGE_GROUP,TI,500,0.0
+AdaBoost,AGE_GROUP,PP,293,0.414
+AdaBoost,AGE_GROUP,CAL,0,0.0
+XGBoost,RACE,DI,13,0.026
+XGBoost,RACE,SPD,16,0.032
+XGBoost,RACE,EOPP,268,0.464
+XGBoost,RACE,EOD,218,0.436
+XGBoost,RACE,TI,500,0.0
+XGBoost,RACE,PP,235,0.47
+XGBoost,RACE,CAL,465,0.07
+XGBoost,SEX,DI,9,0.018
+XGBoost,SEX,SPD,9,0.018
+XGBoost,SEX,EOPP,500,0.0
+XGBoost,SEX,EOD,500,0.0
+XGBoost,SEX,TI,500,0.0
+XGBoost,SEX,PP,500,0.0
+XGBoost,SEX,CAL,500,0.0
+XGBoost,ETHNICITY,DI,456,0.088
+XGBoost,ETHNICITY,SPD,490,0.02
+XGBoost,ETHNICITY,EOPP,500,0.0
+XGBoost,ETHNICITY,EOD,500,0.0
+XGBoost,ETHNICITY,TI,500,0.0
+XGBoost,ETHNICITY,PP,500,0.0
+XGBoost,ETHNICITY,CAL,500,0.0
+XGBoost,AGE_GROUP,DI,0,0.0
+XGBoost,AGE_GROUP,SPD,0,0.0
+XGBoost,AGE_GROUP,EOPP,0,0.0
+XGBoost,AGE_GROUP,EOD,0,0.0
+XGBoost,AGE_GROUP,TI,500,0.0
+XGBoost,AGE_GROUP,PP,390,0.22
+XGBoost,AGE_GROUP,CAL,462,0.076
+LightGBM,RACE,DI,4,0.008
+LightGBM,RACE,SPD,9,0.018
+LightGBM,RACE,EOPP,172,0.344
+LightGBM,RACE,EOD,130,0.26
+LightGBM,RACE,TI,500,0.0
+LightGBM,RACE,PP,233,0.466
+LightGBM,RACE,CAL,437,0.126
+LightGBM,SEX,DI,3,0.006
+LightGBM,SEX,SPD,3,0.006
+LightGBM,SEX,EOPP,500,0.0
+LightGBM,SEX,EOD,500,0.0
+LightGBM,SEX,TI,500,0.0
+LightGBM,SEX,PP,500,0.0
+LightGBM,SEX,CAL,500,0.0
+LightGBM,ETHNICITY,DI,405,0.19
+LightGBM,ETHNICITY,SPD,477,0.046
+LightGBM,ETHNICITY,EOPP,500,0.0
+LightGBM,ETHNICITY,EOD,500,0.0
+LightGBM,ETHNICITY,TI,500,0.0
+LightGBM,ETHNICITY,PP,500,0.0
+LightGBM,ETHNICITY,CAL,499,0.002
+LightGBM,AGE_GROUP,DI,0,0.0
+LightGBM,AGE_GROUP,SPD,0,0.0
+LightGBM,AGE_GROUP,EOPP,0,0.0
+LightGBM,AGE_GROUP,EOD,0,0.0
+LightGBM,AGE_GROUP,TI,500,0.0
+LightGBM,AGE_GROUP,PP,431,0.138
+LightGBM,AGE_GROUP,CAL,392,0.216
+CatBoost,RACE,DI,3,0.006
+CatBoost,RACE,SPD,5,0.01
+CatBoost,RACE,EOPP,145,0.29
+CatBoost,RACE,EOD,115,0.23
+CatBoost,RACE,TI,500,0.0
+CatBoost,RACE,PP,216,0.432
+CatBoost,RACE,CAL,427,0.146
+CatBoost,SEX,DI,0,0.0
+CatBoost,SEX,SPD,0,0.0
+CatBoost,SEX,EOPP,500,0.0
+CatBoost,SEX,EOD,492,0.016
+CatBoost,SEX,TI,500,0.0
+CatBoost,SEX,PP,500,0.0
+CatBoost,SEX,CAL,500,0.0
+CatBoost,ETHNICITY,DI,300,0.4
+CatBoost,ETHNICITY,SPD,435,0.13
+CatBoost,ETHNICITY,EOPP,500,0.0
+CatBoost,ETHNICITY,EOD,500,0.0
+CatBoost,ETHNICITY,TI,500,0.0
+CatBoost,ETHNICITY,PP,500,0.0
+CatBoost,ETHNICITY,CAL,500,0.0
+CatBoost,AGE_GROUP,DI,0,0.0
+CatBoost,AGE_GROUP,SPD,0,0.0
+CatBoost,AGE_GROUP,EOPP,0,0.0
+CatBoost,AGE_GROUP,EOD,0,0.0
+CatBoost,AGE_GROUP,TI,500,0.0
+CatBoost,AGE_GROUP,PP,442,0.116
+CatBoost,AGE_GROUP,CAL,453,0.094
+HistGradientBoosting,RACE,DI,3,0.006
+HistGradientBoosting,RACE,SPD,6,0.012
+HistGradientBoosting,RACE,EOPP,177,0.354
+HistGradientBoosting,RACE,EOD,135,0.27
+HistGradientBoosting,RACE,TI,500,0.0
+HistGradientBoosting,RACE,PP,210,0.42
+HistGradientBoosting,RACE,CAL,441,0.118
+HistGradientBoosting,SEX,DI,0,0.0
+HistGradientBoosting,SEX,SPD,0,0.0
+HistGradientBoosting,SEX,EOPP,500,0.0
+HistGradientBoosting,SEX,EOD,500,0.0
+HistGradientBoosting,SEX,TI,500,0.0
+HistGradientBoosting,SEX,PP,500,0.0
+HistGradientBoosting,SEX,CAL,500,0.0
+HistGradientBoosting,ETHNICITY,DI,393,0.214
+HistGradientBoosting,ETHNICITY,SPD,472,0.056
+HistGradientBoosting,ETHNICITY,EOPP,500,0.0
+HistGradientBoosting,ETHNICITY,EOD,500,0.0
+HistGradientBoosting,ETHNICITY,TI,500,0.0
+HistGradientBoosting,ETHNICITY,PP,500,0.0
+HistGradientBoosting,ETHNICITY,CAL,500,0.0
+HistGradientBoosting,AGE_GROUP,DI,0,0.0
+HistGradientBoosting,AGE_GROUP,SPD,0,0.0
+HistGradientBoosting,AGE_GROUP,EOPP,0,0.0
+HistGradientBoosting,AGE_GROUP,EOD,0,0.0
+HistGradientBoosting,AGE_GROUP,TI,500,0.0
+HistGradientBoosting,AGE_GROUP,PP,428,0.144
+HistGradientBoosting,AGE_GROUP,CAL,440,0.12
+Bagging,RACE,DI,18,0.036
+Bagging,RACE,SPD,12,0.024
+Bagging,RACE,EOPP,237,0.474
+Bagging,RACE,EOD,159,0.318
+Bagging,RACE,TI,500,0.0
+Bagging,RACE,PP,172,0.344
+Bagging,RACE,CAL,470,0.06
+Bagging,SEX,DI,10,0.02
+Bagging,SEX,SPD,2,0.004
+Bagging,SEX,EOPP,500,0.0
+Bagging,SEX,EOD,500,0.0
+Bagging,SEX,TI,500,0.0
+Bagging,SEX,PP,500,0.0
+Bagging,SEX,CAL,500,0.0
+Bagging,ETHNICITY,DI,455,0.09
+Bagging,ETHNICITY,SPD,478,0.044
+Bagging,ETHNICITY,EOPP,500,0.0
+Bagging,ETHNICITY,EOD,500,0.0
+Bagging,ETHNICITY,TI,500,0.0
+Bagging,ETHNICITY,PP,500,0.0
+Bagging,ETHNICITY,CAL,500,0.0
+Bagging,AGE_GROUP,DI,0,0.0
+Bagging,AGE_GROUP,SPD,0,0.0
+Bagging,AGE_GROUP,EOPP,0,0.0
+Bagging,AGE_GROUP,EOD,0,0.0
+Bagging,AGE_GROUP,TI,500,0.0
+Bagging,AGE_GROUP,PP,213,0.426
+Bagging,AGE_GROUP,CAL,453,0.094
+Extra Trees,RACE,DI,5,0.01
+Extra Trees,RACE,SPD,5,0.01
+Extra Trees,RACE,EOPP,97,0.194
+Extra Trees,RACE,EOD,48,0.096
+Extra Trees,RACE,TI,500,0.0
+Extra Trees,RACE,PP,158,0.316
+Extra Trees,RACE,CAL,33,0.066
+Extra Trees,SEX,DI,0,0.0
+Extra Trees,SEX,SPD,0,0.0
+Extra Trees,SEX,EOPP,499,0.002
+Extra Trees,SEX,EOD,231,0.462
+Extra Trees,SEX,TI,500,0.0
+Extra Trees,SEX,PP,500,0.0
+Extra Trees,SEX,CAL,291,0.418
+Extra Trees,ETHNICITY,DI,35,0.07
+Extra Trees,ETHNICITY,SPD,71,0.142
+Extra Trees,ETHNICITY,EOPP,489,0.022
+Extra Trees,ETHNICITY,EOD,489,0.022
+Extra Trees,ETHNICITY,TI,500,0.0
+Extra Trees,ETHNICITY,PP,500,0.0
+Extra Trees,ETHNICITY,CAL,352,0.296
+Extra Trees,AGE_GROUP,DI,0,0.0
+Extra Trees,AGE_GROUP,SPD,0,0.0
+Extra Trees,AGE_GROUP,EOPP,0,0.0
+Extra Trees,AGE_GROUP,EOD,0,0.0
+Extra Trees,AGE_GROUP,TI,500,0.0
+Extra Trees,AGE_GROUP,PP,359,0.282
+Extra Trees,AGE_GROUP,CAL,2,0.004
+Stacking Ensemble,RACE,DI,7,0.014
+Stacking Ensemble,RACE,SPD,10,0.02
+Stacking Ensemble,RACE,EOPP,183,0.366
+Stacking Ensemble,RACE,EOD,131,0.262
+Stacking Ensemble,RACE,TI,500,0.0
+Stacking Ensemble,RACE,PP,172,0.344
+Stacking Ensemble,RACE,CAL,104,0.208
+Stacking Ensemble,SEX,DI,0,0.0
+Stacking Ensemble,SEX,SPD,0,0.0
+Stacking Ensemble,SEX,EOPP,500,0.0
+Stacking Ensemble,SEX,EOD,500,0.0
+Stacking Ensemble,SEX,TI,500,0.0
+Stacking Ensemble,SEX,PP,500,0.0
+Stacking Ensemble,SEX,CAL,323,0.354
+Stacking Ensemble,ETHNICITY,DI,419,0.162
+Stacking Ensemble,ETHNICITY,SPD,474,0.052
+Stacking Ensemble,ETHNICITY,EOPP,500,0.0
+Stacking Ensemble,ETHNICITY,EOD,500,0.0
+Stacking Ensemble,ETHNICITY,TI,500,0.0
+Stacking Ensemble,ETHNICITY,PP,500,0.0
+Stacking Ensemble,ETHNICITY,CAL,273,0.454
+Stacking Ensemble,AGE_GROUP,DI,0,0.0
+Stacking Ensemble,AGE_GROUP,SPD,0,0.0
+Stacking Ensemble,AGE_GROUP,EOPP,0,0.0
+Stacking Ensemble,AGE_GROUP,EOD,0,0.0
+Stacking Ensemble,AGE_GROUP,TI,500,0.0
+Stacking Ensemble,AGE_GROUP,PP,398,0.204
+Stacking Ensemble,AGE_GROUP,CAL,52,0.104

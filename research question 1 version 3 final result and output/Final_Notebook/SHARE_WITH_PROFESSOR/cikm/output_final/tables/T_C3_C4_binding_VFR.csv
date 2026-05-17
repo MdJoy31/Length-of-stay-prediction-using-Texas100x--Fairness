@@ -1,0 +1,5 @@
+metric,attribute,C3_n_pass,C3_VFR,C3_verdict,C4_n_pass,C4_VFR,C4_verdict,delta_VFR,greedy_effect
+DI,RACE,295,0.41,fair,262,0.476,fair,0.066,increased
+DI,AGE_GROUP,206,0.412,unfair,116,0.232,unfair,-0.18,reduced
+SPD,RACE,301,0.398,fair,265,0.47,fair,0.072,increased
+SPD,AGE_GROUP,245,0.49,unfair,146,0.292,unfair,-0.198,reduced

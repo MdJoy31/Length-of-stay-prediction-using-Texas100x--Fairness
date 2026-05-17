@@ -1,0 +1,33 @@
+================================================================================
+FIX 2 · DATASET-AUGMENTATION DIAGNOSTICS
+================================================================================
+
+Diagnostic 1 — unique-row analysis
+  Total rows: 925,128
+  Unique combinations on 9 cols: 920,447
+  Duplication ratio: 1.01
+  Diagnostic 1 verdict: LOW DUPLICATION (real cohort or modest augmentation)
+
+Diagnostic 2 — RACE × ETHNICITY crosstab (raw counts)
+ETHNICITY       0       1
+RACE                     
+0            2300    1174
+1             523   15881
+2             721  114491
+3          101714  501654
+4          149284   37386
+
+Diagnostic 2 — RACE × ETHNICITY crosstab (row %)
+ETHNICITY     0     1
+RACE                 
+0          66.2  33.8
+1           3.2  96.8
+2           0.6  99.4
+3          16.9  83.1
+4          80.0  20.0
+
+  Proportion both Black AND Hispanic: 54.2%
+  Diagnostic 2 verdict: NON-STANDARD RACE-ETHNICITY CODING
+
+Diagnostic 3 — top-10 LOS values cover 89.3% of rows
+  Diagnostic 3 verdict: CLUSTERING ON SMALL-INTEGER LOS (expected for real clinical data; most inpatient stays are 1-10 days)

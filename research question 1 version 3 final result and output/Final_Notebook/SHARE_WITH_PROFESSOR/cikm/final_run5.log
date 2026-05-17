@@ -1,0 +1,25 @@
+D:\Research study\Research question ML\fairness_project_v2\.venv\Lib\site-packages\nbformat\__init__.py:96: MissingIDFieldWarning: Cell is missing an id field, this will become a hard error in future nbformat versions. You may want to use `normalize()` on your notebooks before validations (available since nbformat 5.1.4). Previous versions of nbformat are fixing this issue transparently, and will stop doing so in the future.
+  validate(nb)
+[0s] Cells: 48
+[0s] Run 5: 4-bucket age + bigger XGB + master alpha
+D:\Research study\Research question ML\fairness_project_v2\.venv\Lib\site-packages\zmq\_future.py:718: RuntimeWarning: Proactor event loop does not implement add_reader family of methods required for zmq. Registering an additional selector thread for add_reader support via tornado. Use `asyncio.set_event_loop_policy(WindowsSelectorEventLoopPolicy())` to avoid this warning.
+  self._get_loop()
+D:\Research study\Research question ML\fairness_project_v2\.venv\Lib\site-packages\joblib\externals\loky\backend\resource_tracker.py:359: UserWarning: resource_tracker: There appear to be 2 leaked folder objects to clean up at shutdown
+  warnings.warn(
+D:\Research study\Research question ML\fairness_project_v2\.venv\Lib\site-packages\joblib\externals\loky\backend\resource_tracker.py:375: UserWarning: resource_tracker: C:\Users\rakib\AppData\Local\Temp\joblib_memmapping_folder_49552_ff3a44a28475438798cccc5b436a7d47_01844e6b10134d64ae349b86cbe24b5e: FileNotFoundError(2, 'The system cannot find the path specified')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+D:\Research study\Research question ML\fairness_project_v2\.venv\Lib\site-packages\joblib\externals\loky\backend\resource_tracker.py:375: UserWarning: resource_tracker: C:\Users\rakib\AppData\Local\Temp\joblib_memmapping_folder_49552_05222144b37c46fb8e69ac00bbf22af7_877219c4c8e74d3eb025eddd962d43d5: FileNotFoundError(2, 'The system cannot find the path specified')
+  warnings.warn(f"resource_tracker: {name}: {e!r}")
+Traceback (most recent call last):
+  File "<stdin>", line 13, in <module>
+  File "D:\Research study\Research question ML\fairness_project_v2\.venv\Lib\site-packages\jupyter_core\utils\__init__.py", line 165, in wrapped
+    return loop.run_until_complete(inner)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\rakib\AppData\Local\Programs\Python\Python311\Lib\asyncio\base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "D:\Research study\Research question ML\fairness_project_v2\.venv\Lib\site-packages\nbclient\client.py", line 709, in async_execute
+    await self.async_execute_cell(
+  File "D:\Research study\Research question ML\fairness_project_v2\.venv\Lib\site-packages\nbclient\client.py", line 1009, in async_execute_cell
+    raise DeadKernelError("Kernel died") from None
+nbclient.exceptions.DeadKernelError: Kernel died

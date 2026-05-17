@@ -1,0 +1,13 @@
+Model,RACE,SEX,ETHNICITY,AGE_GROUP,All_7_pass_attributes
+Logistic Regression,5/7,4/7,7/7,3/7,1
+Decision Tree,5/7,5/7,7/7,3/7,1
+Random Forest,5/7,5/7,7/7,3/7,1
+Gradient Boosting,7/7,5/7,7/7,3/7,2
+AdaBoost,4/7,3/7,6/7,2/7,0
+XGBoost,6/7,5/7,7/7,3/7,1
+LightGBM,5/7,5/7,7/7,3/7,1
+CatBoost,5/7,5/7,7/7,3/7,1
+HistGradientBoosting,5/7,5/7,7/7,3/7,1
+Bagging,6/7,5/7,7/7,3/7,1
+Extra Trees,5/7,5/7,7/7,2/7,1
+Stacking Ensemble,5/7,5/7,7/7,3/7,1

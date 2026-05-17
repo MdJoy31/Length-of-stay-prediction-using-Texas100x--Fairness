@@ -1,0 +1,21 @@
+config,Acc,AUROC,DI_R,DI_S,DI_E,DI_A,min_DI,all4
+intersect λ=200 clip=std,0.8616,0.9405,0.596,0.75,0.832,0.27,0.27,False
+intersect λ=200 clip=relaxed,0.8573,0.9368,0.596,0.751,0.827,0.266,0.266,False
+intersect λ=500 clip=std,0.8616,0.9405,0.596,0.753,0.83,0.276,0.276,False
+intersect λ=500 clip=relaxed,0.8582,0.9375,0.601,0.753,0.832,0.268,0.268,False
+intersect λ=1000 clip=std,0.8616,0.9405,0.596,0.753,0.83,0.276,0.276,False
+intersect λ=1000 clip=relaxed,0.8597,0.9385,0.592,0.752,0.832,0.269,0.269,False
+intersect λ=5000 clip=std,0.8616,0.9405,0.596,0.753,0.83,0.276,0.276,False
+intersect λ=5000 clip=relaxed,0.8596,0.9386,0.589,0.754,0.831,0.28,0.28,False
+intersect λ=10000 clip=std,0.8616,0.9405,0.596,0.753,0.83,0.276,0.276,False
+intersect λ=10000 clip=relaxed,0.8596,0.9386,0.589,0.754,0.831,0.28,0.28,False
+age-only λ=10 clip=std,0.8604,0.9404,0.64,0.755,0.82,0.274,0.274,False
+age-only λ=10 clip=relaxed,0.8421,0.9268,0.649,0.732,0.819,0.264,0.264,False
+age-only λ=50 clip=std,0.8591,0.9396,0.631,0.757,0.817,0.28,0.28,False
+age-only λ=50 clip=relaxed,0.8425,0.9273,0.644,0.734,0.819,0.265,0.265,False
+age-only λ=100 clip=std,0.859,0.9394,0.649,0.759,0.822,0.282,0.282,False
+age-only λ=100 clip=relaxed,0.8452,0.9287,0.637,0.74,0.819,0.269,0.269,False
+age-only λ=500 clip=std,0.859,0.9394,0.649,0.759,0.822,0.282,0.282,False
+age-only λ=500 clip=relaxed,0.8494,0.931,0.628,0.751,0.82,0.281,0.281,False
+age-only λ=1000 clip=std,0.859,0.9394,0.649,0.759,0.822,0.282,0.282,False
+age-only λ=1000 clip=relaxed,0.8499,0.9314,0.626,0.75,0.824,0.283,0.283,False

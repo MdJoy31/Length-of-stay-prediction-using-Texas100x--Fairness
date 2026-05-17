@@ -1,0 +1,8 @@
+metric,fleiss_kappa,agreement_class
+DI,-0.0346,below chance
+SPD,0.1165,slight
+EOPP,0.465,moderate
+EOD,0.5866,moderate
+TI,1.0,almost perfect
+PP,0.3151,fair
+CAL,0.0028,slight

@@ -1,0 +1,2 @@
+Configuration,Accuracy,AUROC,F1,DI_RACE,DI_SEX,DI_ETHNICITY,DI_AGE_GROUP,All_4_DI_pass,Max_DI_VFR_pct,Mean_VFR_28cells_pct,Cells_with_VFR_gt_10pct,Stability_summary
+(3) Threshold-Shift only (λ=0 + α-search),0.8316,0.9532,0.8132,0.929,0.9542,0.9701,0.8003,True,41.2,8.63,7,Marginal pass — at least one DI VFR > 10%

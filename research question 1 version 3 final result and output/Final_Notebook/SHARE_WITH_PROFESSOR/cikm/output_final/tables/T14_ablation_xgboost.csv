@@ -1,0 +1,7 @@
+Configuration,Accuracy,AUROC,F1,DI_RACE,DI_SEX,DI_ETHNICITY,DI_AGE_GROUP,All_DI_ge_080,Fair_of_28
+(1) Standard,0.8776,0.9528,0.8627,0.644,0.763,0.831,0.299,False,20
+(2) Reweighing only,0.8578,0.9373,0.8396,0.575,0.749,0.821,0.264,False,18
+(3) Reweigh + alpha thresholds,0.8139,0.9373,0.7917,0.901,0.952,0.968,0.803,True,23
+(4) Full Fair,0.8141,0.9378,0.7941,0.887,0.955,0.959,0.805,True,22
+(5) Refined Fair (<=5pp target),0.8169,0.9373,0.7928,0.83,0.918,0.964,0.8,True,23
+(5b) Phase5b lambda=0 + threshold,0.8347,0.9528,0.8163,0.801,0.932,1.0,0.8,True,21

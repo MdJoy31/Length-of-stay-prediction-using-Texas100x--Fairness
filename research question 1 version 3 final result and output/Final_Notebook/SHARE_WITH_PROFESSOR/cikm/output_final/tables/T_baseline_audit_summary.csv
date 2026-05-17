@@ -1,0 +1,5 @@
+Configuration,config_id,vfr_mean_across_28_cells,vfr_max,n_cells_flipped,n_cells_full_N_required,kappa_mean,kappa_eopp,kappa_eod,kappa_cal,all_DI_pass,n_DI_pass,accuracy,auroc
+Real-Only,1,0.0658,0.498,12,0,0.4369,0.5884,0.5951,0.0028,False,1,0.8783,0.9528
+Reweighing-only λ=2,2,0.0621,0.426,10,0,0.4362,0.6182,0.607,-0.0127,False,1,0.8707,0.9373
+Threshold-Shift only,3,0.0863,0.49,11,0,0.3461,0.6057,0.607,0.0028,True,4,0.8316,0.9528
+Real+VFR canonical (Phase 5b),4,0.0809,0.476,11,0,0.3502,0.465,0.5866,0.0028,True,4,0.8352,0.9528

@@ -1,0 +1,29 @@
+Attribute,Metric,Value,Threshold,Pass,Margin_sigma,Stability,Bootstrap_pass_count,VFR_pct
+RACE,DI,0.644,0.8,False,-1.49,Stable,8/500,1.6
+RACE,SPD,0.18,0.1,False,-1.49,Stable,10/500,2.0
+RACE,EOPP,0.03,0.1,True,-0.21,Unstable,260/500,48.0
+RACE,EOD,0.034,0.1,True,-0.42,Unstable,193/500,38.6
+RACE,TI,0.0,0.1,True,inf,Very stable,500/500,0.0
+RACE,PP,0.062,0.1,True,-0.3,Unstable,229/500,45.8
+RACE,CAL,0.026,0.05,True,1.73,Stable,476/500,4.8
+SEX,DI,0.763,0.8,False,-2.14,Stable,12/500,2.4
+SEX,SPD,0.123,0.1,False,-2.2,Stable,10/500,2.0
+SEX,EOPP,0.033,0.1,True,6.55,Very stable,500/500,0.0
+SEX,EOD,0.05,0.1,True,5.81,Very stable,500/500,0.0
+SEX,TI,0.0,0.1,True,inf,Very stable,500/500,0.0
+SEX,PP,0.003,0.1,True,15.13,Very stable,500/500,0.0
+SEX,CAL,0.016,0.05,True,5.58,Very stable,500/500,0.0
+ETHNICITY,DI,0.831,0.8,True,1.48,Stable,465/500,7.0
+ETHNICITY,SPD,0.078,0.1,True,2.12,Stable,493/500,1.4
+ETHNICITY,EOPP,0.02,0.1,True,6.95,Very stable,500/500,0.0
+ETHNICITY,EOD,0.028,0.1,True,8.64,Very stable,500/500,0.0
+ETHNICITY,TI,0.0,0.1,True,inf,Very stable,500/500,0.0
+ETHNICITY,PP,0.003,0.1,True,12.68,Very stable,500/500,0.0
+ETHNICITY,CAL,0.014,0.05,True,4.61,Stable,499/500,0.2
+AGE_GROUP,DI,0.299,0.8,False,-36.85,Very stable,0/500,0.0
+AGE_GROUP,SPD,0.43,0.1,False,-29.16,Very stable,0/500,0.0
+AGE_GROUP,EOPP,0.172,0.1,False,-3.53,Very stable,0/500,0.0
+AGE_GROUP,EOD,0.172,0.1,False,-3.65,Very stable,0/500,0.0
+AGE_GROUP,TI,0.0,0.1,True,inf,Very stable,500/500,0.0
+AGE_GROUP,PP,0.073,0.1,True,0.74,Unstable,399/500,20.2
+AGE_GROUP,CAL,0.016,0.05,True,1.49,Stable,460/500,8.0

@@ -1,0 +1,8 @@
+Metric,Fleiss_kappa,Landis_Koch
+DI,0.24217322968438026,fair
+SPD,0.2542484738491996,fair
+EOPP,0.7150771666007123,substantial
+EOD,0.7591716563564789,substantial
+TI,1.0,almost perfect
+PP,0.2491031500319428,fair
+CAL,-0.0025062656641633074,below chance

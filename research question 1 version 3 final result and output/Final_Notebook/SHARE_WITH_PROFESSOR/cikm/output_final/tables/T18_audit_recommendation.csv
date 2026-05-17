@@ -1,0 +1,8 @@
+Metric,Recommended_Role,Min_N_range,Cross_site_kappa,Class
+DI,Primary screening,"5,000–185,026",0.204,fair
+SPD,Primary screening,"5,000–185,026",0.215,fair
+EOPP,Complementary,"100,000–185,026",0.674,substantial
+EOD,Complementary,"50,000–185,026",0.601,substantial
+TI,Diagnostic only,"185,026–185,026",1.0,almost perfect
+PP,Diagnostic only,"185,026–185,026",0.235,fair
+CAL,Complementary,"185,026–185,026",0.016,slight
