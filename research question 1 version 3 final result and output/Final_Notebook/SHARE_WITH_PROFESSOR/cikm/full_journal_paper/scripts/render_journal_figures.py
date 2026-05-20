@@ -178,7 +178,7 @@ print('F_per_attribute_di.png saved')
 # VFR landscape (7 metrics × 4 attrs × 3 experiments)
 # ---------------------------------------------------------------------
 METRIC_ORDER = ['DI', 'SPD', 'EOPP', 'EOD', 'TI', 'PP', 'CAL']
-ATTR_ORDER = ['RACE', 'SEX', 'ETHNICITY', 'AGE_GROUP']
+ATTR_ORDER = ['RACE', 'SEX_CODE', 'ETHNICITY', 'AGE_GROUP']  # matches CSV column 'attribute'
 ATTR_LBL = ['Race', 'Sex', 'Ethnicity', 'Age']
 
 vfr_paths = [
