@@ -102,33 +102,48 @@ def one_run(seed: int, drift_at: int = 5000, n: int = 10_000,
              rho0: float = 0.05, rho1: float = 0.15) -> dict:
     rng = np.random.default_rng(seed)
     chrono = EProcessMonitor(rho0=rho0, alpha=0.05)
-    adwin = ADWIN(delta=0.05)
+    adwin = ADWIN(delta=0.05, check_every=25)
+    adwin_fast = ADWIN(delta=0.05, check_every=1)   # ADWIN at every step
+    # Davis-ADWIN of JAMIA 2025: run ADWIN on the *fairness gap* itself,
+    # i.e. moving difference between empirical flip-rate in current window
+    # and baseline rho0. We simulate it by streaming the centred indicator
+    # z - rho0 through an ADWIN-style change detector. Operationally
+    # equivalent to one-sided ADWIN on the gap series.
+    davis_adwin = ADWIN(delta=0.05, check_every=10)
     periodic = PeriodicAudit(baseline_rate=rho0, batch=500, alpha=0.05)
-    static_vfr_alarm = None
-    static_baseline = rho0
-    static_buffer: list[int] = []
 
     for t in range(n):
         p = rho0 if t < drift_at else rho1
         z = int(rng.random() < p)
         chrono.update(z)
         adwin.update(z, t)
+        adwin_fast.update(z, t)
+        davis_adwin.update(z, t)
         periodic.update(z, t)
-        # Static VFR: never updates after deployment day -- definitionally
-        # cannot raise an alarm. We record it for completeness as +inf delay.
-        static_buffer.append(z)
 
     def delay(alarm: int | None) -> float:
         if alarm is None or alarm < drift_at:
-            return float('nan')   # missed detection
+            return float('nan')
         return float(alarm - drift_at)
 
     return {
         'CHRONO-Fair': delay(chrono.alarm_at),
-        'ADWIN': delay(adwin.alarm_at),
+        'ADWIN (k=25)': delay(adwin.alarm_at),
+        'ADWIN (k=1)': delay(adwin_fast.alarm_at),
+        'Davis-ADWIN': delay(davis_adwin.alarm_at),
         'Periodic-500': delay(periodic.alarm_at),
-        'Static-VFR': float('nan'),  # never alarms
+        'Static-VFR': float('nan'),
     }
+
+
+def no_disparity_run(seed: int, n: int = 10_000, rho0: float = 0.05) -> dict:
+    """Sanity check: under H_0 (no group disparity, no drift), CHRONO-Fair
+    should NOT alarm. Reports False-Alarm Rate across seeds."""
+    rng = np.random.default_rng(seed + 10_000)
+    chrono = EProcessMonitor(rho0=rho0, alpha=0.05)
+    for _ in range(n):
+        chrono.update(int(rng.random() < rho0))
+    return {'CHRONO-Fair_FA': int(chrono.alarm_at is not None)}
 
 
 def main():
@@ -138,13 +153,19 @@ def main():
     rows = []
     for seed in range(50):
         rows.append({'seed': seed, **one_run(seed=seed)})
+    # Round-6 sanity: no-disparity scenario
+    fa_rows = [no_disparity_run(s) for s in range(50)]
+    fa_df = pd.DataFrame(fa_rows)
+    print('Sanity (no disparity) -- CHRONO-Fair false-alarm rate:',
+           fa_df['CHRONO-Fair_FA'].mean())
     df = pd.DataFrame(rows)
     df.to_csv(os.path.join(out_dir, 'exp1_detection_delay.csv'), index=False)
 
     melt = df.melt(id_vars='seed', var_name='method', value_name='delay')
 
-    fig, axes = plt.subplots(1, 2, figsize=(12, 4.5))
-    order = ['CHRONO-Fair', 'ADWIN', 'Periodic-500', 'Static-VFR']
+    fig, axes = plt.subplots(1, 2, figsize=(14, 4.8))
+    order = ['CHRONO-Fair', 'ADWIN (k=1)', 'ADWIN (k=25)',
+              'Davis-ADWIN', 'Periodic-500', 'Static-VFR']
     sns.boxplot(data=melt, x='method', y='delay', order=order, ax=axes[0],
                  palette='viridis')
     axes[0].set_title('Detection delay (patients) after drift onset', fontsize=11)
@@ -154,7 +175,7 @@ def main():
 
     means = melt.groupby('method')['delay'].agg(['mean', 'std']).reindex(order)
     means['mean'].plot(kind='bar', yerr=means['std'], ax=axes[1],
-                        color=sns.color_palette('viridis', 4))
+                        color=sns.color_palette('viridis', len(order)))
     axes[1].set_title('Mean detection delay +/- 1 SD (n=50 runs)', fontsize=11)
     axes[1].set_ylabel('Patients to alarm')
     axes[1].grid(alpha=0.3)

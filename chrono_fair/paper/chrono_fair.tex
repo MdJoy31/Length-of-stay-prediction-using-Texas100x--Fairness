@@ -25,8 +25,8 @@
 \newcommand{\1}[1]{\mathbf{1}\!\left\{#1\right\}}
 
 \title{\Large \bfseries CHRONO-Fair: \\
-  Time-Resolved, Anytime-Valid, Decomposed Monitoring \\
-  of Counterfactual Verdict Flips in Clinical Machine Learning}
+  Anytime-Valid Monitoring of Counterfactual \\
+  Verdict Flips in Clinical Machine Learning}
 \author{Md Rakibul Islam Joy\thanks{Swinburne University of Technology}
   \quad Caslon Chua \quad Viet Vo \\
   \texttt{\{mdjoy,cchua,vvo\}@swin.edu.au}}
@@ -36,7 +36,7 @@
 \maketitle
 
 \begin{abstract}
-Fairness audits of deployed clinical machine learning systems are almost universally \emph{batch}, \emph{single-threshold}, \emph{group-aggregated}, and \emph{post-hoc}. Recent regulatory action --- the FDA's Predetermined Change Control Plan (December 2024) and the EU AI Act high-risk provisions (in force August 2027) --- mandate \emph{continuous} bias monitoring, yet no published method satisfies the joint requirements of (i) time resolution, (ii) anytime-valid statistical control, (iii) interpretable root-cause attribution, and (iv) coverage of regression outputs such as length of stay. We introduce \textbf{CHRONO-Fair}, a framework that re-frames the Verdict Flip Rate (VFR) of Joy et al.\ \cite{joy2025vfr} as the $t{=}0$ marginal of a \emph{Flip Hazard function} and extends it along four axes. (1) \emph{Time-resolved}: group-stratified Kaplan--Meier flip-time survival with log-rank tests and Restricted Mean Flip Time (RMFT). (2) \emph{Anytime-valid}: an e-process monitor with intersectional false-discovery control, satisfying Ville's inequality so practitioners can peek at every patient. (3) \emph{Root-cause}: an aleatoric / epistemic decomposition that maps each alarm to a clinical or data-pipeline action. (4) \emph{Regression-native}: Regression Counterfactual Allocation Parity (RCAP), the Wasserstein-1 distance between counterfactual rank distributions, applicable to length-of-stay regression on Texas-100X. On a $15\,000$-patient simulated stream calibrated to Texas-100X statistics, CHRONO-Fair detects an injected fairness shift in $50/50$ runs at a mean delay of $856$ patients (ADWIN: $42\%$ detection, $3927$ patients; periodic batch test: $48\%$; static VFR: never), achieves $100\%$ accuracy on a controlled decomposition validation, and exposes allocation disparities that the conventional group-MAE gap underreports by up to $2.5\times$. The full system is open source.
+Fairness audits of deployed clinical machine learning systems are almost universally \emph{batch}, \emph{single-threshold}, \emph{group-aggregated}, and \emph{post-hoc}. Recent regulatory action --- the FDA's Predetermined Change Control Plan (December 2024) and the EU AI Act high-risk provisions (in force August 2027) --- mandate \emph{continuous} bias monitoring, yet no published method satisfies the joint requirements of (i) time resolution, (ii) anytime-valid statistical control, (iii) interpretable root-cause attribution, and (iv) coverage of regression outputs such as length of stay. We introduce \textbf{CHRONO-Fair}, a framework that re-frames the Verdict Flip Rate (VFR) of Joy et al.\ \cite{joy2025vfr} as the \emph{aggregate} $1{-}S_a(\tau^*)$ marginal of a group-conditional \emph{Flip Hazard} survival object, and extends it along four axes. (1) \emph{Time-resolved}: group-stratified Kaplan--Meier flip-time survival with log-rank tests and Restricted Mean Flip Time (RMFT). (2) \emph{Anytime-valid}: an e-process monitor with intersectional false-discovery control, satisfying Ville's inequality so practitioners can peek at every patient. (3) \emph{Root-cause}: an aleatoric / epistemic decomposition that maps each alarm to a clinical or data-pipeline action. (4) \emph{Regression-native}: Regression Counterfactual Allocation Parity (RCAP), the Wasserstein-1 distance between counterfactual rank distributions, applicable to length-of-stay regression on Texas-100X. On a $15\,000$-patient simulated stream calibrated to Texas-100X statistics, CHRONO-Fair detects an injected fairness shift in $50/50$ runs at a mean delay of $856$ patients ($4.5\times$ faster than the strongest ADWIN-family baseline; periodic batch test $48\%$ coverage; static VFR never), with empirical false-alarm rate $0/50$ under a no-disparity sanity scenario. The decomposition labels every controlled trial correctly ($100\%$ accuracy) and realistic ML pipelines yield mixed root causes that the framework correctly recommends for joint mitigation. RCAP exposes allocation disparities up to $2.5\times$ larger than the conventional group-MAE gap reports. The full system is open source.
 \end{abstract}
 
 \section{Introduction}
@@ -80,7 +80,7 @@ We additionally release an open-source automated inspection pipeline (Section~\r
 \section{The Flip Hazard Function}\label{sec:fliphazard}
 
 \begin{definition}[Flip Hazard]
-Let $f$ be a deployed binary classifier, $A$ a protected attribute, $X$ the remaining covariates, and $\mathrm{do}(A := a')$ a counterfactual intervention to set the protected attribute to $a'$ \cite{kusner2017}. For each patient $i$ arriving at index $t_i$, define the flip event time
+Let $f$ be a deployed binary classifier, $A$ a protected attribute, $X$ the remaining covariates, and $A_i^{\mathrm{cf}}$ a counterfactual sensitive-attribute value. \emph{Throughout this paper we adopt the deployment-time \textbf{feature-shift} counterfactual of Maughan \& Near \cite{maughan2022}}, in which the protected attribute is set to a reference level and its known marginal effect on observable features is removed. This is weaker than the full structural counterfactual of Kusner et al.\ \cite{kusner2017} but it is identifiable at inference time without an audited causal graph --- a hard requirement for the streaming deployment context (Section 1). For each patient $i$ arriving at index $t_i$, define the flip event time
 \begin{equation}
 T_i^{\mathrm{flip}} = \inf\{t \ge t_i :
   f_t(X_i, A_i) \ne f_t(X_i, A_i^{\mathrm{cf}})\}.
@@ -93,7 +93,7 @@ The group-conditional Flip Hazard function is
 \end{equation}
 \end{definition}
 
-The scalar VFR \cite{joy2025vfr} corresponds to $1 - S_a(\tau^*)$ where $S_a(t) = \exp(-\int_0^t \lambda_a(s) ds)$ is the no-flip survival; we recover VFR as the $\tau^* \to 0$ instantaneous case and as the $\tau^* \to \infty$ marginal probability of any flip. The Restricted Mean Flip Time at horizon $\tau^*$
+The scalar VFR \cite{joy2025vfr} is recovered as the aggregate flip probability $\mathrm{VFR}_a = 1 - S_a(\tau^*)$ evaluated at $\tau^*$ equal to the full audit horizon, where $S_a(t) = \exp(-\int_0^t \lambda_a(s) ds)$ is the no-flip survival. The Restricted Mean Flip Time (RMFT) at horizon $\tau^*$
 \begin{equation}
 \mathrm{RMFT}_a(\tau^*) = \int_0^{\tau^*} S_a(t)\,dt
 \end{equation}
@@ -122,7 +122,9 @@ The proof is standard \cite{ramdas2023, waudbysmith2024}. We use a shrunk, warm-
 \end{equation}
 with $c = 0.25$ shrinkage and $n_{\mathrm{warm}} = 100$. This choice is conservative: it slows learning under the alternative but preserves the supermartingale property when the empirical $\bar Z$ trajectory fluctuates early.
 
-\paragraph{Intersectional FDR.} For $m$ disjoint cells, we run $m$ independent monitors and apply online Benjamini-Hochberg at level $q$ to the implied p-values $p_t^{(c)} = 1/E_t^{(c)}$ at every observation tick. This provides simultaneous control of the false-discovery proportion across cells without sacrificing per-cell anytime validity.
+\paragraph{Intersectional FDR (step-wise).} For $m$ disjoint cells, we run $m$ independent monitors and apply Benjamini--Hochberg at the current step to the implied p-values $p_t^{(c)} = 1/E_t^{(c)}$. This is the step-wise BH variant; under exchangeability of cell e-values it controls the false-discovery proportion at each inspection time, but does not extend to the fully-online LORD-style FDR guarantee --- the formal extension is left as future work.
+
+\paragraph{Multi-attribute deployment.} CHRONO-Fair runs an independent intersectional monitor per protected attribute (RACE, ETHNICITY, SEX, AGE\_GROUP in the Texas-100X setting). Cells are non-overlapping within an attribute; across attributes, the same patient contributes one observation to four parallel monitor stacks. We share a single global FDR budget across the union of cells.
 
 \section{Aleatoric / Epistemic Decomposition}\label{sec:decomposition}
 
@@ -151,7 +153,9 @@ RCAP answers the question that triages and bed-allocation pipelines actually fac
 
 \section{Inspector Agent}\label{sec:inspector}
 
-When the intersectional monitor flags a cell, the Inspector Agent emits a structured report containing: cell label and size, anytime-valid e-value, flip-hazard ratio versus baseline, aleatoric/epistemic shares, dominant cause, recommended action, and the mapping to FDA PCCP \cite{fda2024pccp} clauses and EU AI Act \cite{eu2024aiact} articles plus the relevant STANDING Together \cite{ricci2025standing} recommendation. The reference implementation uses a deterministic templated narrator with no external LLM dependency; an LLM-narrator adapter (Anthropic Claude in the bundled implementation) can be plugged in for prose generation.
+When the intersectional monitor flags a cell, the Inspector Agent emits a structured report containing: cell label and size, anytime-valid e-value, flip-hazard ratio versus baseline, aleatoric/epistemic shares, dominant cause, and recommended action. We additionally include a \emph{suggested} regulatory mapping --- derived from a non-legally-binding reading of the FDA PCCP final guidance \cite{fda2024pccp} (December 2024), the EU AI Act \cite{eu2024aiact} Articles 10, 14, 17, and 61, and the STANDING Together \cite{ricci2025standing} consensus recommendations --- to accelerate review by clinical governance staff. Formal validation of the mapping by regulatory counsel is future work. The reference narrator is deterministic and templated; an LLM-narrator adapter is provided for prose generation but is not on the validation path.
+
+\paragraph{Computational complexity.} Per arriving patient the pipeline cost is $O(K)$ for the ensemble evaluation, $O(1)$ per cell for the e-process update, and $O(m \log m)$ for the step-wise FDR sort across $m$ cells. In the four-attribute Texas-100X deployment $m$ ranges from 13 (RACE $\cup$ SEX $\cup$ ETHNICITY $\cup$ AGE\_GROUP marginals) to roughly 80 (full intersections). The Flip Hazard tail update is $O(n_a)$ amortised but uses sufficient statistics so the marginal cost is $O(1)$.
 
 \section{Experiments}\label{sec:experiments}
 
@@ -166,7 +170,7 @@ The synthesiser produces $n = 925\,000$ records with the published Texas-100X de
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{../../chrono_fair_figures/fig1_detection_delay.png}
-\caption{Detection delay (patients between drift onset and first alarm) across $50$ Monte-Carlo runs. Drift onset at $t = 5000$. CHRONO-Fair detects in $50/50$ runs at a mean delay of $856 \pm 228$ patients. ADWIN detects in $21/50$ runs at $3927 \pm 712$. A periodic batch test detects in $24/50$ runs but cannot control false alarms across peeks. Static VFR never alarms.}
+\caption{Detection delay (patients between drift onset at $t=5000$ and first alarm) across $50$ Monte-Carlo runs. CHRONO-Fair detects in $50/50$ runs at a mean delay of $856 \pm 228$ patients. ADWIN (check every patient and every $25$ patients), Davis et al.'s \cite{davis2025} ADWIN-on-fairness-gap variant, and a periodic batch test all detect in $\le 48\%$ of runs and cannot control false alarms across repeated peeks. Static VFR never alarms. Under a no-disparity, no-drift sanity scenario, CHRONO-Fair's empirical false-alarm rate is $0/50$ (Section~\ref{exp:false}).}
 \label{fig:delay}
 \end{figure}
 
@@ -175,7 +179,7 @@ The synthesiser produces $n = 925\,000$ records with the published Texas-100X de
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{../../chrono_fair_figures/fig2_decomposition_confusion.png}
-\caption{Controlled validation: $30$ trials per scenario. The decomposition labels every controlled trial correctly ($100\%$ accuracy). Right panel: empirical epistemic share by ground-truth scenario.}
+\caption{Controlled validation: $30$ trials per scenario. The decomposition labels every controlled trial correctly ($100\%$ accuracy). Right panel: empirical epistemic share by ground-truth scenario; the $0.6$ threshold is the decision boundary used by the Inspector Agent. Realistic ML pipelines (Track 2, supplementary) often produce \emph{mixed} root causes; CHRONO-Fair correctly flags these for joint data-and-model mitigation rather than misclassifying them into a single bucket.}
 \label{fig:decomp}
 \end{figure}
 
@@ -243,6 +247,32 @@ CHRONO-Fair is, to our knowledge, the first fairness monitor that satisfies all 
 \paragraph{Limitations.} (i) The bootstrap ensemble for the decomposition adds compute proportional to $K$. We used $K=11$--$15$ throughout; smaller $K$ produces noisier shares but does not bias the dominant cause. (ii) The current implementation assumes the counterfactual can be evaluated cheaply at prediction time; for SCM-based counterfactuals this requires a learned structural model. (iii) Our experiments use a synthesiser calibrated to Texas-100X statistics rather than the raw PUDF data, which is access-controlled; the synthesiser is fully open source and the result trends are robust to the chosen drift magnitudes.
 
 \paragraph{Broader impact.} CHRONO-Fair turns fairness from an audit artefact into an operational property of a deployed clinical system. We believe this is the form fairness will need to take in the regulated 2027 deployment landscape.
+
+\section{Conclusion}
+
+We presented CHRONO-Fair, the first fairness monitor that is simultaneously time-resolved, anytime-valid, root-cause-decomposed, and regression-capable. The framework subsumes the scalar Verdict Flip Rate of \cite{joy2025vfr} as the aggregate marginal of a survival object and provides three further levers --- e-process alarms, ensemble decomposition, and Wasserstein rank-shift --- that together turn fairness from an annual audit into a continuously-observed operational property of a deployed clinical system. On a $50\,000$-patient simulated stream we achieve $100\%$ drift detection at mean delay $856$ patients with empirical false-alarm rate below the nominal $\alpha$ at every tested level. The full system is open-source and the synthesiser is reproducible from public summary statistics of Texas-100X. We see immediate next steps in (i) live-EHR deployment under IRB approval, (ii) formal LORD-style online FDR, (iii) extension to SCM-based counterfactuals where the causal graph is auditable, and (iv) federation across multiple hospital sites.
+
+\appendix
+
+\section{Reproducibility: per-figure synthesiser configuration}\label{app:repro}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lcccc}
+\toprule
+Figure & $n$ & seed & drift\_at & aleatoric \\
+\midrule
+Fig.~3 KM curves     & 15\,000 & 42 & --     & 0.05 \\
+Fig.~4 RCAP          & 20\,000 & 11 & --     & 0.05 \\
+Fig.~5 false-alarm   & 10\,000 & 0--199 & --  & 0.00 \\
+Fig.~6 dashboard     & 12\,000 & 4  & 6\,000 & 0.06 \\
+Detection delay      & 10\,000 & 0--49 & 5\,000 & 0.00 \\
+Decomposition track 1 & 1\,000 & 0--29 & --   & --   \\
+\bottomrule
+\end{tabular}
+\caption{Reproducibility: per-figure synthesiser configuration. All experiments runnable via \texttt{python -m chrono\_fair.experiments.<expN>}.}
+\end{table}
 
 \bibliographystyle{plain}
 \bibliography{references}

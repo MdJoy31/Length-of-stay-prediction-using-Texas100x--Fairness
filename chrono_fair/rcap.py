@@ -62,6 +62,22 @@ def wasserstein_rcap(delta: np.ndarray) -> float:
     return float(np.mean(np.abs(delta)))
 
 
+def wasserstein_rcap_ci(delta: np.ndarray, n_boot: int = 1000,
+                          alpha: float = 0.05,
+                          seed: int = 0) -> tuple[float, float, float]:
+    """Bootstrap (mean, ci_low, ci_high) for RCAP W_1."""
+    if len(delta) == 0:
+        return 0.0, 0.0, 0.0
+    rng = np.random.default_rng(seed)
+    boots = np.empty(n_boot)
+    for b in range(n_boot):
+        sample = rng.choice(delta, size=len(delta), replace=True)
+        boots[b] = np.mean(np.abs(sample))
+    return (float(np.mean(np.abs(delta))),
+            float(np.quantile(boots, alpha / 2)),
+            float(np.quantile(boots, 1 - alpha / 2)))
+
+
 def intersectional_rcap(
     df: pd.DataFrame,
     y_hat_col: str,
@@ -103,4 +119,5 @@ def intersectional_rcap(
     return pd.DataFrame(rows)
 
 
-__all__ = ['rank_shift', 'wasserstein_rcap', 'intersectional_rcap']
+__all__ = ['rank_shift', 'wasserstein_rcap', 'wasserstein_rcap_ci',
+            'intersectional_rcap']
