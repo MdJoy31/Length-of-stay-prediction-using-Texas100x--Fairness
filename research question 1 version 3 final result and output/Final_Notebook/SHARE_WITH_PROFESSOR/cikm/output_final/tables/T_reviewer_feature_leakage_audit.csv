@@ -1,0 +1,9 @@
+feature,availability,leakage_risk,note
+ADMITTING_DIAGNOSIS,admission,high,Recorded at admission; reflects intake decision
+PRINC_SURG_PROC_CODE,near-adm,moderate,"Often planned at admission, but updated through stay"
+THCIC_ID,admission,low,Hospital identifier; not target-correlated by construction
+PAT_AGE,admission,low,Demographic
+TOTAL_CHARGES,discharge,HIGH,Final billed charges; only known at/after discharge.
+PAT_STATUS,discharge,HIGH,Discharge disposition code; only known at discharge.
+TYPE_OF_ADMISSION,admission,low,Emergency / urgent / elective at intake
+SOURCE_OF_ADMISSION,admission,low,Referral source at intake

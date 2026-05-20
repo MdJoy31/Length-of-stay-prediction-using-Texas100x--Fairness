@@ -1,0 +1,11 @@
+concern,severity,addressed_by,evidence_artefact,status
+1. Threshold-tuning on audit set,major,§33.1 disclosure + 3-way split plan,(text),acknowledged; rerun pending
+2. Feature leakage (AUROC 0.953),major,§33.2 admission/discharge classification + ablation code,T_reviewer_feature_leakage_audit.csv,2 discharge-only features identified; ablation code ready
+3. VFR vs bootstrap CI novelty,major,§33.3 per-cell side-by-side,"T_reviewer_VFR_vs_CI.csv, T_reviewer_VFR_CI_agreement.csv",0 cells stable by VFR but ambiguous by CI; VFR is finer-grained
+"4. Threshold choices (VFR, CV) arbitrary",moderate,§33.4 sensitivity sweep,"T_reviewer_VFR_sensitivity.csv, T_reviewer_CV_sensitivity.csv","sensitivity reported across {0.05, 0.10, 0.15}; main conclusion robust"
+5. Hospital validation strength,moderate,§33.5 GroupKFold reframing + hospital-disjoint code,(existing K=20 GroupKFold = partial),partial external validity; full train/audit hospital-split pending
+6. Race/ethnicity coding anomaly,moderate,§33.7 drop-Eth robustness + wording,T_reviewer_eth_drop_robustness.csv,Race+Sex+Age verdict unchanged (9/21 fair)
+7. Baseline 4 reproducibility,moderate,§33.6 Algorithm 4 pseudocode,(markdown),full pseudocode written
+"8. ""43.5% mislead"" overclaim",minor,§33.8 wording correction,(text),rephrased to non-zero VFR vs practically significant
+9. CIKM fit framing,minor,§33.9 positioning text,(text),reframed under trustworthy AI / governance-aware DM
+10. AUROC preserved tautology,minor,§33.8 wording correction,(text),AUPRC and calibration shift added to discussion

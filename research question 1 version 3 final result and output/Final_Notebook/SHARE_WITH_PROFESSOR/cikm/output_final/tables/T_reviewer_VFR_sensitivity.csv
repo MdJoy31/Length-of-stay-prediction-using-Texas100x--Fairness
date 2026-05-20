@@ -1,0 +1,4 @@
+VFR_cutoff,stable_cells_C4,unstable_cells_C4
+0.05,20,8
+0.1,21,7
+0.15,22,6

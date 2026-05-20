@@ -1,0 +1,4 @@
+CV_cutoff,audit_N,stable_cells_C4,unstable_cells_C4
+0.03,50000,4,24
+0.05,50000,9,19
+0.1,50000,13,15

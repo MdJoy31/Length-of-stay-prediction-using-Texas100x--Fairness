@@ -1,0 +1,6 @@
+criterion,count_of_28
+VFR <= 0.10 (stable),21
+Metric 95% CI does not cross threshold (stable),26
+Both agree: stable,21
+VFR stable but CI ambiguous (VFR is more permissive),0
+VFR unstable but CI clear (CI is more permissive),5
