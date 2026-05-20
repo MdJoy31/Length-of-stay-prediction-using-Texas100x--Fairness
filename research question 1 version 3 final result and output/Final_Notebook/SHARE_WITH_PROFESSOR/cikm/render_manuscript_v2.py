@@ -189,8 +189,8 @@ def render_F3_vfr_heatmap():
 
     cbar = fig.colorbar(im, ax=ax, fraction=0.045, pad=0.04)
     cbar.set_label('VFR (0 = stable verdict, 0.5 = coin-flip)', fontsize=12, fontweight='bold')
-    ax.set_title(f'Per-cell Verdict-Flip-Rate landscape (canonical XGBoost, Phase 5b · C4)\n'
-                 f'{flip} of 28 cells flip (VFR > 0); Race-axis cells dominate the high-instability quadrant',
+    ax.set_title(f'Per-cell Verdict-Flip-Rate landscape on the post-intervention XGBoost classifier\n'
+                 f'{flip} of 28 cells exhibit non-zero VFR; Race-axis cells dominate the high-instability quadrant',
                  fontsize=12, fontweight='bold', pad=14)
     plt.tight_layout()
     plt.savefig(OUT / 'F3_vfr_heatmap.png', bbox_inches='tight', dpi=300)
@@ -228,7 +228,7 @@ def render_F4_cv_audit_size():
     handles = [Line2D([0], [0], color=METRIC_COLORS[m], lw=2, marker='o', markersize=4, label=m) for m in METRIC_ORDER]
     handles.append(Line2D([0], [0], color='black', linestyle='--', lw=1.2, label='CV=0.05'))
     fig.legend(handles=handles, loc='lower center', ncol=8, fontsize=8, frameon=True, bbox_to_anchor=(0.5, -0.06))
-    plt.suptitle('CV vs audit-size N · one panel per protected attribute · canonical C4',
+    plt.suptitle('Coefficient of variation vs audit-cohort size · one panel per protected attribute',
                  fontsize=10, fontweight='bold', y=1.02)
     plt.tight_layout()
     plt.subplots_adjust(bottom=0.13)
@@ -272,7 +272,7 @@ def render_F5_hospital_violin():
     ax.set_xticks(group_centers); ax.set_xticklabels(METRIC_ORDER, fontsize=10, fontweight='bold')
     ax.set_ylabel('Metric value · 20 hospital folds × 4 attributes\n(80 verdicts per metric)',
                   fontsize=9, fontweight='bold')
-    ax.set_title('Cross-hospital metric distribution on canonical XGBoost C4 · K=20 GroupKFold',
+    ax.set_title('Cross-hospital fairness-metric distribution on the post-intervention XGBoost classifier · K = 20 GroupKFold',
                  fontsize=10, fontweight='bold')
     ax.grid(axis='y', alpha=0.3)
     ax.tick_params(axis='y', labelsize=8)
@@ -297,10 +297,11 @@ def render_F6_per_model_tradeoff():
     ]
     T = pd.read_csv(TAB / 'T_per_model_before_after.csv').reset_index(drop=True)
 
-    # v2 tweaks: wider legend column (0.32 vs 0.28) to hold bigger font;
-    # tight wspace=0.10 so panels sit close to the legend.
-    fig = plt.figure(figsize=(16, 7))
-    gs = fig.add_gridspec(1, 3, width_ratios=[1.0, 1.0, 0.32], wspace=0.10)
+    # Layout: two square panels + legend column. top=0.80 reserves a clear
+    # band for a two-line suptitle so it cannot overlap the short panel titles.
+    fig = plt.figure(figsize=(16, 7.6))
+    gs = fig.add_gridspec(1, 3, width_ratios=[1.0, 1.0, 0.32], wspace=0.18,
+                          top=0.80, bottom=0.10)
     axA = fig.add_subplot(gs[0, 0])
     axB = fig.add_subplot(gs[0, 1])
     axL = fig.add_subplot(gs[0, 2]); axL.axis('off')
@@ -319,7 +320,7 @@ def render_F6_per_model_tradeoff():
         if show_floor:
             ax.axhspan(0.0, 0.32, color='red', alpha=0.10, zorder=1)
             ax.text(0.885, 0.95,
-                    'Structural floor\n(Age base-rate gap = 0.399)\nrequires canonical Phase 5b\ngreedy refinement',
+                    'Structural floor\n(Age base-rate gap = 0.399)\nrequires cell-level\nthreshold refinement',
                     ha='right', va='top', fontsize=10, fontweight='bold', color='#8b0000',
                     bbox=dict(boxstyle='round,pad=0.45', facecolor='white', edgecolor='#8b0000', alpha=0.95))
         ax.set_xlabel('Test-set accuracy', fontsize=13, fontweight='bold')
@@ -331,12 +332,12 @@ def render_F6_per_model_tradeoff():
         ax.set_xlim(0.77, 0.895)
 
     panel(axA, 'DI_RACE_before', 'DI_RACE_after',
-          'DI · Race axis (closer to 1 = fairer)',
-          '(a) Race-axis threshold shift: works universally\nAll 12 models move above DI = 0.80',
+          'Race-axis Disparate Impact (closer to 1 = fairer)',
+          '(a) Race axis',
           (0.45, 1.05))
     panel(axB, 'DI_AGE_GROUP_before', 'DI_AGE_GROUP_after',
-          'DI · Age axis',
-          '(b) Age-axis threshold shift (naïve, per-attribute α only): structurally infeasible\nNo model crosses DI = 0.80',
+          'Age-axis Disparate Impact',
+          '(b) Age axis',
           (0.0, 1.05), show_floor=True)
 
     legend_handles = []
@@ -355,9 +356,9 @@ def render_F6_per_model_tradeoff():
                 title='Classifiers (12) + markers', title_fontsize=13,
                 borderaxespad=0.2, handletextpad=0.5, labelspacing=0.45)
 
-    plt.suptitle('Per-model trade-off across 12 classifiers · Race-axis intervention works universally · Age-axis needs greedy refinement',
-                 fontsize=12.5, fontweight='bold', y=1.02)
-    plt.tight_layout()
+    plt.suptitle('Accuracy vs Disparate Impact across 12 classifiers after threshold-shifting intervention\n'
+                 'Race-axis intervention succeeds for every classifier; Age-axis requires cell-level threshold refinement',
+                 fontsize=12.5, fontweight='bold', y=0.96)
     plt.savefig(OUT / 'F6_per_model_tradeoff.png', bbox_inches='tight', dpi=300)
     plt.close()
     print('F6_per_model_tradeoff.png saved (legend font 13, tight spacing)')
