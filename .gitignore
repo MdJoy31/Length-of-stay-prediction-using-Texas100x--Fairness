@@ -1,56 +1,11 @@
-# Python
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.toc
+*.synctex.gz
 __pycache__/
-*.py[cod]
-*$py.class
-*.egg-info/
-dist/
-build/
-*.egg
-
-# Virtual environment
-.venv/
-venv/
-env/
-
-# Data files (too large for git)
-data/
-**/data/*.csv
-**/data/*.p
-final_analysis/data/
-
-# Model files
-models/*.pkl
-models/*.joblib
-models/*.pt
-
-# Results (regeneratable)
-results/*.pkl
-**/*.pkl
-processed_data/
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Jupyter
+*.pyc
 .ipynb_checkpoints/
-
-# Temporary experiment files
-boost_results*.txt
-boost_accuracy*.py
-generate_notebooks.py
-optimize_50_agents.py
-rerun_failed.py
-find_cell.py
-agent_results/
-catboost_info/
-**/catboost_info/
-
-# Figures (regeneratable, but we keep them)
-# figures/

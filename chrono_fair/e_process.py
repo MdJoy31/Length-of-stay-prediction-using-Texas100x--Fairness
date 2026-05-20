@@ -54,12 +54,25 @@ class EProcessMonitor:
 
     def update(self, z: float) -> Dict[str, float]:
         lo, hi = self.feasible()
-        if self.use_grow and self.n >= 5:
-            # GROW heuristic: lambda_hat = (z_bar - rho0) / (rho0(1-rho0))
-            z_bar = self.sum_z / self.n
-            lam = (z_bar - self.rho0) / max(1e-9, self.rho0 * (1 - self.rho0))
-            lam = float(np.clip(lam, lo + 1e-6, hi - 1e-6))
+        # Shrunk, warm-started GROW: predictable in z (uses only past
+        # observations) and clipped to keep E_t a non-negative supermartingale.
+        # The 0.25 shrinkage and the 100-sample warm-up are calibrated to
+        # achieve empirical false-alarm rate at or below the nominal alpha
+        # (see exp5_ablation_false_alarm.py and Theorem 1 in the paper).
+        SHRINK = 0.25
+        WARMUP = 100
+        if self.use_grow:
+            if self.n >= WARMUP:
+                z_bar = self.sum_z / self.n
+                raw = (z_bar - self.rho0) / max(1e-9, self.rho0 * (1 - self.rho0))
+                lam = SHRINK * raw
+                lam = float(np.clip(lam, lo + 1e-6, hi - 1e-6))
+            else:
+                # Warm-up: bet 0 so E_t = 1 (no premature alarms).
+                lam = 0.0
         else:
+            # Ablation mode: fixed predictable lambda (Waudby-Smith & Ramdas
+            # constant-bet variant), still clipped to feasible range.
             lam = float(np.clip(self.lambda_init, lo + 1e-6, hi - 1e-6))
         self.bets.append(lam)
 
