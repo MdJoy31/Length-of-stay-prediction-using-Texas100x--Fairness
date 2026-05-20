@@ -170,7 +170,7 @@ A passing result here confirms that the all-4-DI achievement of §34.1 is **not 
 """.splitlines(keepends=True)
 
 # §34.3 a (headline) ----------------------------------------------------
-idx_343a = find_cell('§ 34.3 · Hospital-disjoint headline numbers')
+idx_343a = find_cell('Independent-seed reproducibility')
 nb['cells'][idx_343a]['source'] = '''# § 34.3 · Independent-seed reproducibility — headline numbers
 import pandas as pd
 from IPython.display import display, HTML
@@ -229,7 +229,7 @@ nb['cells'][idx_343a]['outputs'] = [
 ]
 
 # §34.3 b (seed VFR landscape) ------------------------------------------
-idx_343b = find_cell('§ 34.3 · Hospital-disjoint VFR landscape')
+idx_343b = find_cell('Independent-seed VFR landscape')
 nb['cells'][idx_343b]['source'] = '''# § 34.3 · Independent-seed VFR landscape
 import pandas as pd
 from IPython.display import display, HTML

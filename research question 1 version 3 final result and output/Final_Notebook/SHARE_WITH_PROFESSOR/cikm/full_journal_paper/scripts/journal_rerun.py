@@ -72,15 +72,25 @@ METRIC_THRESHOLDS = {'DI': 0.80, 'SPD': 0.10, 'EOPP': 0.10, 'EOD': 0.10,
 # total rerun time manageable - same depth/learning rate, ~half the trees).
 # The CIKM run used n_estimators=1500; here we use 600 for the journal rerun
 # (this is still well past convergence on this dataset; AUROC differs by <0.002).
-XGB_PARAMS = dict(n_estimators=600, max_depth=10, learning_rate=0.05,
+XGB_PARAMS = dict(n_estimators=1000, max_depth=10, learning_rate=0.05,
                   tree_method='hist', min_child_weight=3, reg_lambda=1.0,
                   random_state=RANDOM_STATE, seed=RANDOM_STATE,
                   eval_metric='logloss', verbosity=0, n_jobs=-1)
 
 # ---------------------------------------------------------------------
-log("Loading texas_100x.csv ...")
-df = pd.read_csv(DATA)
-log(f"  rows={len(df):,}  hospitals={df['THCIC_ID'].nunique()}")
+log("Loading texas_100x.csv (memory-efficient: only needed columns) ...")
+NEEDED_COLS = ['LENGTH_OF_STAY', 'RACE', 'ETHNICITY', 'SEX_CODE', 'PAT_AGE',
+               'THCIC_ID', 'ADMITTING_DIAGNOSIS', 'PRINC_SURG_PROC_CODE',
+               'TOTAL_CHARGES', 'PAT_STATUS', 'TYPE_OF_ADMISSION',
+               'SOURCE_OF_ADMISSION']
+DTYPES = {'RACE': 'int8', 'SEX_CODE': 'int8', 'ETHNICITY': 'int8',
+          'PAT_AGE': 'int8', 'PAT_STATUS': 'int8',
+          'TYPE_OF_ADMISSION': 'int8', 'SOURCE_OF_ADMISSION': 'int8',
+          'LENGTH_OF_STAY': 'float32', 'TOTAL_CHARGES': 'float32',
+          'THCIC_ID': 'str', 'ADMITTING_DIAGNOSIS': 'str',
+          'PRINC_SURG_PROC_CODE': 'str'}
+df = pd.read_csv(DATA, usecols=NEEDED_COLS, dtype=DTYPES)
+log(f"  rows={len(df):,}  hospitals={df['THCIC_ID'].nunique()}  memory={df.memory_usage(deep=True).sum()/1024/1024:.1f} MB")
 
 # Target
 df['LOS_BINARY'] = (df['LENGTH_OF_STAY'] > LOS_THRESHOLD).astype(int)
@@ -252,8 +262,13 @@ def _all_DI(pred, df_protected_all):
 
 def alpha_search_on_val(proba_val, y_val, df_val_protected_all, target_DI=0.80,
                         max_refinement_passes=3, log_fn=None):
-    """Stage B (alpha-SR match) + Stage C (greedy refinement to maximise
-    min(DI) across all 4 protected attributes on VAL).
+    """Stage B (alpha-SR match) + Stage C (CONSTRAINED greedy refinement).
+
+    Stage C objective: minimise accuracy loss on VAL subject to the constraint
+    min(DI across 4 attributes) >= target_DI. Among threshold moves that bring
+    min(DI) closer to target_DI, prefer the one with the HIGHEST resulting
+    val accuracy. Stops as soon as the constraint is satisfied.
+
     df_val_protected_all must contain RACE, SEX_CODE, ETHNICITY, AGE_GROUP."""
     if log_fn is None: log_fn = lambda *a, **k: None
     cell_proto = df_val_protected_all[['RACE', 'AGE_GROUP', 'SEX_CODE']]
@@ -278,12 +293,19 @@ def alpha_search_on_val(proba_val, y_val, df_val_protected_all, target_DI=0.80,
     # Initial min-DI on val
     pred = apply_cell_thresholds(proba_val, cell_proto, thresholds)
     cur_min_DI, di_per_attr = _all_DI(pred, df_val_protected_all)
-    log_fn(f"    after Stage B (SR-match): min DI={cur_min_DI:.3f}  per-attr={[f'{d:.3f}' for d in di_per_attr]}")
+    cur_acc = float((pred == y_val).mean())
+    log_fn(f"    after Stage B (SR-match): min DI={cur_min_DI:.3f}  per-attr={[f'{d:.3f}' for d in di_per_attr]}  val_acc={cur_acc:.4f}")
 
-    # Stage C: greedy refinement
-    # Priority: largest cells first (they move the SR most).
+    # If constraint already satisfied, return Stage-B thresholds (cheapest)
+    if cur_min_DI >= target_DI:
+        log_fn(f"    Stage B already satisfies min DI >= {target_DI}; no refinement needed.")
+        return thresholds
+
+    # Stage C: CONSTRAINED greedy refinement.
+    # Each pass: pick the (cell, t) move that improves min(DI) the most while
+    # preserving the most accuracy. Stop as soon as min(DI) >= target_DI.
     cells_by_size = sorted(cell_sizes.keys(), key=lambda c: -cell_sizes[c])
-    GRID = np.arange(0.10, 0.91, 0.02)  # 41 candidate thresholds per cell
+    GRID = np.arange(0.10, 0.91, 0.02)
 
     for pass_i in range(max_refinement_passes):
         improved = False
@@ -292,28 +314,40 @@ def alpha_search_on_val(proba_val, y_val, df_val_protected_all, target_DI=0.80,
             mask = cells == cell
             best_t = thresholds[cell]
             best_min_DI = cur_min_DI
+            best_acc = cur_acc
             for t in GRID:
                 trial = pred.copy()
                 trial[mask] = (proba_val[mask] >= t).astype(int)
                 trial_min_DI, _ = _all_DI(trial, df_val_protected_all)
-                if trial_min_DI > best_min_DI + 1e-6:
+                trial_acc = float((trial == y_val).mean())
+                # Prefer: (a) higher min(DI), AND, ties broken by (b) higher acc.
+                # But cap the min(DI) gain at target_DI -- we don't want to
+                # overshoot once the constraint is satisfied.
+                trial_min_DI_capped = min(trial_min_DI, target_DI)
+                best_min_DI_capped  = min(best_min_DI,  target_DI)
+                better = (trial_min_DI_capped > best_min_DI_capped + 1e-6) or \
+                         (abs(trial_min_DI_capped - best_min_DI_capped) <= 1e-6 and trial_acc > best_acc + 1e-6)
+                if better:
                     best_min_DI = trial_min_DI
+                    best_acc = trial_acc
                     best_t = float(t)
             if best_t != thresholds[cell]:
                 thresholds[cell] = best_t
                 pred = apply_cell_thresholds(proba_val, cell_proto, thresholds)
                 cur_min_DI = best_min_DI
+                cur_acc = best_acc
                 improved = True
             if cur_min_DI >= target_DI:
                 break
-        log_fn(f"    after refinement pass {pass_i+1}: min DI={cur_min_DI:.3f}  "
+        log_fn(f"    after refinement pass {pass_i+1}: min DI={cur_min_DI:.3f}  val_acc={cur_acc:.4f}  "
                f"(target {target_DI}, improved={improved})")
         if cur_min_DI >= target_DI or not improved:
             break
 
     pred_final = apply_cell_thresholds(proba_val, cell_proto, thresholds)
     final_min_DI, final_per_attr = _all_DI(pred_final, df_val_protected_all)
-    log_fn(f"    final on VAL: min DI={final_min_DI:.3f}  per-attr={[f'{d:.3f}' for d in final_per_attr]}")
+    final_acc = float((pred_final == y_val).mean())
+    log_fn(f"    final on VAL: min DI={final_min_DI:.3f}  val_acc={final_acc:.4f}  per-attr={[f'{d:.3f}' for d in final_per_attr]}")
     return thresholds
 
 # ---------------------------------------------------------------------
@@ -416,9 +450,7 @@ def run_experiment(label, keep_cols, te_cols, split_fn, exp_id):
     y_val   = y_full[idx_val]
     y_audit = y_full[idx_audit]
 
-    # standardize
-    sc = StandardScaler().fit(X_train)
-    X_train, X_val, X_audit = sc.transform(X_train), sc.transform(X_val), sc.transform(X_audit)
+    # No standardisation - XGBoost is scale-invariant for tree splits
 
     # Stage A: intersectional reweighing. Hospital-disjoint splits face
     # cross-site age case-mix drift, so use heavier reweighing (lambda=5) for
@@ -446,13 +478,15 @@ def run_experiment(label, keep_cols, te_cols, split_fn, exp_id):
     proba_audit = model.predict_proba(X_audit)[:, 1]
     pred_std_audit = (proba_audit >= 0.5).astype(int)
 
-    # Stage B + C on VAL: per-cell alpha-SR match THEN greedy refinement
-    # Target val min-DI = 0.88 to buffer against audit-side distribution drift.
-    log("  running Stage B (SR-match) + Stage C (greedy refinement) on VAL ...")
+    # Stage B + C on VAL: per-cell alpha-SR match THEN constrained refinement.
+    # Stage C objective: minimise accuracy loss subject to min(DI) >= target_DI.
+    # Target = 0.80 (the four-fifths rule itself). No buffer; the constraint is
+    # met as cheaply as possible to preserve accuracy.
+    log("  running Stage B (SR-match) + Stage C (constrained refinement) on VAL ...")
     df_val_protected_all   = df.iloc[idx_val][PROTECTED]
     df_audit_protected     = df.iloc[idx_audit][PROTECTED]
     thresholds = alpha_search_on_val(proba_val, y_val, df_val_protected_all,
-                                      target_DI=0.88, max_refinement_passes=5,
+                                      target_DI=0.80, max_refinement_passes=3,
                                       log_fn=log)
     log(f"    selected {len(thresholds)} per-cell thresholds on val")
 
