@@ -1,4 +1,4 @@
 experiment,label,n_train,n_val,n_audit,AUROC_standard,Acc_standard,F1_standard,AUROC_fair,Acc_fair,F1_fair,Acc_cost_pp,DI_Race,DI_Sex,DI_Eth,DI_Age,all_4_DI_pass_audit,VFR_stable_cells_audit,VFR_total_cells
-70_15_15,"Three-way 70/15/15 patient split, full 8-feature model",647589,138769,138770,0.9416,0.8625,0.846,0.9416,0.8044,0.7791,5.81,0.909,0.9702,0.9951,0.9072,True,22,28
-admission_only,"Three-way 70/15/15 patient split, ADMISSION-ONLY (drop TOTAL_CHARGES, PAT_STATUS)",647589,138769,138770,0.8585,0.7724,0.7501,0.8585,0.7143,0.6857,5.81,0.8779,0.9858,0.9904,0.9884,True,23,28
-seed_reproducibility,"Three-way 70/15/15 patient split, full 8-feature model, RANDOM_STATE=123 (reproducibility)",647589,138769,138770,0.9424,0.8638,0.8479,0.9424,0.8055,0.7801,5.83,0.908,0.9788,0.9883,0.8972,True,22,28
+70_15_15,"Three-way 70/15/15 patient split, full 8-feature model",647589,138769,138770,0.9418,0.8624,0.8461,0.9418,0.8127,0.788,4.98,0.8522,0.8476,0.9492,0.847,True,21,28
+admission_only,"Three-way 70/15/15 patient split, ADMISSION-ONLY (drop TOTAL_CHARGES, PAT_STATUS)",647589,138769,138770,0.8567,0.7706,0.7476,0.8567,0.7204,0.685,5.02,0.8642,0.8582,0.992,0.8493,True,24,28
+seed_reproducibility,"Three-way 70/15/15 patient split, full 8-feature model, RANDOM_STATE=123 (reproducibility)",647589,138769,138770,0.9426,0.8644,0.8487,0.9426,0.814,0.7904,5.04,0.8944,0.8393,0.9601,0.8035,True,21,28

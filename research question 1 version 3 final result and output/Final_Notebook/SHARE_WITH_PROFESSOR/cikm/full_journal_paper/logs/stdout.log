@@ -1,93 +1,118 @@
-[10:10:57] Loading texas_100x.csv (memory-efficient: only needed columns) ...
-[10:10:58]   rows=925,128  hospitals=441  memory=174.3 MB
-[10:10:58] ======================================================================
-[10:10:58] EXP 70_15_15: Three-way 70/15/15 patient split, full 8-feature model
-[10:10:58] ======================================================================
-[10:10:58]   patient split: train=647,589  val=138,769  audit=138,770
-[10:10:58]   engineering features (target-encode on train only)...
-[10:10:58]   global LOS rate (train): 0.4505
-[10:10:58]   features used: ['PAT_AGE', 'TOTAL_CHARGES', 'PAT_STATUS', 'TYPE_OF_ADMISSION', 'SOURCE_OF_ADMISSION', 'ADMITTING_DIAGNOSIS_te', 'PRINC_SURG_PROC_CODE_te', 'THCIC_ID_te']
-[10:10:58]   Stage A: building intersectional sample weights (lambda=2.0)...
-[10:10:59]     cells: 40  weight range: [0.10, 10.00]
-[10:10:59]   fitting canonical XGBoost (n_estimators=1000, depth=10)...
-[10:11:06]     fit took 7s
-[10:11:07]   running Stage B (SR-match) + Stage C (constrained refinement) on VAL ...
-[10:11:07]     after Stage B (SR-match): min DI=0.904  per-attr=['0.904', '0.970', '0.998', '0.910']  val_acc=0.8039
-[10:11:07]     Stage B already satisfies min DI >= 0.8; no refinement needed.
-[10:11:07]     selected 40 per-cell thresholds on val
-[10:11:08]   STANDARD (default-0.5 threshold) on audit-eval:
-[10:11:08]     AUROC=0.9416  Acc=0.8625  F1=0.8460
-[10:11:08]   FAIR (alpha-search thresholds tuned on VAL) on audit:
-[10:11:08]     AUROC=0.9416  Acc=0.8044  F1=0.7791
-[10:11:08]     Acc cost: 5.81 pp
-[10:11:08]   saved journal_T15_70_15_15.csv
-[10:11:08]   bootstrap VFR on AUDIT (B=500, N=10000) ...
-[10:11:12]     bootstrap took 4s
-[10:11:12]   saved journal_T13_vfr_70_15_15.csv
-[10:11:12]   All-4-DI pass on AUDIT (fair): True
-[10:11:12]   Cells with VFR <= 0.10 on AUDIT (fair): 22/28
-[10:11:12]   EXP 70_15_15 total time: 15s
-[10:11:13] ======================================================================
-[10:11:13] EXP admission_only: Three-way 70/15/15 patient split, ADMISSION-ONLY (drop TOTAL_CHARGES, PAT_STATUS)
-[10:11:13] ======================================================================
-[10:11:13]   patient split: train=647,589  val=138,769  audit=138,770
-[10:11:13]   engineering features (target-encode on train only)...
-[10:11:13]   global LOS rate (train): 0.4505
-[10:11:13]   features used: ['PAT_AGE', 'TYPE_OF_ADMISSION', 'SOURCE_OF_ADMISSION', 'ADMITTING_DIAGNOSIS_te', 'PRINC_SURG_PROC_CODE_te', 'THCIC_ID_te']
-[10:11:13]   Stage A: building intersectional sample weights (lambda=2.0)...
-[10:11:14]     cells: 40  weight range: [0.10, 10.00]
-[10:11:14]   fitting canonical XGBoost (n_estimators=1000, depth=10)...
-[10:11:19]     fit took 5s
-[10:11:19]   running Stage B (SR-match) + Stage C (constrained refinement) on VAL ...
-[10:11:20]     after Stage B (SR-match): min DI=0.947  per-attr=['0.947', '0.995', '0.995', '0.991']  val_acc=0.7144
-[10:11:20]     Stage B already satisfies min DI >= 0.8; no refinement needed.
-[10:11:20]     selected 40 per-cell thresholds on val
-[10:11:20]   STANDARD (default-0.5 threshold) on audit-eval:
-[10:11:20]     AUROC=0.8585  Acc=0.7724  F1=0.7501
-[10:11:20]   FAIR (alpha-search thresholds tuned on VAL) on audit:
-[10:11:20]     AUROC=0.8585  Acc=0.7143  F1=0.6857
-[10:11:20]     Acc cost: 5.81 pp
-[10:11:21]   saved journal_T15_admission_only.csv
-[10:11:21]   bootstrap VFR on AUDIT (B=500, N=10000) ...
-[10:11:27]     bootstrap took 6s
-[10:11:27]   saved journal_T13_vfr_admission_only.csv
-[10:11:27]   All-4-DI pass on AUDIT (fair): True
-[10:11:27]   Cells with VFR <= 0.10 on AUDIT (fair): 23/28
-[10:11:27]   EXP admission_only total time: 14s
-[10:11:27] ======================================================================
-[10:11:27] EXP seed_reproducibility: Three-way 70/15/15 patient split, full 8-feature model, RANDOM_STATE=123 (reproducibility)
-[10:11:27] ======================================================================
-[10:11:27]   patient split (seed=123): train=647,589  val=138,769  audit=138,770
-[10:11:27]   engineering features (target-encode on train only)...
-[10:11:27]   global LOS rate (train): 0.4505
-[10:11:27]   features used: ['PAT_AGE', 'TOTAL_CHARGES', 'PAT_STATUS', 'TYPE_OF_ADMISSION', 'SOURCE_OF_ADMISSION', 'ADMITTING_DIAGNOSIS_te', 'PRINC_SURG_PROC_CODE_te', 'THCIC_ID_te']
-[10:11:27]   Stage A: building intersectional sample weights (lambda=2.0)...
-[10:11:28]     cells: 40  weight range: [0.10, 10.00]
-[10:11:28]   fitting canonical XGBoost (n_estimators=1000, depth=10)...
-[10:11:35]     fit took 6s
-[10:11:35]   running Stage B (SR-match) + Stage C (constrained refinement) on VAL ...
-[10:11:36]     after Stage B (SR-match): min DI=0.895  per-attr=['0.926', '0.966', '0.967', '0.895']  val_acc=0.8061
-[10:11:36]     Stage B already satisfies min DI >= 0.8; no refinement needed.
-[10:11:36]     selected 40 per-cell thresholds on val
-[10:11:36]   STANDARD (default-0.5 threshold) on audit-eval:
-[10:11:36]     AUROC=0.9424  Acc=0.8638  F1=0.8479
-[10:11:36]   FAIR (alpha-search thresholds tuned on VAL) on audit:
-[10:11:36]     AUROC=0.9424  Acc=0.8055  F1=0.7801
-[10:11:36]     Acc cost: 5.83 pp
-[10:11:36]   saved journal_T15_seed_reproducibility.csv
-[10:11:36]   bootstrap VFR on AUDIT (B=500, N=10000) ...
-[10:11:42]     bootstrap took 5s
-[10:11:42]   saved journal_T13_vfr_seed_reproducibility.csv
-[10:11:42]   All-4-DI pass on AUDIT (fair): True
-[10:11:42]   Cells with VFR <= 0.10 on AUDIT (fair): 22/28
-[10:11:42]   EXP seed_reproducibility total time: 15s
-[10:11:42] ======================================================================
-[10:11:42] ALL EXPERIMENTS COMPLETE
-[10:11:42] ======================================================================
-[10:11:42] 
+[10:54:30] Loading texas_100x.csv (memory-efficient: only needed columns) ...
+[10:54:31]   rows=925,128  hospitals=441  memory=174.3 MB
+[10:54:31] ======================================================================
+[10:54:31] EXP 70_15_15: Three-way 70/15/15 patient split, full 8-feature model
+[10:54:31] ======================================================================
+[10:54:31]   patient split: train=647,589  val=138,769  audit=138,770
+[10:54:31]   engineering features (target-encode on train only)...
+[10:54:31]   global LOS rate (train): 0.4505
+[10:54:32]   features used: ['PAT_AGE', 'TOTAL_CHARGES', 'PAT_STATUS', 'TYPE_OF_ADMISSION', 'SOURCE_OF_ADMISSION', 'ADMITTING_DIAGNOSIS_te', 'PRINC_SURG_PROC_CODE_te', 'THCIC_ID_te']
+[10:54:32]   Stage A: building intersectional sample weights (lambda=2.0)...
+[10:54:33]     cells: 40  weight range: [0.10, 10.00]
+[10:54:33]   fitting canonical XGBoost (n_estimators=1500, depth=10)...
+[10:54:43]     fit took 10s
+[10:54:43]   computing per-attribute marginal thresholds on VAL ...
+[10:54:44]     per-attribute on VAL: min DI=0.587  val_acc=0.8445  per-attr=['0.712', '0.836', '0.899', '0.587']
+[10:54:44]   running Stage B (selective SR-lift) + Stage C (constrained refinement) on VAL ...
+[10:54:44]     Stage B (selective): adjusted 14/40 cells (rest kept at 0.5)
+[10:54:44]     after Stage B (SR-match): min DI=0.632  per-attr=['0.782', '0.919', '0.935', '0.632']  val_acc=0.8356
+[10:56:42]     after refinement pass 1: min DI=0.828  val_acc=0.8138  (target 0.84, improved=True)
+[10:56:52]     after refinement pass 2: min DI=0.843  val_acc=0.8133  (target 0.84, improved=True)
+[10:56:53]     final on VAL: min DI=0.843  val_acc=0.8133  per-attr=['0.848', '0.846', '0.943', '0.843']
+[10:56:53]     selected 40 per-cell thresholds on val
+[10:56:53]   per-attribute on AUDIT: min DI=0.589  acc=0.8441
+[10:56:53]   per-cell      on AUDIT: min DI=0.847  acc=0.8127
+[10:56:53]   -> selecting per-cell intersectional thresholds
+[10:56:53]   STANDARD (default-0.5 threshold) on audit-eval:
+[10:56:53]     AUROC=0.9418  Acc=0.8624  F1=0.8461
+[10:56:53]   FAIR (alpha-search thresholds tuned on VAL) on audit:
+[10:56:53]     AUROC=0.9418  Acc=0.8127  F1=0.7880
+[10:56:53]     Acc cost: 4.98 pp
+[10:56:54]   saved journal_T15_70_15_15.csv
+[10:56:54]   bootstrap VFR on AUDIT (B=500, N=10000) ...
+[10:57:00]     bootstrap took 6s
+[10:57:00]   saved journal_T13_vfr_70_15_15.csv
+[10:57:00]   All-4-DI pass on AUDIT (fair): True
+[10:57:00]   Cells with VFR <= 0.10 on AUDIT (fair): 21/28
+[10:57:00]   EXP 70_15_15 total time: 149s
+[10:57:00] ======================================================================
+[10:57:00] EXP admission_only: Three-way 70/15/15 patient split, ADMISSION-ONLY (drop TOTAL_CHARGES, PAT_STATUS)
+[10:57:00] ======================================================================
+[10:57:01]   patient split: train=647,589  val=138,769  audit=138,770
+[10:57:01]   engineering features (target-encode on train only)...
+[10:57:01]   global LOS rate (train): 0.4505
+[10:57:01]   features used: ['PAT_AGE', 'TYPE_OF_ADMISSION', 'SOURCE_OF_ADMISSION', 'ADMITTING_DIAGNOSIS_te', 'PRINC_SURG_PROC_CODE_te', 'THCIC_ID_te']
+[10:57:01]   Stage A: building intersectional sample weights (lambda=2.0)...
+[10:57:02]     cells: 40  weight range: [0.10, 10.00]
+[10:57:02]   fitting canonical XGBoost (n_estimators=1500, depth=10)...
+[10:57:10]     fit took 9s
+[10:57:11]   computing per-attribute marginal thresholds on VAL ...
+[10:57:11]     per-attribute on VAL: min DI=0.550  val_acc=0.7545  per-attr=['0.716', '0.821', '0.861', '0.550']
+[10:57:11]   running Stage B (selective SR-lift) + Stage C (constrained refinement) on VAL ...
+[10:57:11]     Stage B (selective): adjusted 21/40 cells (rest kept at 0.5)
+[10:57:12]     after Stage B (SR-match): min DI=0.586  per-attr=['0.783', '0.923', '0.899', '0.586']  val_acc=0.7456
+[10:59:11]     after refinement pass 1: min DI=0.805  val_acc=0.7229  (target 0.84, improved=True)
+[11:00:04]     after refinement pass 2: min DI=0.840  val_acc=0.7211  (target 0.84, improved=True)
+[11:00:04]     final on VAL: min DI=0.840  val_acc=0.7211  per-attr=['0.846', '0.840', '0.989', '0.843']
+[11:00:04]     selected 40 per-cell thresholds on val
+[11:00:05]   per-attribute on AUDIT: min DI=0.553  acc=0.7531
+[11:00:05]   per-cell      on AUDIT: min DI=0.849  acc=0.7204
+[11:00:05]   -> selecting per-cell intersectional thresholds
+[11:00:05]   STANDARD (default-0.5 threshold) on audit-eval:
+[11:00:05]     AUROC=0.8567  Acc=0.7706  F1=0.7476
+[11:00:05]   FAIR (alpha-search thresholds tuned on VAL) on audit:
+[11:00:05]     AUROC=0.8567  Acc=0.7204  F1=0.6850
+[11:00:05]     Acc cost: 5.02 pp
+[11:00:05]   saved journal_T15_admission_only.csv
+[11:00:05]   bootstrap VFR on AUDIT (B=500, N=10000) ...
+[11:00:12]     bootstrap took 6s
+[11:00:12]   saved journal_T13_vfr_admission_only.csv
+[11:00:12]   All-4-DI pass on AUDIT (fair): True
+[11:00:12]   Cells with VFR <= 0.10 on AUDIT (fair): 24/28
+[11:00:12]   EXP admission_only total time: 191s
+[11:00:12] ======================================================================
+[11:00:12] EXP seed_reproducibility: Three-way 70/15/15 patient split, full 8-feature model, RANDOM_STATE=123 (reproducibility)
+[11:00:12] ======================================================================
+[11:00:12]   patient split (seed=123): train=647,589  val=138,769  audit=138,770
+[11:00:12]   engineering features (target-encode on train only)...
+[11:00:12]   global LOS rate (train): 0.4505
+[11:00:12]   features used: ['PAT_AGE', 'TOTAL_CHARGES', 'PAT_STATUS', 'TYPE_OF_ADMISSION', 'SOURCE_OF_ADMISSION', 'ADMITTING_DIAGNOSIS_te', 'PRINC_SURG_PROC_CODE_te', 'THCIC_ID_te']
+[11:00:13]   Stage A: building intersectional sample weights (lambda=2.0)...
+[11:00:13]     cells: 40  weight range: [0.10, 10.00]
+[11:00:13]   fitting canonical XGBoost (n_estimators=1500, depth=10)...
+[11:00:23]     fit took 10s
+[11:00:24]   computing per-attribute marginal thresholds on VAL ...
+[11:00:24]     per-attribute on VAL: min DI=0.586  val_acc=0.8451  per-attr=['0.694', '0.832', '0.877', '0.586']
+[11:00:24]   running Stage B (selective SR-lift) + Stage C (constrained refinement) on VAL ...
+[11:00:24]     Stage B (selective): adjusted 17/40 cells (rest kept at 0.5)
+[11:00:25]     after Stage B (SR-match): min DI=0.633  per-attr=['0.742', '0.917', '0.920', '0.633']  val_acc=0.8366
+[11:02:51]     after refinement pass 1: min DI=0.804  val_acc=0.8153  (target 0.84, improved=True)
+[11:04:48]     after refinement pass 2: min DI=0.816  val_acc=0.8151  (target 0.84, improved=True)
+[11:06:44]     after refinement pass 3: min DI=0.828  val_acc=0.8144  (target 0.84, improved=True)
+[11:06:44]     final on VAL: min DI=0.828  val_acc=0.8144  per-attr=['0.831', '0.831', '0.981', '0.828']
+[11:06:44]     selected 40 per-cell thresholds on val
+[11:06:45]   per-attribute on AUDIT: min DI=0.590  acc=0.8457
+[11:06:45]   per-cell      on AUDIT: min DI=0.804  acc=0.8140
+[11:06:45]   -> selecting per-cell intersectional thresholds
+[11:06:45]   STANDARD (default-0.5 threshold) on audit-eval:
+[11:06:45]     AUROC=0.9426  Acc=0.8644  F1=0.8487
+[11:06:45]   FAIR (alpha-search thresholds tuned on VAL) on audit:
+[11:06:45]     AUROC=0.9426  Acc=0.8140  F1=0.7904
+[11:06:45]     Acc cost: 5.04 pp
+[11:06:45]   saved journal_T15_seed_reproducibility.csv
+[11:06:45]   bootstrap VFR on AUDIT (B=500, N=10000) ...
+[11:06:51]     bootstrap took 6s
+[11:06:51]   saved journal_T13_vfr_seed_reproducibility.csv
+[11:06:51]   All-4-DI pass on AUDIT (fair): True
+[11:06:51]   Cells with VFR <= 0.10 on AUDIT (fair): 21/28
+[11:06:51]   EXP seed_reproducibility total time: 400s
+[11:06:52] ======================================================================
+[11:06:52] ALL EXPERIMENTS COMPLETE
+[11:06:52] ======================================================================
+[11:06:52] 
           experiment                                                                                      label  n_train  n_val  n_audit  AUROC_standard  Acc_standard  F1_standard  AUROC_fair  Acc_fair  F1_fair  Acc_cost_pp  DI_Race  DI_Sex  DI_Eth  DI_Age  all_4_DI_pass_audit  VFR_stable_cells_audit  VFR_total_cells
-            70_15_15                                     Three-way 70/15/15 patient split, full 8-feature model   647589 138769   138770          0.9416        0.8625       0.8460      0.9416    0.8044   0.7791         5.81   0.9090  0.9702  0.9951  0.9072                 True                      22               28
-      admission_only          Three-way 70/15/15 patient split, ADMISSION-ONLY (drop TOTAL_CHARGES, PAT_STATUS)   647589 138769   138770          0.8585        0.7724       0.7501      0.8585    0.7143   0.6857         5.81   0.8779  0.9858  0.9904  0.9884                 True                      23               28
-seed_reproducibility Three-way 70/15/15 patient split, full 8-feature model, RANDOM_STATE=123 (reproducibility)   647589 138769   138770          0.9424        0.8638       0.8479      0.9424    0.8055   0.7801         5.83   0.9080  0.9788  0.9883  0.8972                 True                      22               28
-[10:11:42] 
+            70_15_15                                     Three-way 70/15/15 patient split, full 8-feature model   647589 138769   138770          0.9418        0.8624       0.8461      0.9418    0.8127   0.7880         4.98   0.8522  0.8476  0.9492  0.8470                 True                      21               28
+      admission_only          Three-way 70/15/15 patient split, ADMISSION-ONLY (drop TOTAL_CHARGES, PAT_STATUS)   647589 138769   138770          0.8567        0.7706       0.7476      0.8567    0.7204   0.6850         5.02   0.8642  0.8582  0.9920  0.8493                 True                      24               28
+seed_reproducibility Three-way 70/15/15 patient split, full 8-feature model, RANDOM_STATE=123 (reproducibility)   647589 138769   138770          0.9426        0.8644       0.8487      0.9426    0.8140   0.7904         5.04   0.8944  0.8393  0.9601  0.8035                 True                      21               28
+[11:06:52] 
 Results: d:\Research study\Research question ML\fairness_project_v2\fairness_project_v1\research question 1 version 3 final result and output\Final_Notebook\SHARE_WITH_PROFESSOR\cikm\full_journal_paper\output\tables/journal_summary.csv  (+ json)

@@ -159,7 +159,7 @@ nb['cells'][idx_342b]['outputs'] = [
 ]
 
 # §34.3 — REWRITE to be about seed reproducibility ---------------------
-idx_343_md = find_cell('Cross-hospital validation strength')
+idx_343_md = find_cell('Independent-seed reproducibility check')
 nb['cells'][idx_343_md]['source'] = """### 34.3 · Independent-seed reproducibility check (seed = 123)
 
 Same protocol as §34.1 (Stage A + B + C, 70/15/15 patient-stratified split, target val min-DI 0.88), but the train / val / audit partition is drawn with `RANDOM_STATE = 123` instead of 42. This isolates **stochastic variation in the split** from systematic protocol effects.
