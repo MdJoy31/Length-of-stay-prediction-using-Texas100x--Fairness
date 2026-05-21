@@ -38,9 +38,10 @@ REF = dict(AUROC=0.9528, Acc_std=0.8776, Acc_fair=0.8352, Acc_cost_pp=4.24,
 # ---------------------------------------------------------------------
 # Protocol comparison: 4 bars × 3 panels
 # ---------------------------------------------------------------------
-fig, axes = plt.subplots(1, 3, figsize=(11.5, 4.0))
+fig, axes = plt.subplots(1, 3, figsize=(13.8, 4.4))
+plt.subplots_adjust(wspace=0.32)
 labels = ['Single-split\n(in-sample\ntuning)', 'Stratified\n70/15/15\n(held-out)',
-          'Admission-\nonly\nablation', 'Reproducibility\n(seed = 123)']
+          'Admission-only\nablation', 'Reproducibility\n(seed = 123)']
 xpos = np.arange(4)
 colors = ['#888888', '#3a78b8', '#e07b39', '#5fa55a']
 
@@ -77,7 +78,7 @@ ax.bar(xpos, min_dis, color=colors, edgecolor='black', linewidth=0.5)
 for i, v in enumerate(min_dis):
     ax.text(i, v + 0.005, f'{v:.3f}', ha='center', fontsize=9, fontweight='bold')
 ax.axhline(0.80, color='red', linestyle='--', linewidth=1.2, alpha=0.7, label='Four-fifths rule (DI = 0.80)')
-ax.set_ylim(0.75, 0.92); ax.set_ylabel('min(DI) across 4 protected attributes', fontsize=10, fontweight='bold')
+ax.set_ylim(0.75, 0.92); ax.set_ylabel('Minimum DI across 4 attributes', fontsize=10, fontweight='bold', labelpad=8)
 ax.set_xticks(xpos); ax.set_xticklabels(labels, fontsize=8.5)
 ax.set_title('(c) Minimum DI on audit', fontsize=10.5, fontweight='bold')
 ax.legend(fontsize=8, loc='upper right')
