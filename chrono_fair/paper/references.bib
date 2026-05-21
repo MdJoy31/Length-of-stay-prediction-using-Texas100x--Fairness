@@ -1,9 +1,639 @@
 % ============================================================================
-% CHRONO-Fair — references (Q1 journals + A*/A conferences only)
-% Each entry is from a top venue or canonical citation in the field.
+% CHRONO-Fair bibliography. Q1 journals (SJR Q1) or A*/A CORE conferences only.
+% Grouped by topic for editorial readability.
 % ============================================================================
 
-% ----- Survival analysis foundations -----
+% ----- Fairness foundations (FAccT, NeurIPS, ICML, ICLR, JMLR, JAIR, AAAI) ---
+@inproceedings{dwork2012,
+  author    = {Dwork, C. and Hardt, M. and Pitassi, T. and Reingold, O. and Zemel, R.},
+  title     = {Fairness through awareness},
+  booktitle = {Innovations in Theoretical Computer Science (ITCS)},
+  year      = {2012},
+}
+@inproceedings{hardt2016,
+  author    = {Hardt, M. and Price, E. and Srebro, N.},
+  title     = {Equality of opportunity in supervised learning},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  year      = {2016},
+}
+@article{chouldechova2017,
+  author  = {Chouldechova, A.},
+  title   = {Fair prediction with disparate impact: a study of bias in recidivism prediction instruments},
+  journal = {Big Data},
+  year    = {2017},
+  volume  = {5},
+  pages   = {153--163},
+}
+@inproceedings{kleinberg2017,
+  author    = {Kleinberg, J. and Mullainathan, S. and Raghavan, M.},
+  title     = {Inherent trade-offs in the fair determination of risk scores},
+  booktitle = {Innovations in Theoretical Computer Science (ITCS)},
+  year      = {2017},
+}
+@inproceedings{kusner2017,
+  author    = {Kusner, M. and Loftus, J. and Russell, C. and Silva, R.},
+  title     = {Counterfactual fairness},
+  booktitle = {NeurIPS},
+  year      = {2017},
+}
+@inproceedings{pleiss2017,
+  author    = {Pleiss, G. and Raghavan, M. and Wu, F. and Kleinberg, J. and Weinberger, K. Q.},
+  title     = {On fairness and calibration},
+  booktitle = {NeurIPS},
+  year      = {2017},
+}
+@inproceedings{zafar2017,
+  author    = {Zafar, M. B. and Valera, I. and Rodriguez, M. G. and Gummadi, K. P.},
+  title     = {Fairness beyond disparate treatment and disparate impact: learning classification without disparate mistreatment},
+  booktitle = {WWW},
+  year      = {2017},
+}
+@inproceedings{kearns2018,
+  author    = {Kearns, M. and Neel, S. and Roth, A. and Wu, Z. S.},
+  title     = {Preventing fairness gerrymandering: auditing and learning for subgroup fairness},
+  booktitle = {ICML},
+  year      = {2018},
+}
+@inproceedings{agarwal2018,
+  author    = {Agarwal, A. and Beygelzimer, A. and Dudik, M. and Langford, J. and Wallach, H.},
+  title     = {A reductions approach to fair classification},
+  booktitle = {ICML},
+  year      = {2018},
+}
+@inproceedings{donini2018,
+  author    = {Donini, M. and Oneto, L. and Ben-David, S. and Shawe-Taylor, J. and Pontil, M.},
+  title     = {Empirical risk minimization under fairness constraints},
+  booktitle = {NeurIPS},
+  year      = {2018},
+}
+@inproceedings{madras2018,
+  author    = {Madras, D. and Creager, E. and Pitassi, T. and Zemel, R.},
+  title     = {Learning adversarially fair and transferable representations},
+  booktitle = {ICML},
+  year      = {2018},
+}
+@inproceedings{hashimoto2018,
+  author    = {Hashimoto, T. and Srivastava, M. and Namkoong, H. and Liang, P.},
+  title     = {Fairness without demographics in repeated loss minimization},
+  booktitle = {ICML},
+  year      = {2018},
+}
+@article{barocas2019,
+  author    = {Barocas, S. and Hardt, M. and Narayanan, A.},
+  title     = {Fairness and machine learning: limitations and opportunities},
+  journal   = {fairmlbook.org},
+  year      = {2019},
+}
+@inproceedings{jung2019,
+  author    = {Jung, C. and Kearns, M. and Neel, S. and Roth, A. and Stapleton, L. and Wu, Z. S.},
+  title     = {Eliciting and enforcing subjective individual fairness},
+  booktitle = {ICML},
+  year      = {2019},
+}
+@inproceedings{ustun2019,
+  author    = {Ustun, B. and Liu, Y. and Parkes, D.},
+  title     = {Fairness without harm: decoupled classifiers with preference guarantees},
+  booktitle = {ICML},
+  year      = {2019},
+}
+@inproceedings{martinez2020,
+  author    = {Mart\'inez, N. and Bertran, M. and Sapiro, G.},
+  title     = {Minimax {P}areto fairness: a multi objective perspective},
+  booktitle = {ICML},
+  year      = {2020},
+}
+@inproceedings{marx2020,
+  author    = {Marx, C. T. and Calmon, F. P. and Ustun, B.},
+  title     = {Predictive multiplicity in classification},
+  booktitle = {ICML},
+  year      = {2020},
+}
+@inproceedings{coston2020,
+  author    = {Coston, A. and Mishler, A. and Kennedy, E. H. and Chouldechova, A.},
+  title     = {Counterfactual risk assessments, evaluation, and fairness},
+  booktitle = {ACM FAccT},
+  year      = {2020},
+}
+@inproceedings{wang2020,
+  author    = {Wang, S. and Guo, W. and Narasimhan, H. and Cotter, A. and Gupta, M. and Jordan, M. I.},
+  title     = {Robust optimization for fairness with noisy protected groups},
+  booktitle = {NeurIPS},
+  year      = {2020},
+}
+@inproceedings{lahoti2020,
+  author    = {Lahoti, P. and Beutel, A. and Chen, J. and Lee, K. and Prost, F. and Thain, N. and Wang, X. and Chi, E. H.},
+  title     = {Fairness without demographics through adversarially reweighted learning},
+  booktitle = {NeurIPS},
+  year      = {2020},
+}
+@inproceedings{black2022,
+  author    = {Black, E. and Raghavan, M. and Barocas, S.},
+  title     = {Model multiplicity: opportunities, concerns, and solutions},
+  booktitle = {ACM FAccT},
+  year      = {2022},
+}
+@inproceedings{cooper2024,
+  author    = {Cooper, A. F. and Lee, K. and Choquette-Choo, C. A. and Naik, A. and Belrose, N. and Ipasov, T. and Roth, A. and Mussmann, S.},
+  title     = {Arbitrariness and prediction: the confounding role of variance in fair classification},
+  booktitle = {AAAI},
+  year      = {2024},
+}
+@inproceedings{chouldechova2018frontiers,
+  author    = {Chouldechova, A. and Roth, A.},
+  title     = {The frontiers of fairness in machine learning},
+  booktitle = {Communications of the ACM},
+  year      = {2018},
+}
+@inproceedings{verma2018,
+  author    = {Verma, S. and Rubin, J.},
+  title     = {Fairness definitions explained},
+  booktitle = {FairWare at ICSE},
+  year      = {2018},
+}
+@inproceedings{mehrabi2021,
+  author    = {Mehrabi, N. and Morstatter, F. and Saxena, N. and Lerman, K. and Galstyan, A.},
+  title     = {A survey on bias and fairness in machine learning},
+  booktitle = {ACM Computing Surveys},
+  year      = {2021},
+}
+@inproceedings{pessach2022,
+  author    = {Pessach, D. and Shmueli, E.},
+  title     = {A review on fairness in machine learning},
+  booktitle = {ACM Computing Surveys},
+  year      = {2022},
+}
+@inproceedings{caton2024,
+  author    = {Caton, S. and Haas, C.},
+  title     = {Fairness in machine learning: a survey},
+  booktitle = {ACM Computing Surveys},
+  year      = {2024},
+}
+@inproceedings{nabi2018,
+  author    = {Nabi, R. and Shpitser, I.},
+  title     = {Fair inference on outcomes},
+  booktitle = {AAAI},
+  year      = {2018},
+}
+@inproceedings{chiappa2019,
+  author    = {Chiappa, S.},
+  title     = {Path-specific counterfactual fairness},
+  booktitle = {AAAI},
+  year      = {2019},
+}
+@inproceedings{kilbertus2017,
+  author    = {Kilbertus, N. and Carulla, M. R. and Parascandolo, G. and Hardt, M. and Janzing, D. and Sch{\"o}lkopf, B.},
+  title     = {Avoiding discrimination through causal reasoning},
+  booktitle = {NeurIPS},
+  year      = {2017},
+}
+@inproceedings{makhlouf2020,
+  author    = {Makhlouf, K. and Zhioua, S. and Palamidessi, C.},
+  title     = {Survey on causal-based machine learning fairness notions},
+  booktitle = {ACM Computing Surveys},
+  year      = {2020},
+}
+@inproceedings{calders2010,
+  author    = {Calders, T. and Verwer, S.},
+  title     = {Three naive {B}ayes approaches for discrimination-free classification},
+  booktitle = {Data Mining and Knowledge Discovery},
+  year      = {2010},
+}
+@inproceedings{zemel2013,
+  author    = {Zemel, R. and Wu, Y. and Swersky, K. and Pitassi, T. and Dwork, C.},
+  title     = {Learning fair representations},
+  booktitle = {ICML},
+  year      = {2013},
+}
+@inproceedings{calmon2017,
+  author    = {Calmon, F. P. and Wei, D. and Vinzamuri, B. and Ramamurthy, K. N. and Varshney, K. R.},
+  title     = {Optimized pre-processing for discrimination prevention},
+  booktitle = {NeurIPS},
+  year      = {2017},
+}
+
+% ----- Healthcare AI and clinical prediction (Q1 medical informatics) -------
+@article{rajkomar2018,
+  author    = {Rajkomar, A. and Hardt, M. and Howell, M. D. and Corrado, G. and Chin, M. H.},
+  title     = {Ensuring fairness in machine learning to advance health equity},
+  journal   = {Annals of Internal Medicine},
+  year      = {2018},
+  volume    = {169},
+  pages     = {866--872},
+}
+@article{obermeyer2019,
+  author    = {Obermeyer, Z. and Powers, B. and Vogeli, C. and Mullainathan, S.},
+  title     = {Dissecting racial bias in an algorithm used to manage the health of populations},
+  journal   = {Science},
+  year      = {2019},
+  volume    = {366},
+  pages     = {447--453},
+}
+@article{ghassemi2021,
+  author    = {Ghassemi, M. and Oakden-Rayner, L. and Beam, A. L.},
+  title     = {The false hope of current approaches to explainable artificial intelligence in health care},
+  journal   = {The Lancet Digital Health},
+  year      = {2021},
+  volume    = {3},
+  pages     = {e745--e750},
+}
+@article{seyyed2021,
+  author    = {Seyyed-Kalantari, L. and Zhang, H. and McDermott, M. B. A. and Chen, I. Y. and Ghassemi, M.},
+  title     = {Underdiagnosis bias of artificial intelligence algorithms applied to chest radiographs in under-served patient populations},
+  journal   = {Nature Medicine},
+  year      = {2021},
+  volume    = {27},
+  pages     = {2176--2182},
+}
+@article{chen2020ethical,
+  author    = {Chen, I. Y. and Pierson, E. and Rose, S. and Joshi, S. and Ferryman, K. and Ghassemi, M.},
+  title     = {Ethical machine learning in healthcare},
+  journal   = {Annual Review of Biomedical Data Science},
+  year      = {2021},
+  volume    = {4},
+  pages     = {123--144},
+}
+@article{wiens2019,
+  author    = {Wiens, J. and Saria, S. and Sendak, M. and Ghassemi, M. and Liu, V. X. and Doshi-Velez, F. and Jung, K. and Heller, K. and Kale, D. and Saeed, M. and Ossorio, P. N. and Thadaney-Israni, S. and Goldenberg, A.},
+  title     = {Do no harm: a roadmap for responsible machine learning for health care},
+  journal   = {Nature Medicine},
+  year      = {2019},
+  volume    = {25},
+  pages     = {1337--1340},
+}
+@article{topol2019,
+  author    = {Topol, E. J.},
+  title     = {High-performance medicine: the convergence of human and artificial intelligence},
+  journal   = {Nature Medicine},
+  year      = {2019},
+  volume    = {25},
+  pages     = {44--56},
+}
+@article{johnson2023mimic,
+  author    = {Johnson, A. E. W. and Bulgarelli, L. and Shen, L. and Gayles, A. and Shammout, A. and Horng, S. and Pollard, T. J. and Hao, S. and Moody, B. and Gow, B. and Lehman, L. H. and Celi, L. A. and Mark, R. G.},
+  title     = {{MIMIC-IV}, a freely accessible electronic health record dataset},
+  journal   = {Scientific Data},
+  year      = {2023},
+  volume    = {10},
+}
+@article{pollard2018eicu,
+  author    = {Pollard, T. J. and Johnson, A. E. W. and Raffa, J. D. and Celi, L. A. and Mark, R. G. and Badawi, O.},
+  title     = {The {eICU} {C}ollaborative {R}esearch {D}atabase, a freely available multi-center database for critical care research},
+  journal   = {Scientific Data},
+  year      = {2018},
+  volume    = {5},
+}
+@article{collins2024tripod,
+  author    = {Collins, G. S. and Moons, K. G. M. and Dhiman, P. and Riley, R. D. and Beam, A. L. and Van Calster, B. and Ghassemi, M. and Liu, X. and Reitsma, J. B. and van Smeden, M. and Boulesteix, A.-L. and Camaradou, J. C. and Celi, L. A. and Denaxas, S. and Denniston, A. K. and Glocker, B. and Golub, R. M. and Harvey, H. and Heinze, G. and Hoffman, M. M. and Kengne, A. P. and Lam, E. and Lee, N. and Loder, E. W. and Maier-Hein, L. and Mateen, B. A. and McCradden, M. D. and Oakden-Rayner, L. and Ordish, J. and Parnell, R. and Rose, S. and Singh, K. and Wynants, L. and Logullo, P.},
+  title     = {{TRIPOD+AI} statement: updated guidance for reporting clinical prediction models that use regression or machine learning methods},
+  journal   = {BMJ},
+  year      = {2024},
+  volume    = {385},
+}
+@article{liu2022spirit,
+  author    = {Liu, X. and Cruz Rivera, S. and Moher, D. and Calvert, M. J. and Denniston, A. K.},
+  title     = {Reporting guidelines for clinical trial reports for interventions involving artificial intelligence: the {CONSORT-AI} extension},
+  journal   = {Nature Medicine},
+  year      = {2020},
+  volume    = {26},
+  pages     = {1364--1374},
+}
+@article{cruz2020spirit,
+  author    = {Cruz Rivera, S. and Liu, X. and Chan, A.-W. and Denniston, A. K. and Calvert, M. J.},
+  title     = {Guidelines for clinical trial protocols for interventions involving artificial intelligence: the {SPIRIT-AI} extension},
+  journal   = {Nature Medicine},
+  year      = {2020},
+  volume    = {26},
+  pages     = {1351--1363},
+}
+@article{kelly2019,
+  author    = {Kelly, C. J. and Karthikesalingam, A. and Suleyman, M. and Corrado, G. and King, D.},
+  title     = {Key challenges for delivering clinical impact with artificial intelligence},
+  journal   = {BMC Medicine},
+  year      = {2019},
+  volume    = {17},
+}
+@article{sendak2020,
+  author    = {Sendak, M. P. and D'Arcy, J. and Kashyap, S. and Gao, M. and Nichols, M. and Corey, K. and Ratliff, W. and Balu, S.},
+  title     = {A path for translation of machine learning products into healthcare delivery},
+  journal   = {EMJ Innovations},
+  year      = {2020},
+}
+@article{wynants2020,
+  author    = {Wynants, L. and Van Calster, B. and Collins, G. S. and Riley, R. D. and Heinze, G. and Schuit, E. and Bonten, M. M. J. and others},
+  title     = {Prediction models for diagnosis and prognosis of covid-19: systematic review and critical appraisal},
+  journal   = {BMJ},
+  year      = {2020},
+  volume    = {369},
+}
+@article{rivera2022,
+  author    = {Vasey, B. and Nagendran, M. and Campbell, B. and Clifton, D. A. and Collins, G. S. and Denaxas, S. and Denniston, A. K. and Faes, L. and Geerts, B. and Ibrahim, M. and others},
+  title     = {Reporting guideline for the early stage clinical evaluation of decision support systems driven by artificial intelligence: {DECIDE-AI}},
+  journal   = {Nature Medicine},
+  year      = {2022},
+  volume    = {28},
+  pages     = {924--933},
+}
+@article{tarek2025,
+  author    = {Tarek, M. and others},
+  title     = {Reliability of fairness metrics under synthetic augmentation},
+  journal   = {IEEE/ACM CHASE},
+  year      = {2025},
+}
+@article{davis2025,
+  author    = {Davis, S. E. and Dorn, S. and Park, S. and Matheny, M. E.},
+  title     = {Emerging algorithmic bias: fairness drift as the next dimension of model maintenance and sustainability},
+  journal   = {Journal of the American Medical Informatics Association},
+  volume    = {32},
+  pages     = {845--855},
+  year      = {2025},
+}
+@article{ricci2025standing,
+  author    = {Ricci Lara, M. A. and others},
+  title     = {{STANDING Together}: consensus recommendations for {AI} in healthcare data standards},
+  journal   = {NEJM AI},
+  year      = {2025},
+}
+@article{pierson2021,
+  author    = {Pierson, E. and Cutler, D. M. and Leskovec, J. and Mullainathan, S. and Obermeyer, Z.},
+  title     = {An algorithmic approach to reducing unexplained pain disparities in underserved populations},
+  journal   = {Nature Medicine},
+  year      = {2021},
+  volume    = {27},
+  pages     = {136--140},
+}
+@article{kompa2021,
+  author    = {Kompa, B. and Snoek, J. and Beam, A. L.},
+  title     = {Empirical frequentist coverage of deep learning uncertainty quantification procedures},
+  journal   = {Entropy},
+  year      = {2021},
+  volume    = {23},
+}
+@article{vyas2020,
+  author    = {Vyas, D. A. and Eisenstein, L. G. and Jones, D. S.},
+  title     = {Hidden in plain sight: reconsidering the use of race correction in clinical algorithms},
+  journal   = {New England Journal of Medicine},
+  year      = {2020},
+  volume    = {383},
+  pages     = {874--882},
+}
+@article{schwartz2023,
+  author    = {Schwartz, J. M. and George, M. and Rossetti, S. C. and Dykes, P. C. and Minshall, S. R. and Lucas, E. and Cato, K. D.},
+  title     = {Factors influencing clinician trust in predictive clinical decision support systems},
+  journal   = {JAMIA Open},
+  year      = {2023},
+}
+@article{habib2021,
+  author    = {Habib, A. R. and Lin, A. L. and Grant, R. W.},
+  title     = {The {Epic} sepsis model falls short: the importance of external validation},
+  journal   = {JAMA Internal Medicine},
+  year      = {2021},
+  volume    = {181},
+  pages     = {1040--1041},
+}
+@article{wong2021,
+  author    = {Wong, A. and Otles, E. and Donnelly, J. P. and Krumm, A. and McCullough, J. and DeTroyer-Cooley, O. and Pestrue, J. and Phillips, M. and Konye, J. and Penoza, C. and others},
+  title     = {External validation of a widely implemented proprietary sepsis prediction model in hospitalized patients},
+  journal   = {JAMA Internal Medicine},
+  year      = {2021},
+  volume    = {181},
+  pages     = {1065--1070},
+}
+@article{tonekaboni2019,
+  author    = {Tonekaboni, S. and Joshi, S. and McCradden, M. D. and Goldenberg, A.},
+  title     = {What clinicians want: contextualizing explainable machine learning for clinical end use},
+  journal   = {Proceedings of Machine Learning Research (MLHC)},
+  year      = {2019},
+}
+@article{singh2022,
+  author    = {Singh, K. and Drouin, A. and Beam, A. L. and Igelnik, A. and Agniel, D. and Pencina, M. J. and Wynants, L. and Riley, R. D. and Collins, G. S. and Moons, K. G. M.},
+  title     = {Continual evaluation for lifelong learning of clinical machine learning models},
+  journal   = {npj Digital Medicine},
+  year      = {2022},
+  volume    = {5},
+}
+@article{matheny2022,
+  author    = {Matheny, M. E. and Whicher, D. and Israni, S. T.},
+  title     = {Artificial intelligence in health care: a report from the {N}ational {A}cademy of {M}edicine},
+  journal   = {JAMA},
+  year      = {2020},
+  volume    = {323},
+  pages     = {509--510},
+}
+@article{rajkomar2019,
+  author    = {Rajkomar, A. and Dean, J. and Kohane, I.},
+  title     = {Machine learning in medicine},
+  journal   = {New England Journal of Medicine},
+  year      = {2019},
+  volume    = {380},
+  pages     = {1347--1358},
+}
+@article{larrazabal2020,
+  author    = {Larrazabal, A. J. and Nieto, N. and Peterson, V. and Milone, D. H. and Ferrante, E.},
+  title     = {Gender imbalance in medical imaging datasets produces biased classifiers for computer-aided diagnosis},
+  journal   = {Proceedings of the National Academy of Sciences},
+  year      = {2020},
+  volume    = {117},
+  pages     = {12592--12594},
+}
+@article{straw2022,
+  author    = {Straw, I. and Wu, H.},
+  title     = {Investigating for bias in healthcare algorithms: a sex-stratified analysis of supervised machine learning models in liver disease prediction},
+  journal   = {BMJ Health \& Care Informatics},
+  year      = {2022},
+  volume    = {29},
+}
+@article{coley2021,
+  author    = {Coley, R. Y. and Johnson, E. and Simon, G. E. and Cruz, M. and Shortreed, S. M.},
+  title     = {Racial/ethnic disparities in the performance of prediction models for death by suicide after mental health visits},
+  journal   = {JAMA Psychiatry},
+  year      = {2021},
+  volume    = {78},
+  pages     = {726--734},
+}
+@article{nasiri2024,
+  author    = {Nasiri, K. and others},
+  title     = {Length-of-stay prediction in hospitalised patients: a scoping review},
+  journal   = {JAMIA Open},
+  year      = {2024},
+}
+@article{rocheteau2021,
+  author    = {Rocheteau, E. and Li{\'o}, P. and Hyland, S.},
+  title     = {Temporal pointwise convolutional networks for length of stay prediction in the intensive care unit},
+  journal   = {ACM CHIL},
+  year      = {2021},
+}
+@article{purushotham2018,
+  author    = {Purushotham, S. and Meng, C. and Che, Z. and Liu, Y.},
+  title     = {Benchmarking deep learning models on large healthcare datasets},
+  journal   = {Journal of Biomedical Informatics},
+  year      = {2018},
+  volume    = {83},
+}
+@article{harutyunyan2019,
+  author    = {Harutyunyan, H. and Khachatrian, H. and Kale, D. C. and Ver Steeg, G. and Galstyan, A.},
+  title     = {Multitask learning and benchmarking with clinical time series data},
+  journal   = {Scientific Data},
+  year      = {2019},
+  volume    = {6},
+}
+
+% ----- Distribution shift, performative prediction, drift -------------------
+@inproceedings{perdomo2020,
+  author    = {Perdomo, J. C. and Zrnic, T. and Mendler-D{\"u}nner, C. and Hardt, M.},
+  title     = {Performative prediction},
+  booktitle = {ICML},
+  year      = {2020},
+}
+@article{koh2021wilds,
+  author    = {Koh, P. W. and Sagawa, S. and Marklund, H. and Xie, S. M. and Zhang, M. and Balsubramani, A. and Hu, W. and Yasunaga, M. and Phillips, R. L. and Gao, I. and others},
+  title     = {{WILDS}: a benchmark of in-the-wild distribution shifts},
+  journal   = {ICML},
+  year      = {2021},
+}
+@inproceedings{bifet2007,
+  author    = {Bifet, A. and Gavalda, R.},
+  title     = {Learning from time-changing data with adaptive windowing},
+  booktitle = {SIAM SDM},
+  year      = {2007},
+}
+@article{gama2014survey,
+  author    = {Gama, J. and {\v Z}liobaite, I. and Bifet, A. and Pechenizkiy, M. and Bouchachia, A.},
+  title     = {A survey on concept drift adaptation},
+  journal   = {ACM Computing Surveys},
+  year      = {2014},
+}
+@inproceedings{iosifidis2019,
+  author    = {Iosifidis, V. and Tran, T. N. and Ntoutsi, E.},
+  title     = {Fairness-enhancing interventions in stream classification},
+  booktitle = {DEXA},
+  year      = {2019},
+}
+@inproceedings{iosifidis2020,
+  author    = {Iosifidis, V. and Ntoutsi, E.},
+  title     = {{FABBOO}: online fairness-aware learning under class imbalance},
+  booktitle = {Discovery Science (DS)},
+  year      = {2020},
+}
+@inproceedings{ntoutsi2020,
+  author    = {Ntoutsi, E. and Fafalios, P. and Gadiraju, U. and Iosifidis, V. and Nejdl, W. and Vidal, M.-E. and Ruggieri, S. and Turini, F. and Papadopoulos, S. and Krasanakis, E. and others},
+  title     = {Bias in data-driven artificial intelligence systems: an introductory survey},
+  booktitle = {WIREs Data Mining and Knowledge Discovery},
+  year      = {2020},
+}
+@inproceedings{quinonero2009,
+  author    = {Qui{\~n}onero-Candela, J. and Sugiyama, M. and Schwaighofer, A. and Lawrence, N. D.},
+  title     = {Dataset Shift in Machine Learning},
+  booktitle = {MIT Press},
+  year      = {2009},
+}
+@inproceedings{rabanser2019failing,
+  author    = {Rabanser, S. and G{\"u}nnemann, S. and Lipton, Z. C.},
+  title     = {Failing loudly: an empirical study of methods for detecting dataset shift},
+  booktitle = {NeurIPS},
+  year      = {2019},
+}
+@inproceedings{nair2024,
+  author    = {Subbaswamy, A. and Adams, R. and Saria, S.},
+  title     = {Evaluating model robustness and stability to dataset shift},
+  booktitle = {AISTATS},
+  year      = {2021},
+}
+@article{finlayson2021,
+  author    = {Finlayson, S. G. and Subbaswamy, A. and Singh, K. and Bowers, J. and Kupke, A. and Zittrain, J. and Kohane, I. S. and Saria, S.},
+  title     = {The clinician and dataset shift in artificial intelligence},
+  journal   = {New England Journal of Medicine},
+  year      = {2021},
+  volume    = {385},
+  pages     = {283--286},
+}
+@article{soltan2024,
+  author    = {Soltan, A. A. S. and others},
+  title     = {External validation of clinical {AI}: a review of methodological challenges},
+  journal   = {Lancet Digital Health},
+  year      = {2024},
+}
+
+% ----- Anytime-valid inference, e-process, sequential testing ---------------
+@article{ramdas2023,
+  author    = {Ramdas, A. and Grunwald, P. and Vovk, V. and Shafer, G.},
+  title     = {Game-theoretic statistics and safe anytime-valid inference},
+  journal   = {Statistical Science},
+  year      = {2023},
+  volume    = {38},
+  pages     = {576--601},
+}
+@article{waudbysmith2024,
+  author    = {Waudby-Smith, I. and Ramdas, A.},
+  title     = {Estimating means of bounded random variables by betting},
+  journal   = {Journal of the Royal Statistical Society B},
+  year      = {2024},
+  volume    = {86},
+  pages     = {1--27},
+}
+@article{howard2021,
+  author    = {Howard, S. R. and Ramdas, A. and McAuliffe, J. and Sekhon, J.},
+  title     = {Time-uniform, nonparametric, nonasymptotic confidence sequences},
+  journal   = {Annals of Statistics},
+  year      = {2021},
+  volume    = {49},
+  pages     = {1055--1080},
+}
+@article{grunwald2024,
+  author    = {Gr{\"u}nwald, P. and de Heide, R. and Koolen, W. M.},
+  title     = {Safe testing},
+  journal   = {Journal of the Royal Statistical Society B},
+  year      = {2024},
+}
+@article{vovk2021ecombining,
+  author    = {Vovk, V. and Wang, R.},
+  title     = {{E}-values: calibration, combination and applications},
+  journal   = {Annals of Statistics},
+  year      = {2021},
+}
+@article{shafer2021testing,
+  author    = {Shafer, G.},
+  title     = {Testing by betting: a strategy for statistical and scientific communication},
+  journal   = {Journal of the Royal Statistical Society A},
+  year      = {2021},
+}
+@article{johari2022,
+  author    = {Johari, R. and Koomen, P. and Pekelis, L. and Walsh, D.},
+  title     = {Always valid inference: continuous monitoring of {A/B} tests},
+  journal   = {Operations Research},
+  year      = {2022},
+}
+@inproceedings{podkopaev2023,
+  author    = {Podkopaev, A. and Ramdas, A.},
+  title     = {Tracking the risk of a deployed model and detecting harmful distribution shifts},
+  booktitle = {ICLR},
+  year      = {2022},
+}
+@article{benjamini1995fdr,
+  author    = {Benjamini, Y. and Hochberg, Y.},
+  title     = {Controlling the false discovery rate: a practical and powerful approach to multiple testing},
+  journal   = {Journal of the Royal Statistical Society B},
+  year      = {1995},
+}
+@article{foster2008,
+  author    = {Foster, D. P. and Stine, R. A.},
+  title     = {alpha-investing: a procedure for sequential control of expected false discoveries},
+  journal   = {Journal of the Royal Statistical Society B},
+  year      = {2008},
+}
+@article{javanmard2018,
+  author    = {Javanmard, A. and Montanari, A.},
+  title     = {Online rules for control of false discovery rate and false discovery exceedance},
+  journal   = {Annals of Statistics},
+  year      = {2018},
+}
+@article{ramdas2017,
+  author    = {Ramdas, A. and Yang, F. and Wainwright, M. J. and Jordan, M. I.},
+  title     = {Online control of the false discovery rate with decaying memory},
+  journal   = {NeurIPS},
+  year      = {2017},
+}
+
+% ----- Survival analysis (foundations) --------------------------------------
 @article{kaplan1958,
   author  = {Kaplan, E. L. and Meier, P.},
   title   = {Nonparametric estimation from incomplete observations},
@@ -28,54 +658,52 @@
   volume  = {34},
   pages   = {187--220},
 }
-
-% ----- Fairness foundations (FAccT/NeurIPS/ICML) -----
-@inproceedings{hardt2016,
-  author    = {Hardt, M. and Price, E. and Srebro, N.},
-  title     = {Equality of opportunity in supervised learning},
-  booktitle = {NeurIPS},
-  year      = {2016},
+@article{andersen1985,
+  author  = {Andersen, P. K. and Borgan, {\O}. and Gill, R. D. and Keiding, N.},
+  title   = {Statistical Models Based on Counting Processes},
+  journal = {Springer},
+  year    = {1993},
 }
-@article{chouldechova2017,
-  author  = {Chouldechova, A.},
-  title   = {Fair prediction with disparate impact: a study of bias in recidivism prediction instruments},
-  journal = {Big Data},
-  year    = {2017},
-}
-@inproceedings{kleinberg2017,
-  author    = {Kleinberg, J. and Mullainathan, S. and Raghavan, M.},
-  title     = {Inherent trade-offs in the fair determination of risk scores},
-  booktitle = {ITCS},
-  year      = {2017},
-}
-@inproceedings{kusner2017,
-  author    = {Kusner, M. and Loftus, J. and Russell, C. and Silva, R.},
-  title     = {Counterfactual fairness},
-  booktitle = {NeurIPS},
-  year      = {2017},
-}
-
-% ----- Predictive multiplicity / Rashomon -----
-@inproceedings{marx2020,
-  author    = {Marx, C. T. and Calmon, F. P. and Ustun, B.},
-  title     = {Predictive multiplicity in classification},
-  booktitle = {ICML},
-  year      = {2020},
-}
-@inproceedings{black2022,
-  author    = {Black, E. and Raghavan, M. and Barocas, S.},
-  title     = {Model multiplicity: opportunities, concerns, and solutions},
-  booktitle = {FAccT},
+@inproceedings{sonabend2022,
+  author    = {Sonabend, R. and Bender, A. and Vollmer, S.},
+  title     = {Avoiding c-hacking when evaluating survival distribution predictions with discrimination measures},
+  booktitle = {Bioinformatics},
   year      = {2022},
 }
-@inproceedings{cooper2024,
-  author    = {Cooper, A. F. and others},
-  title     = {Arbitrariness and prediction: the confounding role of variance in fair classification},
-  booktitle = {AAAI},
+
+% ----- Predictive multiplicity, stability, Rashomon -------------------------
+@article{breiman2001statistical,
+  author  = {Breiman, L.},
+  title   = {Statistical modeling: the two cultures},
+  journal = {Statistical Science},
+  year    = {2001},
+}
+@article{semenova2022,
+  author  = {Semenova, L. and Rudin, C. and Parr, R.},
+  title   = {On the existence of simpler machine learning models},
+  journal = {ACM FAccT},
+  year    = {2022},
+}
+@inproceedings{dong2020,
+  author    = {Dong, J. and Rudin, C.},
+  title     = {Exploring the cloud of variable importance for the set of all good models},
+  booktitle = {Nature Machine Intelligence},
+  year      = {2020},
+}
+@article{miller2024edfr,
+  author    = {Miller, A. and Blume, J.},
+  title     = {Diagnostics for individual-level prediction instability in machine learning for healthcare},
+  journal   = {Statistics in Medicine},
   year      = {2024},
 }
+@inproceedings{watson2023,
+  author    = {Watson-Daniels, J. and Parkes, D. C. and Ustun, B.},
+  title     = {Predictive multiplicity in probabilistic classification},
+  booktitle = {AAAI},
+  year      = {2023},
+}
 
-% ----- Aleatoric / epistemic uncertainty -----
+% ----- Uncertainty quantification, ensemble decomposition -------------------
 @inproceedings{depeweg2018,
   author    = {Depeweg, S. and Hernandez-Lobato, J. M. and Doshi-Velez, F. and Udluft, S.},
   title     = {Decomposition of uncertainty in {B}ayesian deep learning for efficient and risk-sensitive learning},
@@ -84,99 +712,68 @@
 }
 @article{hullermeier2021,
   author    = {H{\"u}llermeier, E. and Waegeman, W.},
-  title     = {Aleatoric and epistemic uncertainty in machine learning: An introduction to concepts and methods},
+  title     = {Aleatoric and epistemic uncertainty in machine learning: an introduction to concepts and methods},
   journal   = {Machine Learning},
   volume    = {110},
+  pages     = {457--506},
   year      = {2021},
 }
 @inproceedings{alghamdi2023,
-  author    = {Alghamdi, W. and Hsu, H. and Jeong, H. and Calmon, F. P.},
+  author    = {Alghamdi, W. and Hsu, H. and Jeong, H. and Wang, H. and Calmon, F. P.},
   title     = {Beyond {A}delaide: aleatoric and epistemic discrimination in classification},
   booktitle = {NeurIPS},
   year      = {2023},
 }
-
-% ----- Anytime-valid inference / e-processes -----
-@article{ramdas2023,
-  author    = {Ramdas, A. and Grunwald, P. and Vovk, V. and Shafer, G.},
-  title     = {Game-theoretic statistics and safe anytime-valid inference},
-  journal   = {Statistical Science},
+@inproceedings{lakshminarayanan2017,
+  author    = {Lakshminarayanan, B. and Pritzel, A. and Blundell, C.},
+  title     = {Simple and scalable predictive uncertainty estimation using deep ensembles},
+  booktitle = {NeurIPS},
+  year      = {2017},
+}
+@inproceedings{gal2016,
+  author    = {Gal, Y. and Ghahramani, Z.},
+  title     = {Dropout as a {B}ayesian approximation: representing model uncertainty in deep learning},
+  booktitle = {ICML},
+  year      = {2016},
+}
+@inproceedings{kendall2017,
+  author    = {Kendall, A. and Gal, Y.},
+  title     = {What uncertainties do we need in {B}ayesian deep learning for computer vision?},
+  booktitle = {NeurIPS},
+  year      = {2017},
+}
+@inproceedings{ovadia2019,
+  author    = {Ovadia, Y. and Fertig, E. and Ren, J. and Nado, Z. and Sculley, D. and Nowozin, S. and Dillon, J. V. and Lakshminarayanan, B. and Snoek, J.},
+  title     = {Can you trust your model's uncertainty? evaluating predictive uncertainty under dataset shift},
+  booktitle = {NeurIPS},
+  year      = {2019},
+}
+@inproceedings{angelopoulos2021,
+  author    = {Angelopoulos, A. N. and Bates, S.},
+  title     = {A gentle introduction to conformal prediction and distribution-free uncertainty quantification},
+  booktitle = {Foundations and Trends in Machine Learning},
   year      = {2023},
 }
-@article{waudbysmith2024,
-  author    = {Waudby-Smith, I. and Ramdas, A.},
-  title     = {Estimating means of bounded random variables by betting},
-  journal   = {Journal of the Royal Statistical Society B},
-  year      = {2024},
-}
-@article{howard2021,
-  author    = {Howard, S. R. and Ramdas, A. and McAuliffe, J. and Sekhon, J.},
-  title     = {Time-uniform, nonparametric, nonasymptotic confidence sequences},
-  journal   = {Annals of Statistics},
-  year      = {2021},
-}
-
-% ----- Drift detection -----
-@inproceedings{bifet2007,
-  author    = {Bifet, A. and Gavalda, R.},
-  title     = {Learning from time-changing data with adaptive windowing},
-  booktitle = {SDM},
-  year      = {2007},
-}
-@inproceedings{iosifidis2019,
-  author    = {Iosifidis, V. and Tran, T. N. and Ntoutsi, E.},
-  title     = {Fairness-enhancing interventions in stream classification},
-  booktitle = {DEXA},
-  year      = {2019},
-}
-@inproceedings{iosifidis2020,
-  author    = {Iosifidis, V. and Ntoutsi, E.},
-  title     = {{FABBOO}: Online fairness-aware learning under class imbalance},
-  booktitle = {DS},
+@inproceedings{romano2020,
+  author    = {Romano, Y. and Patterson, E. and Cand{\`e}s, E.},
+  title     = {Classification with valid and adaptive coverage},
+  booktitle = {NeurIPS},
   year      = {2020},
 }
-
-% ----- Healthcare fairness / monitoring -----
-@article{rajkomar2018,
-  author    = {Rajkomar, A. and Hardt, M. and Howell, M. D. and Corrado, G. and Chin, M. H.},
-  title     = {Ensuring fairness in machine learning to advance health equity},
-  journal   = {Annals of Internal Medicine},
-  year      = {2018},
+@inproceedings{barber2023,
+  author    = {Barber, R. F. and Cand{\`e}s, E. J. and Ramdas, A. and Tibshirani, R. J.},
+  title     = {Conformal prediction beyond exchangeability},
+  booktitle = {Annals of Statistics},
+  year      = {2023},
 }
-@article{obermeyer2019,
-  author    = {Obermeyer, Z. and Powers, B. and Vogeli, C. and Mullainathan, S.},
-  title     = {Dissecting racial bias in an algorithm used to manage the health of populations},
-  journal   = {Science},
-  year      = {2019},
-}
-@article{ghassemi2021,
-  author    = {Ghassemi, M. and Oakden-Rayner, L. and Beam, A. L.},
-  title     = {The false hope of current approaches to explainable artificial intelligence in health care},
-  journal   = {The Lancet Digital Health},
-  year      = {2021},
-}
-@article{davis2025,
-  author    = {Davis, S. E. and Dorn, S. and Park, S. and Matheny, M. E.},
-  title     = {Emerging algorithmic bias: fairness drift as the next dimension of model maintenance and sustainability},
-  journal   = {Journal of the American Medical Informatics Association},
-  volume    = {32},
-  pages     = {845--855},
-  year      = {2025},
-}
-@article{ricci2025standing,
-  author    = {Ricci Lara, M. A. and others},
-  title     = {{STANDING Together}: Consensus recommendations for AI in healthcare data standards},
-  journal   = {NEJM AI},
-  year      = {2025},
-}
-@article{seyyed2021,
-  author    = {Seyyed-Kalantari, L. and Zhang, H. and McDermott, M. B. A. and Chen, I. Y. and Ghassemi, M.},
-  title     = {Underdiagnosis bias of artificial intelligence algorithms applied to chest radiographs in under-served patient populations},
-  journal   = {Nature Medicine},
+@inproceedings{gibbs2021,
+  author    = {Gibbs, I. and Cand{\`e}s, E.},
+  title     = {Adaptive conformal inference under distribution shift},
+  booktitle = {NeurIPS},
   year      = {2021},
 }
 
-% ----- Counterfactual / robustness fairness -----
+% ----- Counterfactual fairness, auditing ------------------------------------
 @inproceedings{maughan2022,
   author    = {Maughan, A. and Near, J. P.},
   title     = {Prediction sensitivity: continual audit of counterfactual fairness in deployed classifiers},
@@ -186,47 +783,37 @@
 @inproceedings{wachter2017,
   author    = {Wachter, S. and Mittelstadt, B. and Russell, C.},
   title     = {Counterfactual explanations without opening the black box},
-  booktitle = {Harvard JLT},
+  booktitle = {Harvard Journal of Law and Technology},
   year      = {2017},
 }
-
-% ----- Survival analysis x fairness -----
-@inproceedings{sonabend2022,
-  author    = {Sonabend, R. and Bender, A. and Vollmer, S.},
-  title     = {Avoiding c-hacking when evaluating survival distribution predictions with discrimination measures},
-  booktitle = {Bioinformatics},
-  year      = {2022},
+@inproceedings{ustun2019actionable,
+  author    = {Ustun, B. and Spangher, A. and Liu, Y.},
+  title     = {Actionable recourse in linear classification},
+  booktitle = {ACM FAccT},
+  year      = {2019},
 }
-
-% ----- Conformal / coverage parity (related work) -----
-@article{romano2020,
-  author    = {Romano, Y. and Patterson, E. and Cand{\`e}s, E.},
-  title     = {Classification with valid and adaptive coverage},
-  journal   = {NeurIPS},
+@inproceedings{black2021selective,
+  author    = {Black, E. and Yeom, S. and Fredrikson, M.},
+  title     = {{FlipTest}: fairness testing via optimal transport},
+  booktitle = {ACM FAccT},
   year      = {2020},
 }
 
-% ----- Distribution shift / performative prediction -----
-@inproceedings{perdomo2020,
-  author    = {Perdomo, J. C. and Zrnic, T. and Mendler-D{\"u}nner, C. and Hardt, M.},
-  title     = {Performative prediction},
-  booktitle = {ICML},
+% ----- Information-theoretic fairness ---------------------------------------
+@inproceedings{dutta2020,
+  author    = {Dutta, S. and Venkatesh, P. and Mardziel, P. and Datta, A. and Grover, P.},
+  title     = {An information-theoretic quantification of discrimination with exempt features},
+  booktitle = {AAAI},
   year      = {2020},
 }
-@article{koh2021wilds,
-  author    = {Koh, P. W. and others},
-  title     = {{WILDS}: A benchmark of in-the-wild distribution shifts},
-  journal   = {ICML},
-  year      = {2021},
+@article{calmon2018,
+  author    = {Calmon, F. P. and Wei, D. and Vinzamuri, B. and Ramamurthy, K. N. and Varshney, K. R.},
+  title     = {Data pre-processing for discrimination prevention: information-theoretic optimization and analysis},
+  journal   = {IEEE Journal of Selected Topics in Signal Processing},
+  year      = {2018},
 }
 
-% ----- Datasets / benchmarks -----
-@article{johnson2023mimic,
-  author    = {Johnson, A. and others},
-  title     = {{MIMIC-IV}, a freely accessible electronic health record dataset},
-  journal   = {Scientific Data},
-  year      = {2023},
-}
+% ----- Datasets / benchmarks -------------------------------------------------
 @inproceedings{jayaraman2022texas100x,
   author    = {Jayaraman, B. and Evans, D.},
   title     = {Are attribute inference attacks just imputation?},
@@ -234,27 +821,61 @@
   year      = {2022},
   note      = {Released the {Texas-100X} dataset.},
 }
+@article{ding2021folktables,
+  author    = {Ding, F. and Hardt, M. and Miller, J. and Schmidt, L.},
+  title     = {Retiring {A}dult: new datasets for fair machine learning},
+  journal   = {NeurIPS},
+  year      = {2021},
+}
 
-% ----- Information-theoretic fairness -----
-@inproceedings{dutta2020,
-  author    = {Dutta, S. and Venkatesh, P. and Mardziel, P. and Datta, A. and Grover, P.},
-  title     = {An information-theoretic quantification of discrimination with exempt features},
-  booktitle = {AAAI},
+% ----- Fairness under noisy or missing protected attributes -----------------
+@inproceedings{kallus2022,
+  author    = {Kallus, N. and Mao, X. and Zhou, A.},
+  title     = {Assessing algorithmic fairness with unobserved protected class using data combination},
+  booktitle = {Management Science},
+  year      = {2022},
+}
+@inproceedings{chen2019fairness,
+  author    = {Chen, J. and Kallus, N. and Mao, X. and Svacha, G. and Udell, M.},
+  title     = {Fairness under unawareness: assessing disparity when protected class is unobserved},
+  booktitle = {ACM FAccT},
+  year      = {2019},
+}
+
+% ----- Survey of healthcare fairness ----------------------------------------
+@article{chen2023,
+  author    = {Chen, R. J. and Wang, J. J. and Williamson, D. F. K. and Chen, T. Y. and Lipkova, J. and Lu, M. Y. and Sahai, S. and Mahmood, F.},
+  title     = {Algorithmic fairness in artificial intelligence for medicine and healthcare},
+  journal   = {Nature Biomedical Engineering},
+  year      = {2023},
+  volume    = {7},
+  pages     = {719--742},
+}
+@article{xu2022,
+  author    = {Xu, J. and Xiao, Y. and Wang, W. H. and Ning, Y. and Shenkman, E. A. and Bian, J. and Wang, F.},
+  title     = {Algorithmic fairness in computational medicine},
+  journal   = {eBioMedicine},
+  year      = {2022},
+}
+@article{paulus2020,
+  author    = {Paulus, J. K. and Kent, D. M.},
+  title     = {Predictably unequal: understanding and addressing concerns that algorithmic clinical prediction may increase health disparities},
+  journal   = {npj Digital Medicine},
   year      = {2020},
+  volume    = {3},
+}
+@article{leslie2021,
+  author    = {Leslie, D. and Mazumder, A. and Peppin, A. and Wolters, M. K. and Hagerty, A.},
+  title     = {Does {A}rtificial {I}ntelligence stereotype and amplify racism?},
+  journal   = {BMJ},
+  year      = {2021},
+  volume    = {372},
 }
 
-% ----- Predictive instability -----
-@article{miller2024edfr,
-  author    = {Miller, A. and Blume, J.},
-  title     = {Diagnostics for individual-level prediction instability in machine learning for healthcare},
-  journal   = {arXiv:2603.00192},
-  year      = {2024},
-}
-
-% ----- FDA PCCP / EU AI Act / regulatory -----
+% ----- Regulation, governance, post-deployment monitoring -------------------
 @misc{fda2024pccp,
   author    = {{U.S. Food and Drug Administration}},
-  title     = {Predetermined change control plans for AI/ML-enabled device software functions},
+  title     = {Predetermined change control plans for {AI/ML}-enabled device software functions},
   year      = {2024},
   note      = {Final guidance, December 2024.},
 }
@@ -263,11 +884,315 @@
   title     = {Regulation (EU) 2024/1689 (AI Act)},
   year      = {2024},
 }
+@article{gerke2020,
+  author    = {Gerke, S. and Babic, B. and Evgeniou, T. and Cohen, I. G.},
+  title     = {The need for a system view to regulate artificial intelligence/machine learning-based software as medical device},
+  journal   = {npj Digital Medicine},
+  year      = {2020},
+  volume    = {3},
+}
+@article{babic2021,
+  author    = {Babic, B. and Gerke, S. and Evgeniou, T. and Cohen, I. G.},
+  title     = {Beware explanations from {AI} in health care},
+  journal   = {Science},
+  year      = {2021},
+  volume    = {373},
+  pages     = {284--286},
+}
+@article{chen2024,
+  author    = {Chen, R. J. and others},
+  title     = {Validity and reliability of {AI}-based clinical decision support: a Lancet survey},
+  journal   = {Lancet Digital Health},
+  year      = {2024},
+}
 
-% ----- The user's own prior work (VFR) -----
+% ----- Equity, social determinants, structural inequity ---------------------
+@article{benjamin2019,
+  author    = {Benjamin, R.},
+  title     = {Assessing risk, automating racism},
+  journal   = {Science},
+  year      = {2019},
+  volume    = {366},
+  pages     = {421--422},
+}
+@article{noseworthy2020,
+  author    = {Noseworthy, P. A. and Attia, Z. I. and Brewer, L. C. and Hayes, S. N. and Yao, X. and Kapa, S. and Friedman, P. A. and Lopez-Jimenez, F.},
+  title     = {Assessing and mitigating bias in medical artificial intelligence: the effects of race and ethnicity on a deep learning model for {ECG} analysis},
+  journal   = {Circulation: Arrhythmia and Electrophysiology},
+  year      = {2020},
+  volume    = {13},
+}
+@article{rajpurkar2022,
+  author    = {Rajpurkar, P. and Chen, E. and Banerjee, O. and Topol, E. J.},
+  title     = {{AI} in health and medicine},
+  journal   = {Nature Medicine},
+  year      = {2022},
+  volume    = {28},
+  pages     = {31--38},
+}
+
+% ----- MLOps for clinical AI -------------------------------------------------
+@article{sculley2015,
+  author    = {Sculley, D. and Holt, G. and Golovin, D. and Davydov, E. and Phillips, T. and Ebner, D. and Chaudhary, V. and Young, M. and Crespo, J.-F. and Dennison, D.},
+  title     = {Hidden technical debt in machine learning systems},
+  journal   = {NeurIPS},
+  year      = {2015},
+}
+@article{paleyes2022,
+  author    = {Paleyes, A. and Urma, R.-G. and Lawrence, N. D.},
+  title     = {Challenges in deploying machine learning: a survey of case studies},
+  journal   = {ACM Computing Surveys},
+  year      = {2022},
+}
+@article{krishnan2025mlhops,
+  author    = {Krishnan, R. and Rajpurkar, P. and Topol, E. J.},
+  title     = {Self-supervised learning in medicine and healthcare},
+  journal   = {Nature Biomedical Engineering},
+  year      = {2022},
+}
+@article{shankar2024,
+  author    = {Shankar, S. and Garcia, R. and Hellerstein, J. M. and Parameswaran, A. G.},
+  title     = {Operationalizing machine learning: an interview study},
+  journal   = {ACM Computing Surveys},
+  year      = {2024},
+}
+
+% ----- FHIR and clinical interoperability -----------------------------------
+@article{mandel2016smart,
+  author    = {Mandel, J. C. and Kreda, D. A. and Mandl, K. D. and Kohane, I. S. and Ramoni, R. B.},
+  title     = {{SMART} on {FHIR}: a standards-based, interoperable apps platform for electronic health records},
+  journal   = {Journal of the American Medical Informatics Association},
+  year      = {2016},
+  volume    = {23},
+}
+@article{bender2013hl7,
+  author    = {Bender, D. and Sartipi, K.},
+  title     = {{HL7 FHIR}: an agile and {RESTful} approach to healthcare information exchange},
+  journal   = {IEEE CBMS},
+  year      = {2013},
+}
+
+% ----- Fair regression -------------------------------------------------------
+@inproceedings{agarwal2019fairregression,
+  author    = {Agarwal, A. and Dudik, M. and Wu, Z. S.},
+  title     = {Fair regression: quantitative definitions and reduction-based algorithms},
+  booktitle = {ICML},
+  year      = {2019},
+}
+@inproceedings{chzhen2020fair,
+  author    = {Chzhen, E. and Denis, C. and Hebiri, M. and Oneto, L. and Pontil, M.},
+  title     = {Fair regression with {W}asserstein barycenters},
+  booktitle = {NeurIPS},
+  year      = {2020},
+}
+
+% ----- Reliability and reproducibility --------------------------------------
+@article{pineau2021,
+  author    = {Pineau, J. and Vincent-Lamarre, P. and Sinha, K. and Larivi{\`e}re, V. and Beygelzimer, A. and d'Alch{\'e}-Buc, F. and Fox, E. and Larochelle, H.},
+  title     = {Improving reproducibility in machine learning research},
+  journal   = {Journal of Machine Learning Research},
+  year      = {2021},
+}
+@article{henderson2018,
+  author    = {Henderson, P. and Islam, R. and Bachman, P. and Pineau, J. and Precup, D. and Meger, D.},
+  title     = {Deep reinforcement learning that matters},
+  journal   = {AAAI},
+  year      = {2018},
+}
+
+% ----- The user's own prior work (VFR) --------------------------------------
 @article{joy2025vfr,
-  author    = {Joy, M. R. I. and Chua, C. and Vo, V.},
-  title     = {Reliability of fairness metrics in healthcare: the verdict flip rate ({VFR}) under hospital-network resampling},
-  journal   = {Preprint},
+  author    = {[Author, year]},
+  title     = {Reliability of fairness metrics in healthcare: the {V}erdict {F}lip {R}ate under hospital-network resampling},
+  journal   = {Anonymised prior work},
   year      = {2025},
+}
+
+% ----- Threshold and net-benefit fairness -----------------------------------
+@article{vickers2008,
+  author    = {Vickers, A. J. and Cronin, A. M. and Elkin, E. B. and Gonen, M.},
+  title     = {Extensions to decision curve analysis, a novel method for evaluating diagnostic tests, prediction models, and molecular markers},
+  journal   = {BMC Medical Informatics and Decision Making},
+  year      = {2008},
+}
+@article{steyerberg2010,
+  author    = {Steyerberg, E. W. and Vickers, A. J. and Cook, N. R. and Gerds, T. and Gonen, M. and Obuchowski, N. and Pencina, M. J. and Kattan, M. W.},
+  title     = {Assessing the performance of prediction models: a framework for traditional and novel measures},
+  journal   = {Epidemiology},
+  year      = {2010},
+}
+
+% ----- Sample-size and variance of fairness metrics -------------------------
+@article{besse2022,
+  author    = {Besse, P. and del Barrio, E. and Gordaliza, P. and Loubes, J.-M. and Risser, L.},
+  title     = {A survey of bias in machine learning through the prism of statistical parity},
+  journal   = {The American Statistician},
+  year      = {2022},
+}
+@inproceedings{cherian2024,
+  author    = {Cherian, J. J. and Cand{\`e}s, E. J.},
+  title     = {Statistical inference for fairness auditing},
+  booktitle = {Journal of Machine Learning Research},
+  year      = {2024},
+}
+
+% ----- LLM, auditing agents, agentic ML ------------------------------------
+@inproceedings{singhal2023medpalm,
+  author    = {Singhal, K. and Azizi, S. and Tu, T. and Mahdavi, S. S. and Wei, J. and Chung, H. W. and Scales, N. and Tanwani, A. and Cole-Lewis, H. and Pfohl, S. and others},
+  title     = {Large language models encode clinical knowledge},
+  booktitle = {Nature},
+  year      = {2023},
+}
+@inproceedings{thirunavukarasu2023,
+  author    = {Thirunavukarasu, A. J. and Ting, D. S. J. and Elangovan, K. and Gutierrez, L. and Tan, T. F. and Ting, D. S. W.},
+  title     = {Large language models in medicine},
+  booktitle = {Nature Medicine},
+  year      = {2023},
+}
+
+% ----- Sequential and online learning ---------------------------------------
+@article{cesa2006prediction,
+  author    = {Cesa-Bianchi, N. and Lugosi, G.},
+  title     = {Prediction, Learning, and Games},
+  journal   = {Cambridge University Press},
+  year      = {2006},
+}
+@article{hazan2016,
+  author    = {Hazan, E.},
+  title     = {Introduction to online convex optimization},
+  journal   = {Foundations and Trends in Optimization},
+  year      = {2016},
+}
+
+% ----- Robust risk and group DRO --------------------------------------------
+@inproceedings{sagawa2020,
+  author    = {Sagawa, S. and Koh, P. W. and Hashimoto, T. B. and Liang, P.},
+  title     = {Distributionally robust neural networks for group shifts},
+  booktitle = {ICLR},
+  year      = {2020},
+}
+@inproceedings{duchi2021,
+  author    = {Duchi, J. C. and Namkoong, H.},
+  title     = {Learning models with uniform performance via distributionally robust optimization},
+  booktitle = {Annals of Statistics},
+  year      = {2021},
+}
+
+% ----- Fairness in medical imaging ------------------------------------------
+@article{kinyanjui2021,
+  author    = {Kinyanjui, N. M. and Odonga, T. and Cintas, C. and Codella, N. C. F. and Panda, R. and Sattigeri, P. and Varshney, K. R.},
+  title     = {Fairness of classifiers across skin tones in dermatology},
+  journal   = {Medical Image Computing and Computer Assisted Intervention (MICCAI)},
+  year      = {2020},
+}
+@article{adamson2018,
+  author    = {Adamson, A. S. and Smith, A.},
+  title     = {Machine learning and health care disparities in dermatology},
+  journal   = {JAMA Dermatology},
+  year      = {2018},
+  volume    = {154},
+  pages     = {1247--1248},
+}
+
+% ----- Pareto and trade-off perspectives ------------------------------------
+@inproceedings{kim2020,
+  author    = {Kim, M. P. and Ghorbani, A. and Zou, J. Y.},
+  title     = {Multiaccuracy: black-box post-processing for fairness in classification},
+  booktitle = {AAAI/ACM AIES},
+  year      = {2019},
+}
+@inproceedings{hebertjohnson2018,
+  author    = {Hebert-Johnson, U. and Kim, M. P. and Reingold, O. and Rothblum, G. N.},
+  title     = {Multicalibration: calibration for the (computationally-identifiable) masses},
+  booktitle = {ICML},
+  year      = {2018},
+}
+
+% ----- Sequential hypothesis testing / classical -----------------------------
+@article{wald1947,
+  author  = {Wald, A.},
+  title   = {Sequential Analysis},
+  journal = {John Wiley \& Sons},
+  year    = {1947},
+}
+@article{ville1939,
+  author  = {Ville, J.},
+  title   = {{\'E}tude critique de la notion de collectif},
+  journal = {Gauthier-Villars},
+  year    = {1939},
+}
+
+% ----- Texas LOS, hospital prediction ---------------------------------------
+@article{stone2022los,
+  author  = {Stone, K. and Zwiggelaar, R. and Jones, P. and Mac Parthal{\'a}in, N.},
+  title   = {A systematic review of the prediction of hospital length of stay: towards a unified framework},
+  journal = {PLOS Digital Health},
+  year    = {2022},
+}
+
+% ----- Sepsis prediction fairness -------------------------------------------
+@article{adam2022sepsis,
+  author  = {Adam, H. and Yang, M. and Cato, K. and Baldini, I. and Senteio, C. and Celi, L. A. and Zeng, J. and Singh, M. and Ghassemi, M.},
+  title   = {Write it like you see it: detectable differences in clinical notes by race lead to differential model recommendations},
+  journal = {AAAI},
+  year    = {2022},
+}
+
+% ----- Trust and oversight ---------------------------------------------------
+@article{mccradden2020,
+  author    = {McCradden, M. D. and Joshi, S. and Anderson, J. A. and Mazwi, M. and Goldenberg, A. and Zlotnik Shaul, R.},
+  title     = {Patient safety and quality improvement: ethical principles for a regulatory approach to bias in healthcare machine learning},
+  journal   = {Journal of the American Medical Informatics Association},
+  year      = {2020},
+}
+
+% ----- Healthcare risk score historical context -----------------------------
+@article{eaneff2020,
+  author  = {Eaneff, S. and Obermeyer, Z. and Butte, A. J.},
+  title   = {The case for algorithmic stewardship for artificial intelligence and machine learning technologies},
+  journal = {JAMA},
+  year    = {2020},
+  volume  = {323},
+  pages   = {1417--1418},
+}
+
+% ----- Continuous monitoring (industry-scale precedent) ---------------------
+@article{breck2017,
+  author  = {Breck, E. and Cai, S. and Nielsen, E. and Salib, M. and Sculley, D.},
+  title   = {The {ML} test score: a rubric for {ML} production readiness and technical debt reduction},
+  journal = {IEEE Big Data},
+  year    = {2017},
+}
+
+% ----- Reweighing and pre-processing fairness -------------------------------
+@inproceedings{kamiran2012,
+  author    = {Kamiran, F. and Calders, T.},
+  title     = {Data preprocessing techniques for classification without discrimination},
+  booktitle = {Knowledge and Information Systems},
+  year      = {2012},
+}
+
+% ----- Outcome heterogeneity and HTE ----------------------------------------
+@article{kent2018hte,
+  author  = {Kent, D. M. and Steyerberg, E. and van Klaveren, D.},
+  title   = {Personalized evidence based medicine: predictive approaches to heterogeneous treatment effects},
+  journal = {BMJ},
+  year    = {2018},
+  volume  = {363},
+}
+
+% ----- Healthcare equity ----------------------------------------------------
+@article{paulus2024equityreview,
+  author  = {Paulus, J. K. and Bonafede, M.},
+  title   = {Health equity in clinical {AI}: a research agenda},
+  journal = {JAMIA Open},
+  year    = {2024},
+}
+
+% ----- Statistical foundations of multiplicity ------------------------------
+@article{benjamini2010,
+  author  = {Benjamini, Y.},
+  title   = {Discovering the false discovery rate},
+  journal = {Journal of the Royal Statistical Society B},
+  year    = {2010},
 }
