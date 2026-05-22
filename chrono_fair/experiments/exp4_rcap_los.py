@@ -76,11 +76,13 @@ def main():
         u_ap = rank_positions(y_cf, ref_white_y)     # counterfactual rank position
         seed = int(np.frombuffer(r.encode()[:4].ljust(4, b'_'),
                                   dtype=np.uint32)[0]) % 2**31
-        w1, lo, hi = rcap_w1_ci(u_a, u_ap, n_boot=1000, alpha=0.05, seed=seed)
+        w1, boot_mean, lo, hi = rcap_w1_ci(u_a, u_ap, n_boot=1000,
+                                             alpha=0.05, seed=seed)
         ci_rows.append({'race': r, 'n': int(len(sub)),
-                         'rcap_W1': float(w1),
-                         'ci_low_95': float(lo),
-                         'ci_high_95': float(hi)})
+                         'plug_in_W1': round(float(w1), 4),
+                         'bootstrap_mean_W1': round(float(boot_mean), 4),
+                         'ci_low_95': round(float(lo), 4),
+                         'ci_high_95': round(float(hi), 4)})
     ci_df = pd.DataFrame(ci_rows)
     ci_df.to_csv(os.path.join(out_dir, 'exp4_rcap_ci.csv'), index=False)
     print('=== RCAP 95% CI (against White) ===')

@@ -93,22 +93,26 @@ def rcap_w1(u_a: np.ndarray, u_aprime: np.ndarray) -> float:
 
 def rcap_w1_ci(u_a: np.ndarray, u_aprime: np.ndarray,
                 n_boot: int = 1000, alpha: float = 0.05,
-                seed: int = 0) -> Tuple[float, float, float]:
-    """Bootstrap (W_1, ci_low, ci_high) for RCAP.
+                seed: int = 0) -> Tuple[float, float, float, float]:
+    """Bootstrap summary for RCAP.
 
-    The two rank-position arrays are resampled with replacement; the W_1
-    distance is recomputed each replicate.
+    Returns (plug_in, boot_mean, ci_low, ci_high). The plug-in is the
+    Wasserstein-1 distance on the observed rank-position arrays. The
+    empirical Wasserstein-1 plug-in is biased upward at small sample size,
+    so the bootstrap mean is reported separately from the plug-in rather
+    than as a symmetric interval around it. The percentile CI is the
+    [alpha/2, 1-alpha/2] interval of the bootstrap distribution.
     """
     point = rcap_w1(u_a, u_aprime)
     if len(u_a) == 0 or len(u_aprime) == 0:
-        return 0.0, 0.0, 0.0
+        return 0.0, 0.0, 0.0, 0.0
     rng = np.random.default_rng(seed)
     boots = np.empty(n_boot)
     for b in range(n_boot):
         ra = rng.choice(u_a, size=len(u_a), replace=True)
         rb = rng.choice(u_aprime, size=len(u_aprime), replace=True)
         boots[b] = rcap_w1(ra, rb)
-    return (point,
+    return (point, float(boots.mean()),
             float(np.quantile(boots, alpha / 2)),
             float(np.quantile(boots, 1 - alpha / 2)))
 

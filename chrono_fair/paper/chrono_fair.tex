@@ -306,7 +306,7 @@ Exp.~6 sensitivity & 12\,000 & 30/$\rho_1$ & onset at $t = 6\,000$; $\rho_1 \in 
 Exp.~7 four-attribute audit & 15\,000 & 1 & no drift; structural racial disparity & log-rank $\chi^2$ across race, ethnicity, sex, age & marginal flip rate \\
 Exp.~8 real Texas-100X VFR & 925\,128 & 1000 boot.\ & real audit (no simulation) & point vs CI vs VFR verdict stability & point estimate; bootstrap CI \\
 Exp.~9 robustness stress tests & 200 to 12\,000 & 100/setting & miscalibration, small cell, label delay & false-alarm rate; detection rate; delay & correctly-calibrated monitor \\
-Exp.~15 temporal/hospital replay & 30\,000; 67\,330 & 1 & quarter drift; hospital case-mix; real record order & alarm; detection delay & ADWIN; static VFR \\
+Exp.~10 temporal/hospital replay & 30\,000; 67\,330 & 1 & quarter drift; hospital case-mix; real record order & alarm; detection delay & ADWIN; static VFR \\
 \bottomrule
 \end{tabular}%
 }
@@ -415,10 +415,27 @@ A stream of $n = 20\,000$ patients was generated with seed 11. A Ridge regressor
 Wasserstein-1 distance between counterfactual rank distributions per group pair, MAE gap against White, and per-patient rank shift histograms.
 
 \textbf{Result.}
-RCAP-against-White, computed as the Wasserstein-1 distance between the factual and counterfactual rank-position distributions with 1\,000 bootstrap resamples per group, was $W_1 = 0.0163$ (95\% CI 0.0088, 0.0336) for Black ($n = 1\,488$), $W_1 = 0.0142$ (95\% CI 0.0117, 0.0425) for Asian/PI ($n = 552$), $W_1 = 0.0066$ (95\% CI 0.0052, 0.0169) for Hispanic ($n = 3\,643$), and $W_1 = 0.0049$ (95\% CI 0.0100, 0.0429) for Other ($n = 499$). The MAE gap against White was 0.0065 days for Black, 0.0062 for Asian/PI, 0.0006 for Hispanic, and 0.0028 for Other. The MAE ordering was Black, Asian/PI, Other, Hispanic. The RCAP ordering was Black, Asian/PI, Hispanic, Other. The two orderings agreed on the leader (Black) but disagreed on the placement of Hispanic and Other. For the Other cell ($n = 499$), the bootstrap CI lies above the point estimate. The empirical Wasserstein-1 plug-in is biased upward for small samples, so for cells near $n = 500$ the RCAP estimate carries a noise floor of roughly 0.01 to 0.04 rank units.
+RCAP-against-White was computed as the Wasserstein-1 distance between the factual and counterfactual rank-position distributions, with 1\,000 bootstrap resamples per group. The empirical Wasserstein-1 plug-in is biased upward at small sample size, so the plug-in estimate, the bootstrap mean, and the percentile interval are reported separately rather than as a symmetric interval around the plug-in. Table~\ref{tab:rcap} gives the four values per group. For Black ($n = 1\,488$) the plug-in $W_1$ was 0.0163, the bootstrap mean was 0.0197, and the 95\% percentile interval was [0.0088, 0.0336]. For Other ($n = 499$) the plug-in was 0.0049, the bootstrap mean was 0.0208, and the interval was [0.0100, 0.0429]; the percentile interval lies above the plug-in because the upward bias of the empirical estimator dominates at $n = 499$. The MAE gap against White was 0.0065 days for Black, 0.0062 for Asian/PI, 0.0006 for Hispanic, and 0.0028 for Other. The MAE ordering was Black, Asian/PI, Other, Hispanic, while the plug-in RCAP ordering was Black, Asian/PI, Hispanic, Other; the two orderings agreed on the leader, Black, but disagreed on the placement of Hispanic and Other.
+
+\begin{table}[t]
+\centering
+\caption{RCAP against the White reference. The plug-in is the Wasserstein-1 distance on the observed rank positions; the bootstrap mean and the 95\% percentile interval come from 1\,000 resamples. The bootstrap mean exceeds the plug-in for every group, which quantifies the upward small-sample bias of the empirical Wasserstein-1 estimator.}
+\label{tab:rcap}
+\small
+\begin{tabular}{l r r r l}
+\toprule
+Group & $n$ & Plug-in $W_1$ & Boot.\ mean & 95\% interval \\
+\midrule
+Black    & 1\,488 & 0.0163 & 0.0197 & [0.0088, 0.0336] \\
+Asian/PI & 552    & 0.0142 & 0.0233 & [0.0117, 0.0425] \\
+Hispanic & 3\,643 & 0.0066 & 0.0099 & [0.0052, 0.0169] \\
+Other    & 499    & 0.0049 & 0.0208 & [0.0100, 0.0429] \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \textbf{Interpretation.}
-The MAE gap measures average error, which a regression model can keep low even while systematically shifting one group's allocation rank. RCAP captures the rank shift directly. The clinical reading is that, under the counterfactual swap, the Black rank-position distribution shifts by 1.63 percentile points from the White-referenced distribution. The 95\% bootstrap CI for the Black cell, 0.88 to 3.36 percentile points, excludes zero. The triage and bed-allocation literature treats predicted LOS as an ordinal allocation signal, so a rank-position shift is the policy-relevant quantity \cite{stone2022los}. The small-sample upward bias of the empirical Wasserstein-1 estimate means RCAP should be read together with the per-cell sample size, and cells near $n = 500$ should be merged or flagged as low-power.
+The MAE gap measures average error, which a regression model can keep low even while systematically shifting one group's allocation rank. RCAP captures the rank shift directly. The clinical reading is that, under the counterfactual swap, the Black rank-position distribution shifts by 1.63 percentile points from the White-referenced distribution on the plug-in estimate, with a 95\% percentile interval of 0.88 to 3.36 percentile points that excludes zero. The triage and bed-allocation literature treats predicted LOS as an ordinal allocation signal, so a rank-position shift is the policy-relevant quantity \cite{stone2022los}. Because the empirical Wasserstein-1 estimator is upward-biased at small $n$, RCAP must be read together with the per-cell sample size, and cells near $n = 500$ such as Other should be merged or flagged as low-power rather than interpreted at face value.
 
 Figures~\ref{fig:rcap_hist} and \ref{fig:rcap_mae} plot the per-patient rank-shift distribution and the RCAP-versus-MAE-gap comparison.
 
