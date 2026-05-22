@@ -1,0 +1,16 @@
+counterfactual,race,n,flip_rate
+naive_swap,White,5703,0.0
+naive_swap,Black,1525,0.0
+naive_swap,Hispanic,3684,0.0
+naive_swap,Asian/PI,632,0.0
+naive_swap,Other,456,0.0
+feature_shift,White,5703,0.0
+feature_shift,Black,1525,0.0859016393442623
+feature_shift,Hispanic,3684,0.07790445168295332
+feature_shift,Asian/PI,632,0.0
+feature_shift,Other,456,0.0
+proxy_adjusted,White,5703,0.0
+proxy_adjusted,Black,1525,0.10426229508196722
+proxy_adjusted,Hispanic,3684,0.10152008686210641
+proxy_adjusted,Asian/PI,632,0.0
+proxy_adjusted,Other,456,0.0

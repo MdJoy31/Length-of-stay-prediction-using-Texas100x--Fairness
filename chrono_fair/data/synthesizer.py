@@ -82,8 +82,12 @@ def generate_stream(cfg: StreamConfig) -> pd.DataFrame:
         + risk
         + 0.5 * rng.standard_normal(cfg.n)
     )
-    # Binary extended-stay target (matches Texas-100X paper's y_ext > 3 days)
-    y_ext = (y_los > 3.0).astype(int)
+    # Binary extended-stay target. The threshold is set to the 55th
+    # percentile of predicted length of stay, so that ~45% of records are
+    # labelled extended stay. This matches the published Texas-100X class
+    # balance (~55% normal, ~45% extended) used by the parent repository.
+    los_threshold = float(np.quantile(y_los, 0.55))
+    y_ext = (y_los > los_threshold).astype(int)
 
     # Aleatoric label bias: flip a fraction of minority-group labels (e.g.,
     # historical undercoding of extended stays for under-served groups).

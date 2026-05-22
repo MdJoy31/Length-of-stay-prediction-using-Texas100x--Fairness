@@ -1,0 +1,6 @@
+ablation,false_alarm_rate_H0,detection_rate_H1,mean_delay_H1
+full,0.0,1.0,889.88
+no_warmup,0.0,1.0,904.88
+no_grow,0.03,0.94,822.563829787234
+no_shrink,0.01,0.96,517.5520833333334
+two_sided,0.0,1.0,913.2

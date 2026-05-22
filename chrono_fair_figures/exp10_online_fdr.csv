@@ -1,0 +1,601 @@
+seed,procedure,FDP,power,n_rejected
+0,Step-wise BH,0.0,1.0,6
+0,e-BH,0.0,1.0,6
+0,Bonferroni,0.0,1.0,6
+1,Step-wise BH,0.0,1.0,6
+1,e-BH,0.0,1.0,6
+1,Bonferroni,0.0,1.0,6
+2,Step-wise BH,0.0,1.0,6
+2,e-BH,0.0,1.0,6
+2,Bonferroni,0.0,1.0,6
+3,Step-wise BH,0.0,1.0,6
+3,e-BH,0.0,1.0,6
+3,Bonferroni,0.0,1.0,6
+4,Step-wise BH,0.0,1.0,6
+4,e-BH,0.0,1.0,6
+4,Bonferroni,0.0,1.0,6
+5,Step-wise BH,0.0,1.0,6
+5,e-BH,0.0,1.0,6
+5,Bonferroni,0.0,1.0,6
+6,Step-wise BH,0.0,1.0,6
+6,e-BH,0.0,1.0,6
+6,Bonferroni,0.0,1.0,6
+7,Step-wise BH,0.0,1.0,6
+7,e-BH,0.0,1.0,6
+7,Bonferroni,0.0,1.0,6
+8,Step-wise BH,0.0,1.0,6
+8,e-BH,0.0,1.0,6
+8,Bonferroni,0.0,1.0,6
+9,Step-wise BH,0.0,1.0,6
+9,e-BH,0.0,1.0,6
+9,Bonferroni,0.0,1.0,6
+10,Step-wise BH,0.0,1.0,6
+10,e-BH,0.0,1.0,6
+10,Bonferroni,0.0,1.0,6
+11,Step-wise BH,0.0,1.0,6
+11,e-BH,0.0,1.0,6
+11,Bonferroni,0.0,1.0,6
+12,Step-wise BH,0.0,1.0,6
+12,e-BH,0.0,1.0,6
+12,Bonferroni,0.0,1.0,6
+13,Step-wise BH,0.0,1.0,6
+13,e-BH,0.0,1.0,6
+13,Bonferroni,0.0,1.0,6
+14,Step-wise BH,0.0,1.0,6
+14,e-BH,0.0,1.0,6
+14,Bonferroni,0.0,1.0,6
+15,Step-wise BH,0.0,1.0,6
+15,e-BH,0.0,1.0,6
+15,Bonferroni,0.0,1.0,6
+16,Step-wise BH,0.0,1.0,6
+16,e-BH,0.0,1.0,6
+16,Bonferroni,0.0,1.0,6
+17,Step-wise BH,0.0,1.0,6
+17,e-BH,0.0,1.0,6
+17,Bonferroni,0.0,1.0,6
+18,Step-wise BH,0.0,1.0,6
+18,e-BH,0.0,1.0,6
+18,Bonferroni,0.0,1.0,6
+19,Step-wise BH,0.0,1.0,6
+19,e-BH,0.0,1.0,6
+19,Bonferroni,0.0,1.0,6
+20,Step-wise BH,0.0,1.0,6
+20,e-BH,0.0,1.0,6
+20,Bonferroni,0.0,1.0,6
+21,Step-wise BH,0.0,1.0,6
+21,e-BH,0.0,1.0,6
+21,Bonferroni,0.0,1.0,6
+22,Step-wise BH,0.0,1.0,6
+22,e-BH,0.0,1.0,6
+22,Bonferroni,0.0,1.0,6
+23,Step-wise BH,0.0,1.0,6
+23,e-BH,0.0,1.0,6
+23,Bonferroni,0.0,1.0,6
+24,Step-wise BH,0.0,1.0,6
+24,e-BH,0.0,1.0,6
+24,Bonferroni,0.0,1.0,6
+25,Step-wise BH,0.0,1.0,6
+25,e-BH,0.0,1.0,6
+25,Bonferroni,0.0,1.0,6
+26,Step-wise BH,0.0,1.0,6
+26,e-BH,0.0,1.0,6
+26,Bonferroni,0.0,1.0,6
+27,Step-wise BH,0.0,1.0,6
+27,e-BH,0.0,1.0,6
+27,Bonferroni,0.0,1.0,6
+28,Step-wise BH,0.0,1.0,6
+28,e-BH,0.0,1.0,6
+28,Bonferroni,0.0,1.0,6
+29,Step-wise BH,0.0,1.0,6
+29,e-BH,0.0,1.0,6
+29,Bonferroni,0.0,1.0,6
+30,Step-wise BH,0.0,1.0,6
+30,e-BH,0.0,1.0,6
+30,Bonferroni,0.0,1.0,6
+31,Step-wise BH,0.0,1.0,6
+31,e-BH,0.0,1.0,6
+31,Bonferroni,0.0,1.0,6
+32,Step-wise BH,0.0,1.0,6
+32,e-BH,0.0,1.0,6
+32,Bonferroni,0.0,1.0,6
+33,Step-wise BH,0.0,1.0,6
+33,e-BH,0.0,1.0,6
+33,Bonferroni,0.0,1.0,6
+34,Step-wise BH,0.0,1.0,6
+34,e-BH,0.0,1.0,6
+34,Bonferroni,0.0,1.0,6
+35,Step-wise BH,0.0,1.0,6
+35,e-BH,0.0,1.0,6
+35,Bonferroni,0.0,1.0,6
+36,Step-wise BH,0.0,1.0,6
+36,e-BH,0.0,1.0,6
+36,Bonferroni,0.0,1.0,6
+37,Step-wise BH,0.0,1.0,6
+37,e-BH,0.0,1.0,6
+37,Bonferroni,0.0,1.0,6
+38,Step-wise BH,0.0,1.0,6
+38,e-BH,0.0,1.0,6
+38,Bonferroni,0.0,1.0,6
+39,Step-wise BH,0.0,1.0,6
+39,e-BH,0.0,1.0,6
+39,Bonferroni,0.0,1.0,6
+40,Step-wise BH,0.0,1.0,6
+40,e-BH,0.0,1.0,6
+40,Bonferroni,0.0,1.0,6
+41,Step-wise BH,0.0,1.0,6
+41,e-BH,0.0,1.0,6
+41,Bonferroni,0.0,1.0,6
+42,Step-wise BH,0.0,1.0,6
+42,e-BH,0.0,1.0,6
+42,Bonferroni,0.0,1.0,6
+43,Step-wise BH,0.0,1.0,6
+43,e-BH,0.0,1.0,6
+43,Bonferroni,0.0,1.0,6
+44,Step-wise BH,0.0,1.0,6
+44,e-BH,0.0,1.0,6
+44,Bonferroni,0.0,1.0,6
+45,Step-wise BH,0.0,1.0,6
+45,e-BH,0.0,1.0,6
+45,Bonferroni,0.0,1.0,6
+46,Step-wise BH,0.0,1.0,6
+46,e-BH,0.0,1.0,6
+46,Bonferroni,0.0,1.0,6
+47,Step-wise BH,0.0,1.0,6
+47,e-BH,0.0,1.0,6
+47,Bonferroni,0.0,1.0,6
+48,Step-wise BH,0.0,1.0,6
+48,e-BH,0.0,1.0,6
+48,Bonferroni,0.0,1.0,6
+49,Step-wise BH,0.0,1.0,6
+49,e-BH,0.0,1.0,6
+49,Bonferroni,0.0,1.0,6
+50,Step-wise BH,0.0,1.0,6
+50,e-BH,0.0,1.0,6
+50,Bonferroni,0.0,1.0,6
+51,Step-wise BH,0.0,1.0,6
+51,e-BH,0.0,1.0,6
+51,Bonferroni,0.0,1.0,6
+52,Step-wise BH,0.0,1.0,6
+52,e-BH,0.0,1.0,6
+52,Bonferroni,0.0,1.0,6
+53,Step-wise BH,0.0,1.0,6
+53,e-BH,0.0,1.0,6
+53,Bonferroni,0.0,1.0,6
+54,Step-wise BH,0.0,1.0,6
+54,e-BH,0.0,1.0,6
+54,Bonferroni,0.0,1.0,6
+55,Step-wise BH,0.0,1.0,6
+55,e-BH,0.0,1.0,6
+55,Bonferroni,0.0,1.0,6
+56,Step-wise BH,0.0,1.0,6
+56,e-BH,0.0,1.0,6
+56,Bonferroni,0.0,1.0,6
+57,Step-wise BH,0.0,1.0,6
+57,e-BH,0.0,1.0,6
+57,Bonferroni,0.0,1.0,6
+58,Step-wise BH,0.0,1.0,6
+58,e-BH,0.0,1.0,6
+58,Bonferroni,0.0,1.0,6
+59,Step-wise BH,0.0,1.0,6
+59,e-BH,0.0,1.0,6
+59,Bonferroni,0.0,1.0,6
+60,Step-wise BH,0.0,1.0,6
+60,e-BH,0.0,1.0,6
+60,Bonferroni,0.0,1.0,6
+61,Step-wise BH,0.0,1.0,6
+61,e-BH,0.0,1.0,6
+61,Bonferroni,0.0,1.0,6
+62,Step-wise BH,0.0,1.0,6
+62,e-BH,0.0,1.0,6
+62,Bonferroni,0.0,1.0,6
+63,Step-wise BH,0.0,1.0,6
+63,e-BH,0.0,1.0,6
+63,Bonferroni,0.0,1.0,6
+64,Step-wise BH,0.0,1.0,6
+64,e-BH,0.0,1.0,6
+64,Bonferroni,0.0,1.0,6
+65,Step-wise BH,0.0,1.0,6
+65,e-BH,0.0,1.0,6
+65,Bonferroni,0.0,1.0,6
+66,Step-wise BH,0.0,1.0,6
+66,e-BH,0.0,1.0,6
+66,Bonferroni,0.0,1.0,6
+67,Step-wise BH,0.0,1.0,6
+67,e-BH,0.0,1.0,6
+67,Bonferroni,0.0,1.0,6
+68,Step-wise BH,0.0,1.0,6
+68,e-BH,0.0,1.0,6
+68,Bonferroni,0.0,1.0,6
+69,Step-wise BH,0.0,1.0,6
+69,e-BH,0.0,1.0,6
+69,Bonferroni,0.0,1.0,6
+70,Step-wise BH,0.0,1.0,6
+70,e-BH,0.0,1.0,6
+70,Bonferroni,0.0,1.0,6
+71,Step-wise BH,0.0,1.0,6
+71,e-BH,0.0,1.0,6
+71,Bonferroni,0.0,1.0,6
+72,Step-wise BH,0.0,1.0,6
+72,e-BH,0.0,1.0,6
+72,Bonferroni,0.0,1.0,6
+73,Step-wise BH,0.0,1.0,6
+73,e-BH,0.0,1.0,6
+73,Bonferroni,0.0,1.0,6
+74,Step-wise BH,0.0,1.0,6
+74,e-BH,0.0,1.0,6
+74,Bonferroni,0.0,1.0,6
+75,Step-wise BH,0.0,1.0,6
+75,e-BH,0.0,1.0,6
+75,Bonferroni,0.0,1.0,6
+76,Step-wise BH,0.0,1.0,6
+76,e-BH,0.0,1.0,6
+76,Bonferroni,0.0,1.0,6
+77,Step-wise BH,0.0,1.0,6
+77,e-BH,0.0,1.0,6
+77,Bonferroni,0.0,1.0,6
+78,Step-wise BH,0.0,1.0,6
+78,e-BH,0.0,1.0,6
+78,Bonferroni,0.0,1.0,6
+79,Step-wise BH,0.0,1.0,6
+79,e-BH,0.0,1.0,6
+79,Bonferroni,0.0,1.0,6
+80,Step-wise BH,0.0,1.0,6
+80,e-BH,0.0,1.0,6
+80,Bonferroni,0.0,1.0,6
+81,Step-wise BH,0.0,1.0,6
+81,e-BH,0.0,1.0,6
+81,Bonferroni,0.0,1.0,6
+82,Step-wise BH,0.0,1.0,6
+82,e-BH,0.0,1.0,6
+82,Bonferroni,0.0,1.0,6
+83,Step-wise BH,0.0,1.0,6
+83,e-BH,0.0,1.0,6
+83,Bonferroni,0.0,1.0,6
+84,Step-wise BH,0.0,1.0,6
+84,e-BH,0.0,1.0,6
+84,Bonferroni,0.0,1.0,6
+85,Step-wise BH,0.0,1.0,6
+85,e-BH,0.0,1.0,6
+85,Bonferroni,0.0,1.0,6
+86,Step-wise BH,0.0,1.0,6
+86,e-BH,0.0,1.0,6
+86,Bonferroni,0.0,1.0,6
+87,Step-wise BH,0.0,1.0,6
+87,e-BH,0.0,1.0,6
+87,Bonferroni,0.0,1.0,6
+88,Step-wise BH,0.0,1.0,6
+88,e-BH,0.0,1.0,6
+88,Bonferroni,0.0,1.0,6
+89,Step-wise BH,0.0,1.0,6
+89,e-BH,0.0,1.0,6
+89,Bonferroni,0.0,1.0,6
+90,Step-wise BH,0.0,1.0,6
+90,e-BH,0.0,1.0,6
+90,Bonferroni,0.0,1.0,6
+91,Step-wise BH,0.0,1.0,6
+91,e-BH,0.0,1.0,6
+91,Bonferroni,0.0,1.0,6
+92,Step-wise BH,0.0,1.0,6
+92,e-BH,0.0,1.0,6
+92,Bonferroni,0.0,1.0,6
+93,Step-wise BH,0.0,1.0,6
+93,e-BH,0.0,1.0,6
+93,Bonferroni,0.0,1.0,6
+94,Step-wise BH,0.0,1.0,6
+94,e-BH,0.0,1.0,6
+94,Bonferroni,0.0,1.0,6
+95,Step-wise BH,0.0,1.0,6
+95,e-BH,0.0,1.0,6
+95,Bonferroni,0.0,1.0,6
+96,Step-wise BH,0.0,1.0,6
+96,e-BH,0.0,1.0,6
+96,Bonferroni,0.0,1.0,6
+97,Step-wise BH,0.0,1.0,6
+97,e-BH,0.0,1.0,6
+97,Bonferroni,0.0,1.0,6
+98,Step-wise BH,0.0,1.0,6
+98,e-BH,0.0,1.0,6
+98,Bonferroni,0.0,1.0,6
+99,Step-wise BH,0.0,1.0,6
+99,e-BH,0.0,1.0,6
+99,Bonferroni,0.0,1.0,6
+100,Step-wise BH,0.0,1.0,6
+100,e-BH,0.0,1.0,6
+100,Bonferroni,0.0,1.0,6
+101,Step-wise BH,0.0,1.0,6
+101,e-BH,0.0,1.0,6
+101,Bonferroni,0.0,1.0,6
+102,Step-wise BH,0.0,1.0,6
+102,e-BH,0.0,1.0,6
+102,Bonferroni,0.0,1.0,6
+103,Step-wise BH,0.0,1.0,6
+103,e-BH,0.0,1.0,6
+103,Bonferroni,0.0,1.0,6
+104,Step-wise BH,0.0,1.0,6
+104,e-BH,0.0,1.0,6
+104,Bonferroni,0.0,1.0,6
+105,Step-wise BH,0.0,1.0,6
+105,e-BH,0.0,1.0,6
+105,Bonferroni,0.0,1.0,6
+106,Step-wise BH,0.0,1.0,6
+106,e-BH,0.0,1.0,6
+106,Bonferroni,0.0,1.0,6
+107,Step-wise BH,0.0,1.0,6
+107,e-BH,0.0,1.0,6
+107,Bonferroni,0.0,1.0,6
+108,Step-wise BH,0.0,1.0,6
+108,e-BH,0.0,1.0,6
+108,Bonferroni,0.0,1.0,6
+109,Step-wise BH,0.0,1.0,6
+109,e-BH,0.0,1.0,6
+109,Bonferroni,0.0,1.0,6
+110,Step-wise BH,0.0,1.0,6
+110,e-BH,0.0,1.0,6
+110,Bonferroni,0.0,1.0,6
+111,Step-wise BH,0.0,1.0,6
+111,e-BH,0.0,1.0,6
+111,Bonferroni,0.0,1.0,6
+112,Step-wise BH,0.0,1.0,6
+112,e-BH,0.0,1.0,6
+112,Bonferroni,0.0,1.0,6
+113,Step-wise BH,0.0,1.0,6
+113,e-BH,0.0,1.0,6
+113,Bonferroni,0.0,1.0,6
+114,Step-wise BH,0.0,1.0,6
+114,e-BH,0.0,1.0,6
+114,Bonferroni,0.0,1.0,6
+115,Step-wise BH,0.0,1.0,6
+115,e-BH,0.0,1.0,6
+115,Bonferroni,0.0,1.0,6
+116,Step-wise BH,0.0,1.0,6
+116,e-BH,0.0,1.0,6
+116,Bonferroni,0.0,1.0,6
+117,Step-wise BH,0.0,1.0,6
+117,e-BH,0.0,1.0,6
+117,Bonferroni,0.0,1.0,6
+118,Step-wise BH,0.0,1.0,6
+118,e-BH,0.0,1.0,6
+118,Bonferroni,0.0,1.0,6
+119,Step-wise BH,0.0,1.0,6
+119,e-BH,0.0,1.0,6
+119,Bonferroni,0.0,1.0,6
+120,Step-wise BH,0.0,1.0,6
+120,e-BH,0.0,1.0,6
+120,Bonferroni,0.0,1.0,6
+121,Step-wise BH,0.0,1.0,6
+121,e-BH,0.0,1.0,6
+121,Bonferroni,0.0,1.0,6
+122,Step-wise BH,0.0,1.0,6
+122,e-BH,0.0,1.0,6
+122,Bonferroni,0.0,1.0,6
+123,Step-wise BH,0.0,1.0,6
+123,e-BH,0.0,1.0,6
+123,Bonferroni,0.0,1.0,6
+124,Step-wise BH,0.0,1.0,6
+124,e-BH,0.0,1.0,6
+124,Bonferroni,0.0,1.0,6
+125,Step-wise BH,0.0,1.0,6
+125,e-BH,0.0,1.0,6
+125,Bonferroni,0.0,1.0,6
+126,Step-wise BH,0.0,1.0,6
+126,e-BH,0.0,1.0,6
+126,Bonferroni,0.0,1.0,6
+127,Step-wise BH,0.0,1.0,6
+127,e-BH,0.0,1.0,6
+127,Bonferroni,0.0,1.0,6
+128,Step-wise BH,0.0,1.0,6
+128,e-BH,0.0,1.0,6
+128,Bonferroni,0.0,1.0,6
+129,Step-wise BH,0.0,1.0,6
+129,e-BH,0.0,1.0,6
+129,Bonferroni,0.0,1.0,6
+130,Step-wise BH,0.0,1.0,6
+130,e-BH,0.0,1.0,6
+130,Bonferroni,0.0,1.0,6
+131,Step-wise BH,0.0,1.0,6
+131,e-BH,0.0,1.0,6
+131,Bonferroni,0.0,1.0,6
+132,Step-wise BH,0.0,1.0,6
+132,e-BH,0.0,1.0,6
+132,Bonferroni,0.0,1.0,6
+133,Step-wise BH,0.0,1.0,6
+133,e-BH,0.0,1.0,6
+133,Bonferroni,0.0,1.0,6
+134,Step-wise BH,0.0,1.0,6
+134,e-BH,0.0,1.0,6
+134,Bonferroni,0.0,1.0,6
+135,Step-wise BH,0.0,1.0,6
+135,e-BH,0.0,1.0,6
+135,Bonferroni,0.0,1.0,6
+136,Step-wise BH,0.0,1.0,6
+136,e-BH,0.0,1.0,6
+136,Bonferroni,0.0,1.0,6
+137,Step-wise BH,0.0,1.0,6
+137,e-BH,0.0,1.0,6
+137,Bonferroni,0.0,1.0,6
+138,Step-wise BH,0.0,1.0,6
+138,e-BH,0.0,1.0,6
+138,Bonferroni,0.0,1.0,6
+139,Step-wise BH,0.0,1.0,6
+139,e-BH,0.0,1.0,6
+139,Bonferroni,0.0,1.0,6
+140,Step-wise BH,0.0,1.0,6
+140,e-BH,0.0,1.0,6
+140,Bonferroni,0.0,1.0,6
+141,Step-wise BH,0.0,1.0,6
+141,e-BH,0.0,1.0,6
+141,Bonferroni,0.0,1.0,6
+142,Step-wise BH,0.0,1.0,6
+142,e-BH,0.0,1.0,6
+142,Bonferroni,0.0,1.0,6
+143,Step-wise BH,0.0,1.0,6
+143,e-BH,0.0,1.0,6
+143,Bonferroni,0.0,1.0,6
+144,Step-wise BH,0.0,1.0,6
+144,e-BH,0.0,1.0,6
+144,Bonferroni,0.0,1.0,6
+145,Step-wise BH,0.0,1.0,6
+145,e-BH,0.0,1.0,6
+145,Bonferroni,0.0,1.0,6
+146,Step-wise BH,0.0,1.0,6
+146,e-BH,0.0,1.0,6
+146,Bonferroni,0.0,1.0,6
+147,Step-wise BH,0.0,1.0,6
+147,e-BH,0.0,1.0,6
+147,Bonferroni,0.0,1.0,6
+148,Step-wise BH,0.0,1.0,6
+148,e-BH,0.0,1.0,6
+148,Bonferroni,0.0,1.0,6
+149,Step-wise BH,0.0,1.0,6
+149,e-BH,0.0,1.0,6
+149,Bonferroni,0.0,1.0,6
+150,Step-wise BH,0.0,1.0,6
+150,e-BH,0.0,1.0,6
+150,Bonferroni,0.0,1.0,6
+151,Step-wise BH,0.0,1.0,6
+151,e-BH,0.0,1.0,6
+151,Bonferroni,0.0,1.0,6
+152,Step-wise BH,0.0,1.0,6
+152,e-BH,0.0,1.0,6
+152,Bonferroni,0.0,1.0,6
+153,Step-wise BH,0.0,1.0,6
+153,e-BH,0.0,1.0,6
+153,Bonferroni,0.0,1.0,6
+154,Step-wise BH,0.0,1.0,6
+154,e-BH,0.0,1.0,6
+154,Bonferroni,0.0,1.0,6
+155,Step-wise BH,0.0,1.0,6
+155,e-BH,0.0,1.0,6
+155,Bonferroni,0.0,1.0,6
+156,Step-wise BH,0.0,1.0,6
+156,e-BH,0.0,1.0,6
+156,Bonferroni,0.0,1.0,6
+157,Step-wise BH,0.0,1.0,6
+157,e-BH,0.0,1.0,6
+157,Bonferroni,0.0,1.0,6
+158,Step-wise BH,0.0,1.0,6
+158,e-BH,0.0,1.0,6
+158,Bonferroni,0.0,1.0,6
+159,Step-wise BH,0.0,1.0,6
+159,e-BH,0.0,1.0,6
+159,Bonferroni,0.0,1.0,6
+160,Step-wise BH,0.0,1.0,6
+160,e-BH,0.0,1.0,6
+160,Bonferroni,0.0,1.0,6
+161,Step-wise BH,0.0,1.0,6
+161,e-BH,0.0,1.0,6
+161,Bonferroni,0.0,1.0,6
+162,Step-wise BH,0.0,1.0,6
+162,e-BH,0.0,1.0,6
+162,Bonferroni,0.0,1.0,6
+163,Step-wise BH,0.0,1.0,6
+163,e-BH,0.0,1.0,6
+163,Bonferroni,0.0,1.0,6
+164,Step-wise BH,0.0,1.0,6
+164,e-BH,0.0,1.0,6
+164,Bonferroni,0.0,1.0,6
+165,Step-wise BH,0.0,1.0,6
+165,e-BH,0.0,1.0,6
+165,Bonferroni,0.0,1.0,6
+166,Step-wise BH,0.0,1.0,6
+166,e-BH,0.0,1.0,6
+166,Bonferroni,0.0,1.0,6
+167,Step-wise BH,0.0,1.0,6
+167,e-BH,0.0,1.0,6
+167,Bonferroni,0.0,1.0,6
+168,Step-wise BH,0.0,1.0,6
+168,e-BH,0.0,1.0,6
+168,Bonferroni,0.0,1.0,6
+169,Step-wise BH,0.0,1.0,6
+169,e-BH,0.0,1.0,6
+169,Bonferroni,0.0,1.0,6
+170,Step-wise BH,0.0,1.0,6
+170,e-BH,0.0,1.0,6
+170,Bonferroni,0.0,1.0,6
+171,Step-wise BH,0.0,1.0,6
+171,e-BH,0.0,1.0,6
+171,Bonferroni,0.0,1.0,6
+172,Step-wise BH,0.0,1.0,6
+172,e-BH,0.0,1.0,6
+172,Bonferroni,0.0,1.0,6
+173,Step-wise BH,0.0,1.0,6
+173,e-BH,0.0,1.0,6
+173,Bonferroni,0.0,1.0,6
+174,Step-wise BH,0.0,1.0,6
+174,e-BH,0.0,1.0,6
+174,Bonferroni,0.0,1.0,6
+175,Step-wise BH,0.0,1.0,6
+175,e-BH,0.0,1.0,6
+175,Bonferroni,0.0,1.0,6
+176,Step-wise BH,0.0,1.0,6
+176,e-BH,0.0,1.0,6
+176,Bonferroni,0.0,1.0,6
+177,Step-wise BH,0.0,1.0,6
+177,e-BH,0.0,1.0,6
+177,Bonferroni,0.0,1.0,6
+178,Step-wise BH,0.0,1.0,6
+178,e-BH,0.0,1.0,6
+178,Bonferroni,0.0,1.0,6
+179,Step-wise BH,0.0,1.0,6
+179,e-BH,0.0,1.0,6
+179,Bonferroni,0.0,1.0,6
+180,Step-wise BH,0.0,1.0,6
+180,e-BH,0.0,1.0,6
+180,Bonferroni,0.0,1.0,6
+181,Step-wise BH,0.0,1.0,6
+181,e-BH,0.0,1.0,6
+181,Bonferroni,0.0,1.0,6
+182,Step-wise BH,0.0,1.0,6
+182,e-BH,0.0,1.0,6
+182,Bonferroni,0.0,1.0,6
+183,Step-wise BH,0.0,1.0,6
+183,e-BH,0.0,1.0,6
+183,Bonferroni,0.0,1.0,6
+184,Step-wise BH,0.0,1.0,6
+184,e-BH,0.0,1.0,6
+184,Bonferroni,0.0,1.0,6
+185,Step-wise BH,0.0,1.0,6
+185,e-BH,0.0,1.0,6
+185,Bonferroni,0.0,1.0,6
+186,Step-wise BH,0.0,1.0,6
+186,e-BH,0.0,1.0,6
+186,Bonferroni,0.0,1.0,6
+187,Step-wise BH,0.0,1.0,6
+187,e-BH,0.0,1.0,6
+187,Bonferroni,0.0,1.0,6
+188,Step-wise BH,0.0,1.0,6
+188,e-BH,0.0,1.0,6
+188,Bonferroni,0.0,1.0,6
+189,Step-wise BH,0.0,1.0,6
+189,e-BH,0.0,1.0,6
+189,Bonferroni,0.0,1.0,6
+190,Step-wise BH,0.0,1.0,6
+190,e-BH,0.0,1.0,6
+190,Bonferroni,0.0,1.0,6
+191,Step-wise BH,0.0,1.0,6
+191,e-BH,0.0,1.0,6
+191,Bonferroni,0.0,1.0,6
+192,Step-wise BH,0.0,1.0,6
+192,e-BH,0.0,1.0,6
+192,Bonferroni,0.0,1.0,6
+193,Step-wise BH,0.0,1.0,6
+193,e-BH,0.0,1.0,6
+193,Bonferroni,0.0,1.0,6
+194,Step-wise BH,0.0,1.0,6
+194,e-BH,0.0,1.0,6
+194,Bonferroni,0.0,1.0,6
+195,Step-wise BH,0.0,1.0,6
+195,e-BH,0.0,1.0,6
+195,Bonferroni,0.0,1.0,6
+196,Step-wise BH,0.0,1.0,6
+196,e-BH,0.0,1.0,6
+196,Bonferroni,0.0,1.0,6
+197,Step-wise BH,0.0,1.0,6
+197,e-BH,0.0,1.0,6
+197,Bonferroni,0.0,1.0,6
+198,Step-wise BH,0.0,1.0,6
+198,e-BH,0.0,1.0,6
+198,Bonferroni,0.0,1.0,6
+199,Step-wise BH,0.0,1.0,6
+199,e-BH,0.0,1.0,6
+199,Bonferroni,0.0,1.0,6
