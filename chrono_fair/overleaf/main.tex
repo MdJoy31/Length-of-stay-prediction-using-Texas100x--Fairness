@@ -305,6 +305,7 @@ Exp.~6 sensitivity & 12\,000 & 30/$\rho_1$ & onset at $t = 6\,000$; $\rho_1 \in 
 Exp.~7 four-attribute audit & 15\,000 & 1 & no drift; structural racial disparity & log-rank $\chi^2$ across race, ethnicity, sex, age & marginal flip rate \\
 Exp.~8 real Texas-100X VFR & 925\,128 & 1000 boot.\ & real audit (no simulation) & point vs CI vs VFR verdict stability & point estimate; bootstrap CI \\
 Exp.~9 robustness stress tests & 200 to 12\,000 & 100/setting & miscalibration, small cell, label delay & false-alarm rate; detection rate; delay & correctly-calibrated monitor \\
+Exp.~15 temporal/hospital replay & 30\,000; 67\,330 & 1 & quarter drift; hospital case-mix; real record order & alarm; detection delay & ADWIN; static VFR \\
 \bottomrule
 \end{tabular}%
 }
@@ -660,6 +661,62 @@ The corresponding result is plotted in Figure~\ref{fig:realtexas}.
 \label{fig:realtexas}
 \end{figure}
 
+
+\subsection{Temporal and hospital-group replay}\label{sec:exp_replay}
+
+\textbf{Evaluation question.}
+Texas-100X is administrative discharge data, not a live admission feed. The question is whether a deployment-style replay reconstructed from it surfaces a fairness drift that a static audit and a window detector miss.
+
+\textbf{Setup.}
+Three replay streams were constructed. Part A is a quarter-based temporal replay. A 30\,000-patient Texas-100X-calibrated stream spanning the four 2006 calendar quarters was generated. A controlled verdict-process drift was injected from the Q3 boundary: minority patients in Q3 and Q4 received an added risk shift of 0.6 on the factual prediction only, so their counterfactual flip rate rose. The baseline $\rho_0$ was calibrated on Q1, and Q2 to Q4 were replayed in arrival order. Part B is a hospital-group replay. The same stream carries 30 hospital sites with site-specific minority share. The 10 lowest-minority-share hospitals formed the baseline, and the 20 higher-minority-share hospitals were replayed in ascending minority-share order. Part C is a real Texas-100 record-order replay. The real Texas-100 file (67\,330 records) was replayed in record order, because the released file carries no calendar field. The baseline $\rho_0$ was calibrated on the first 30\% of records. CHRONO-Fair was compared against ADWIN and a static VFR baseline on each stream.
+
+\textbf{Result.}
+Table~\ref{tab:quarterreplay} reports the per-quarter flip rate. The flip rate was 0.111 in Q1, 0.114 in Q2, then rose to 0.151 in Q3 and 0.153 in Q4, tracking the injected drift. Table~\ref{tab:replaycompare} reports the method comparison. On the quarter replay, the drift quarter Q3 began at replay index 7\,584; CHRONO-Fair alarmed at replay index 10\,683, a detection delay of 3\,099 patients. On the hospital replay, the baseline-hospital flip rate averaged 0.114 and the replay-hospital flip rate averaged 0.141, ranging from 0.117 to 0.184; CHRONO-Fair alarmed at replay index 5\,596. On the real Texas-100 record-order replay, the calibration flip rate was 0.096 and the replay-window flip rate was 0.098; CHRONO-Fair did not alarm. ADWIN and static VFR did not alarm on any of the three streams.
+
+\begin{table}[t]
+\centering
+\caption{Part A, quarter-based temporal replay. Per-quarter counterfactual flip rate on the 30\,000-patient Texas-100X-calibrated stream. Q1 is the baseline quarter; the drift was injected from the Q3 boundary.}
+\label{tab:quarterreplay}
+\small
+\begin{tabular}{l r r l}
+\toprule
+Quarter & $n$ & Flip rate & Role \\
+\midrule
+Q1 & 7\,500 & 0.111 & baseline ($\rho_0$) \\
+Q2 & 7\,584 & 0.114 & replay, pre-drift \\
+Q3 & 7\,666 & 0.151 & replay, drift onset \\
+Q4 & 7\,250 & 0.153 & replay, post-drift \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table*}[t]
+\centering
+\caption{Replay method comparison. Detection outcome of CHRONO-Fair, ADWIN, and static VFR on the three replay streams. ``Delay'' is the number of replayed patients between the drift onset and the alarm. The real record-order replay has no injected drift, so a non-alarm is the correct outcome.}
+\label{tab:replaycompare}
+\footnotesize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l l r r r l}
+\toprule
+Replay stream & Drift & CHRONO-Fair & ADWIN & Static VFR & Notes \\
+\midrule
+A. Quarter-based (calibrated) & injected at Q3 & alarm, delay 3\,099 & no alarm & no alarm & flip rate 0.114 to 0.151 across the Q2-Q3 boundary \\
+B. Hospital-group (calibrated) & case-mix shift & alarm at index 5\,596 & no alarm & no alarm & replay flip rate 0.141 vs baseline 0.114 \\
+C. Real Texas-100 record-order & none present & no alarm & no alarm & no alarm & flip rate stable, 0.096 to 0.098; non-alarm is correct \\
+\bottomrule
+\end{tabular}%
+}
+\end{table*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/fig16_replay.png}
+\caption{Section~\ref{sec:exp_replay}. Replay streams. (A) Per-quarter flip rate, with the Q3 drift onset. (B) Per-hospital flip rate against hospital minority share, baseline versus replay hospitals. (C) Real Texas-100 record-order replay summary.}
+\label{fig:replay}
+\end{figure*}
+
+\textbf{Interpretation.}
+The three streams isolate three distinct behaviours. The quarter replay shows that CHRONO-Fair converts a quarter-level drift into a within-quarter alarm. The injected drift raised the flip rate from 0.114 to 0.151 across the Q2-Q3 boundary, a relative increase of 32\%. CHRONO-Fair alarmed 3\,099 patients into the drift quarter, roughly 40\% of the way through Q3, so the alarm arrives inside the same quarter the drift began. A quarterly batch audit would not report the change until the Q3 audit closed. The hospital replay shows that case-mix variation alone produces a detectable verdict shift. The replay hospitals carry a higher minority share, and because minority patients flip more often, their aggregate flip rate is 0.141 against the baseline 0.114. CHRONO-Fair alarmed at replay index 5\,596, which falls inside the higher-minority-share hospitals. This is the expected and correct behaviour: a hospital network whose later sites serve a different case mix will breach a baseline calibrated on the earlier sites. The real Texas-100 record-order replay is the control. The flip rate is stable at 0.096 to 0.098, no drift is present, and CHRONO-Fair correctly does not alarm. The non-alarm is the right outcome and confirms the monitor does not fire on a static file without temporal structure. Across all three streams, ADWIN and static VFR did not alarm. ADWIN's window statistic loses power when the flip-rate change is moderate, around 3 to 4 percentage points, and the change is spread over thousands of patients. Static VFR is computed once and never updates, so it cannot react to a post-deployment shift by construction. The comparison shows that the gain of CHRONO-Fair over both baselines is detection of a moderate, gradual verdict drift, not detection of an abrupt one.
 
 \section{Discussion}\label{sec:discussion}
 % ============================================================================

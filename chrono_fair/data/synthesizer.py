@@ -41,7 +41,8 @@ class StreamConfig:
     aleatoric_bias: float = 0.0   # fraction of minority-group labels flipped
     base_los_mean: float = 4.2
     seed: int = 42
-    start_time: pd.Timestamp = field(default_factory=lambda: pd.Timestamp("2024-01-01"))
+    n_hospitals: int = 30        # number of modelled hospital sites
+    start_time: pd.Timestamp = field(default_factory=lambda: pd.Timestamp("2006-01-01"))
 
 
 def generate_stream(cfg: StreamConfig) -> pd.DataFrame:
@@ -97,12 +98,37 @@ def generate_stream(cfg: StreamConfig) -> pd.DataFrame:
         )
         y_ext[flip_mask] = 1 - y_ext[flip_mask]
 
-    # Arrival timestamps: ~ one patient every 5 minutes
-    arrival = cfg.start_time + pd.to_timedelta(np.arange(cfg.n) * 5, unit='m')
+    # Arrival timestamps spread evenly across a 360-day deployment year, so
+    # the stream covers four calendar quarters as Texas-100X (2006) does.
+    minutes_per_patient = (360 * 24 * 60) / max(1, cfg.n)
+    arrival = cfg.start_time + pd.to_timedelta(
+        np.arange(cfg.n) * minutes_per_patient, unit='m')
+
+    # Calendar quarter, derived from the arrival timestamp. Texas-100X covers
+    # the four quarters of 2006; the synthesiser reproduces a quarter label so
+    # quarter-based temporal replay can be exercised.
+    quarter = arrival.quarter.astype(int)
+
+    # Hospital assignment. Texas-100X spans 441 hospitals; the synthesiser
+    # models n_hospitals sites, each with a site-specific minority share. The
+    # site-to-minority-share heterogeneity reproduces the hospital case-mix
+    # variation that hospital-group replay is designed to surface.
+    hosp_share = rng.uniform(0.20, 0.65, size=cfg.n_hospitals)
+    # Assign each patient a hospital; minority patients are routed with a
+    # probability proportional to the site minority share.
+    hosp = np.empty(cfg.n, dtype=int)
+    for i in range(cfg.n):
+        if minority_mask[i]:
+            w = hosp_share
+        else:
+            w = 1.0 - hosp_share
+        hosp[i] = rng.choice(cfg.n_hospitals, p=w / w.sum())
 
     df = pd.DataFrame({
         'arrival': arrival,
         'patient_id': np.arange(cfg.n),
+        'quarter': quarter,
+        'hospital': hosp,
         'race': race,
         'sex': sex,
         'ethnicity': eth,

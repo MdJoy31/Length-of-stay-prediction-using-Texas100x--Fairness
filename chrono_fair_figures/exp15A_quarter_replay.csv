@@ -1,0 +1,5 @@
+quarter,n,flip_rate,role
+Q1,7500,0.1109,baseline (rho_0)
+Q2,7584,0.1138,replay
+Q3,7666,0.1513,replay
+Q4,7250,0.1534,replay
