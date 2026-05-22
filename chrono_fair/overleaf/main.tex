@@ -179,7 +179,7 @@ where $T = \inf\{t : Z_t = 1\}$ is the first flip time and the limit is taken on
 
 The no-flip survival is $S_a(t) = \exp(-\int_0^t \lambda_a(s)\,ds)$. The scalar VFR of \cite{joy2025vfr} corresponds to the aggregate $1 - S_a(\tau^\star)$ at the full audit horizon $\tau^\star$. The framework reports survival as a curve, not a scalar.
 
-The estimator is non-parametric. Kaplan-Meier survival \cite{kaplan1958} and Nelson-Aalen cumulative hazard \cite{nelson1972} are computed per group. Greenwood confidence bands are produced. The pairwise log-rank test \cite{andersen1985} is applied for between-group comparisons. The Restricted Mean Flip Time at horizon $\tau^\star$ is
+The estimator is non-parametric, so it makes no distributional assumption on the flip-time. Kaplan-Meier survival \cite{kaplan1958} and Nelson-Aalen cumulative hazard \cite{nelson1972} are computed per group, and Greenwood confidence bands are produced around each survival curve. The pairwise log-rank test \cite{andersen1985} is applied for between-group comparisons. The Restricted Mean Flip Time at horizon $\tau^\star$ is
 \begin{equation}
 \mathrm{RMFT}_a(\tau^\star) = \int_0^{\tau^\star} S_a(t)\,dt,
 \end{equation}
@@ -740,7 +740,7 @@ The synthesiser injects a known structural disparity, and the framework's counte
 
 \subsection{Threats to external validity}
 
-The framework is evaluated on simulation only. Real EHR streams differ from the synthesiser in label delay, missingness patterns, admission seasonality, and selection bias under triage. The conclusions should be read as preliminary evidence rather than as evidence of clinical effectiveness. External validation on MIMIC-IV \cite{johnson2023mimic} and eICU \cite{pollard2018eicu} is the immediate next step. Distribution-shift behaviour under performative effects \cite{perdomo2020} and dataset shift \cite{finlayson2021, koh2021wilds} requires study beyond the present scope.
+The streaming evidence in this paper is controlled rather than prospective, and that is its main external-validity threat. The real-data component is a Texas-100X batch verdict-stability analysis, while the sequential experiments run on Texas-100X-calibrated replay and simulation. A real admission feed differs from a calibrated stream in label delay, missingness, admission seasonality, and selection bias under triage, none of which the synthesiser reproduces in full. The conclusions should therefore be read as preliminary evidence about sequential monitoring behaviour, not as evidence of clinical effectiveness. Prospective validation on a live clinical stream is the necessary next step, and distribution-shift behaviour under performative effects \cite{perdomo2020} and dataset shift \cite{finlayson2021, koh2021wilds} requires study beyond the present scope.
 
 \subsection{Statistical caveats}
 
