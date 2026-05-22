@@ -54,26 +54,28 @@ class EProcessMonitor:
 
     def update(self, z: float) -> Dict[str, float]:
         lo, hi = self.feasible()
-        # Shrunk, warm-started GROW: predictable in z (uses only past
-        # observations) and clipped to keep E_t a non-negative supermartingale.
-        # The 0.25 shrinkage and the 100-sample warm-up are calibrated to
-        # achieve empirical false-alarm rate at or below the nominal alpha
-        # (see exp5_ablation_false_alarm.py and Theorem 1 in the paper).
+        # One-sided shrunk GROW. The monitor tests only for an INCREASE in the
+        # flip rate above rho0, so the bet lambda is clipped to [0, hi). A
+        # non-negative lambda keeps the test one-sided: a run of zeros (rate
+        # below rho0) cannot inflate E_t. The bet is predictable in z (uses
+        # only past observations). The 0.25 shrinkage and the 100-sample
+        # warm-up are calibrated for empirical false-alarm control at or below
+        # the nominal alpha (see exp5_ablation_false_alarm.py, Theorem 1).
         SHRINK = 0.25
         WARMUP = 100
+        lam_max = hi - 1e-6   # upper feasible bound; lower bound is 0
         if self.use_grow:
             if self.n >= WARMUP:
                 z_bar = self.sum_z / self.n
                 raw = (z_bar - self.rho0) / max(1e-9, self.rho0 * (1 - self.rho0))
                 lam = SHRINK * raw
-                lam = float(np.clip(lam, lo + 1e-6, hi - 1e-6))
+                lam = float(np.clip(lam, 0.0, lam_max))
             else:
                 # Warm-up: bet 0 so E_t = 1 (no premature alarms).
                 lam = 0.0
         else:
-            # Ablation mode: fixed predictable lambda (Waudby-Smith & Ramdas
-            # constant-bet variant), still clipped to feasible range.
-            lam = float(np.clip(self.lambda_init, lo + 1e-6, hi - 1e-6))
+            # Ablation mode: fixed predictable lambda, one-sided.
+            lam = float(np.clip(self.lambda_init, 0.0, lam_max))
         self.bets.append(lam)
 
         factor = 1.0 + lam * (z - self.rho0)

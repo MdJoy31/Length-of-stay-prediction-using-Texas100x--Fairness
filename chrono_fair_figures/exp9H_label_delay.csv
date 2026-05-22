@@ -1,0 +1,6 @@
+label_delay,detection_rate,mean_wallclock_delay
+0,1.0,909.39
+50,1.0,959.39
+100,1.0,1009.39
+250,1.0,1159.39
+500,1.0,1409.39

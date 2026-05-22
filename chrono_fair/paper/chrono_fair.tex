@@ -23,7 +23,7 @@ Clinical prediction models are deployed under regulatory regimes that require fa
 
 This gap has three parts that prior work treats in isolation. A bootstrap confidence interval reveals that a verdict is uncertain, but it is computed once and is silent during deployment. The Verdict Flip Rate quantifies how often the verdict flips across resamples, but it is a scalar with no time axis and no statistical false-alarm control. Drift detectors such as ADWIN operate sequentially, but they monitor a single metric and provide no anytime-valid guarantee under repeated inspection. None of the three attributes a detected flip to a cause that a clinical governance team can act on.
 
-This paper presents CHRONO-Fair, a simulation-based monitoring prototype that closes the three parts of the gap with four coordinated estimators. A Flip Hazard survival object recasts the scalar flip rate as a group-conditional Kaplan-Meier curve with log-rank tests. An anytime-valid e-process raises a statistically controlled alarm at any inspection time, with step-wise Benjamini-Hochberg control across intersectional cells. An ensemble entropy decomposition splits a detected flip into an aleatoric (data) cause and an epistemic (sample-size) cause. A Wasserstein-1 Regression Counterfactual Allocation Parity statistic extends the analysis to length-of-stay regression. On the real Texas-100X verdict data, the confidence interval and the Verdict Flip Rate agree on all 12 audited metric-attribute combinations, and both isolate the single unstable verdict that the point estimate misses. On synthetic streams calibrated to the same dataset, the e-process detects an injected drift in 50 of 50 runs at a median delay of 848 patients, against 21 of 50 for ADWIN, while holding the empirical false-alarm rate at or below the nominal level. All findings are simulation-based or based on stored real-data summary statistics, and require external validation on live electronic health record streams.
+This paper presents CHRONO-Fair, a simulation-based monitoring prototype that closes the three parts of the gap with four coordinated estimators. A Flip Hazard survival object recasts the scalar flip rate as a group-conditional Kaplan-Meier curve with log-rank tests. An anytime-valid e-process raises a statistically controlled alarm at any inspection time, with step-wise Benjamini-Hochberg control across intersectional cells. An ensemble entropy decomposition splits a detected flip into an aleatoric (data) cause and an epistemic (sample-size) cause. A Wasserstein-1 Regression Counterfactual Allocation Parity statistic extends the analysis to length-of-stay regression. On the real Texas-100X verdict data, the confidence interval and the Verdict Flip Rate agree on all 12 audited metric-attribute combinations, and both isolate the single unstable verdict that the point estimate misses. On synthetic streams calibrated to the same dataset, the e-process detects an injected drift in 50 of 50 runs at a median delay of 828 patients, against 21 of 50 for ADWIN, while holding the empirical false-alarm rate at or below the nominal level. All findings are simulation-based or based on stored real-data summary statistics, and require external validation on live electronic health record streams.
 \end{abstract}
 
 \keywords{algorithmic fairness, clinical machine learning, anytime-valid inference, fairness drift, post-deployment monitoring, length-of-stay prediction}
@@ -278,6 +278,7 @@ Exp.~5 false-alarm & 10\,000 & 200/$\alpha$ & no drift (H$_0$) & empirical false
 Exp.~6 sensitivity & 12\,000 & 30/$\rho_1$ & onset at $t = 6\,000$; $\rho_1 \in [0.06, 0.20]$ & detection rate; mean delay vs drift size & none (characterisation) \\
 Exp.~7 four-attribute audit & 15\,000 & 1 & no drift; structural racial disparity & log-rank $\chi^2$ across race, ethnicity, sex, age & marginal flip rate \\
 Exp.~8 real Texas-100X VFR & 925\,128 & 1000 boot.\ & real audit (no simulation) & point vs CI vs VFR verdict stability & point estimate; bootstrap CI \\
+Exp.~9 robustness stress tests & 200 to 12\,000 & 100/setting & miscalibration, small cell, label delay & false-alarm rate; detection rate; delay & correctly-calibrated monitor \\
 \bottomrule
 \end{tabular}
 \caption{Experiment summary. Each row lists stream length, replication count, drift configuration, primary metric, and baselines.}
@@ -297,7 +298,7 @@ A stream of $n = 10\,000$ patients was generated under $\rho_0 = 0.05$ until ind
 For each method and replication, the number of patients between drift onset at $t = 5\,000$ and the first alarm was recorded. Runs that produced an alarm before drift onset were counted as false alarms and excluded from the delay calculation.
 
 \textbf{Result.}
-CHRONO-Fair alarmed in 50 of 50 replications with a mean delay of 856 patients (median 848, standard deviation 228). ADWIN at $k = 1$ alarmed in 21 of 50 replications at mean delay 3\,878 patients. ADWIN at $k = 25$ alarmed in 21 of 50 at mean 3\,927. Davis-ADWIN alarmed in 21 of 50 at mean 3\,904. The periodic batch test alarmed in 24 of 50 at mean 499 patients but did not control false alarms across repeated peeks. Static VFR did not alarm. Under a separate no-disparity sanity scenario at $n = 10\,000$ and seeds 10\,000 to 10\,049, CHRONO-Fair raised 0 alarms in 50 replications.
+CHRONO-Fair alarmed in 50 of 50 replications with a mean delay of 837 patients (median 828, standard deviation 221). ADWIN at $k = 1$ alarmed in 21 of 50 replications at mean delay 3\,878 patients. ADWIN at $k = 25$ alarmed in 21 of 50 at mean 3\,927. Davis-ADWIN alarmed in 21 of 50 at mean 3\,904. The periodic batch test alarmed in 24 of 50 at mean 499 patients but did not control false alarms across repeated peeks. Static VFR did not alarm. Under a separate no-disparity sanity scenario at $n = 10\,000$ and seeds 10\,000 to 10\,049, CHRONO-Fair raised 0 alarms in 50 replications.
 
 \textbf{Interpretation.}
 The detection-rate gap (50 of 50 against 21 of 50) is larger than the delay gap and is the headline result. ADWIN's coverage at $k = 1$ and $k = 25$ is similar, indicating that the framework's advantage is not an artefact of check-frequency. The periodic batch test trades coverage for delay and does not satisfy the FDA PCCP expectation of continuous monitoring \cite{fda2024pccp}.
@@ -353,7 +354,7 @@ Under the no-drift null $H_0$, 200 independent streams of length $n = 10\,000$ w
 The empirical false-alarm rate, defined as the fraction of streams in which the e-process crossed the threshold $1/\alpha$ at any time, was recorded per $\alpha$.
 
 \textbf{Result.}
-The empirical false-alarm rates were 0.000 ($\alpha = 0.01$), 0.000 ($\alpha = 0.025$), 0.000 ($\alpha = 0.05$), 0.010 ($\alpha = 0.10$), and 0.020 ($\alpha = 0.20$). All values were at or below the nominal $\alpha$. The conservatism is most marked at small $\alpha$, where the shrinkage prevents early aggressive bets.
+The empirical false-alarm rates were 0.000 ($\alpha = 0.01$), 0.000 ($\alpha = 0.025$), 0.000 ($\alpha = 0.05$), 0.000 ($\alpha = 0.10$), and 0.005 ($\alpha = 0.20$). All values were at or below the nominal $\alpha$. The conservatism is most marked at small $\alpha$, where the shrinkage prevents early aggressive bets.
 
 \textbf{Interpretation.}
 The empirical-vs-nominal alignment confirms Theorem~\ref{thm:anytime} on the synthesiser. Conservatism at small $\alpha$ is the expected trade-off for the GROW shrinkage and the warm-up. Detection-delay results in Section~\ref{sec:exp_delay} were obtained at $\alpha = 0.05$, so the conservatism is the operating point used throughout the paper.
@@ -392,7 +393,7 @@ Six post-drift rates $\rho_1 \in \{0.06, 0.08, 0.10, 0.12, 0.15, 0.20\}$ were te
 Detection rate (fraction of streams in which an alarm was raised after drift onset) and mean detection delay (patients between drift and alarm, computed only over detected streams) were recorded per $\rho_1$.
 
 \textbf{Result.}
-Detection rate was 2 of 30 at $\rho_1 = 0.06$, 30 of 30 at $\rho_1 = 0.08$, and 30 of 30 at every $\rho_1 \ge 0.10$. Mean delay decreased monotonically with increasing drift: 3\,976 patients at $\rho_1 = 0.06$, 3\,338 at 0.08, 1\,929 at 0.10, 1\,364 at 0.12, 933 at 0.15, and 618 at 0.20.
+Detection rate was 2 of 30 at $\rho_1 = 0.06$, 30 of 30 at $\rho_1 = 0.08$, and 30 of 30 at every $\rho_1 \ge 0.10$. Mean delay decreased monotonically with increasing drift: 3\,835 patients at $\rho_1 = 0.06$, 3\,288 at 0.08, 1\,906 at 0.10, 1\,346 at 0.12, 914 at 0.15, and 611 at 0.20.
 
 \textbf{Interpretation.}
 At a drift of 0.01 above baseline (a 20\% relative change), the e-process detects in 6.7\% of runs. At a drift of 0.03 above baseline (a 60\% relative change), it detects in every run. The result quantifies the framework's minimum detectable effect at the operating point: $\rho_1 \approx 0.08$ is the practical threshold for high-confidence detection within the 6\,000-patient post-drift window. Smaller drifts require longer windows or higher $\alpha$.
@@ -410,6 +411,23 @@ On race, marginal flip rate was 0.078 (White, $n = 7\,214$), 0.190 (Black, $n = 
 
 \textbf{Interpretation.}
 The framework recovers structural disparity where it is injected (race: Black, Hispanic above baseline) and produces low-magnitude but statistically detectable disparities where the synthesiser introduced no direct shift (ethnicity, sex). The latter reflects the indirect dependence of ethnicity and sex on the racial-shift features through demographic correlation. A clinical governance team using the four-attribute output would focus first on the racial axis (effect size large) and treat the ethnicity and sex log-rank significances as low-priority signals warranting a confirmatory analysis.
+
+\subsection{Robustness stress tests}\label{sec:exp_robust}
+
+\textbf{Evaluation question.}
+Three reviewer-relevant questions are addressed. How does a miscalibrated baseline $\rho_0$ affect the monitor? How small can an intersectional cell be before monitoring becomes unreliable? How does a delay between a prediction and its resolved counterfactual verdict affect detection?
+
+\textbf{Setup.}
+The e-process is a one-sided test for an increase above $\rho_0$, so the GROW bet is clipped to be non-negative. For the miscalibration test, the true pre-drift rate was fixed at 0.05 and the monitor was given an assumed $\rho_0 \in \{0.03, 0.04, 0.05, 0.06, 0.07\}$. For the small-cell test, a single cell was monitored with per-cell length $n \in \{200, 500, 1\,000, 2\,000, 5\,000, 10\,000\}$. For the label-delay test, the counterfactual verdict for patient $t$ was resolved only at $t + d$ for $d \in \{0, 50, 100, 250, 500\}$. Each setting used 100 streams.
+
+\textbf{Metric.}
+Empirical false-alarm rate under $H_0$, detection rate under $H_1$ (drift to 0.15), and detection delay.
+
+\textbf{Result.}
+Baseline miscalibration is asymmetric. An assumed $\rho_0$ of 0.03 or 0.04, below the true 0.05, produced false-alarm rates of 1.00 and 0.85. An assumed $\rho_0$ of 0.06 or 0.07, above the true value, produced a false-alarm rate of 0.00, a detection rate of 1.00, and a mean delay that grew from 909 to 1\,816 to 2\,995 patients. The small-cell detection rate was 0.11 at $n = 200$, 0.67 at $n = 500$, 0.98 at $n = 1\,000$, and 1.00 at $n \ge 2\,000$, with a false-alarm rate of 0.00 throughout. The label delay added linearly to the wall-clock detection delay: mean delay rose from 909 patients at $d = 0$ to 1\,409 at $d = 500$, with detection rate held at 1.00.
+
+\textbf{Interpretation.}
+The miscalibration result gives a concrete deployment rule. Underestimating $\rho_0$ is unsafe because it inflates false alarms. Overestimating $\rho_0$ is conservative because it only delays detection. A governance team that is uncertain about $\rho_0$ should round it upward. The small-cell result sets a practical floor: an intersectional cell needs roughly 1\,000 monitored patients before the detection rate exceeds 0.95. Cells below that floor should be merged or flagged as low-power. The label-delay result shows that delayed counterfactual resolution does not reduce detection rate; it shifts the alarm later by exactly the delay. Figure~\ref{fig:robust} plots the three tests.
 
 % ============================================================================
 \section{Discussion}\label{sec:discussion}
@@ -509,7 +527,7 @@ Sec.~\ref{sec:exp_attributes}, Fig.~\ref{fig:fourattr} & 15\,000 & 42 & none \\
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{../../chrono_fair_figures/fig1_detection_delay.png}
-\caption{Section~\ref{sec:exp_delay}. Detection delay across 50 Monte-Carlo runs at $n = 10\,000$, drift onset at $t = 5\,000$. CHRONO-Fair: 50 of 50 alarms at mean delay 856. ADWIN variants and Davis-ADWIN: 21 of 50 at mean delay 3\,878 to 3\,927. Periodic batch (500): 24 of 50 at mean 499 without peeking control. Static VFR: 0 of 50.}
+\caption{Section~\ref{sec:exp_delay}. Detection delay across 50 Monte-Carlo runs at $n = 10\,000$, drift onset at $t = 5\,000$. CHRONO-Fair: 50 of 50 alarms at mean delay 837. ADWIN variants and Davis-ADWIN: 21 of 50 at mean delay 3\,878 to 3\,927. Periodic batch (500): 24 of 50 at mean 499 without peeking control. Static VFR: 0 of 50.}
 \label{fig:delay}
 \end{figure}
 
@@ -589,5 +607,12 @@ Sec.~\ref{sec:exp_attributes}, Fig.~\ref{fig:fourattr} & 15\,000 & 42 & none \\
 \caption{Section~\ref{sec:exp_realvfr}. Real Texas-100X verdict stability. Point estimate (marker) and 95\% bootstrap confidence interval (bar) for 12 metric-attribute combinations, against the 0.8 fairness line. Red marks the one combination with a non-zero Verdict Flip Rate, race worst-group true-positive rate, where the CI straddles 0.8 and 4 of 20 resamples flip the verdict.}
 \label{fig:realvfr}
 \end{figure}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{../../chrono_fair_figures/fig10_robustness.png}
+\caption{Section~\ref{sec:exp_robust}. Robustness stress tests, 100 streams per setting. Left: baseline miscalibration; underestimating $\rho_0$ inflates false alarms, overestimating only delays detection. Centre: small-subgroup reliability; the detection rate exceeds 0.95 once the per-cell stream reaches roughly 1\,000 patients. Right: label delay adds linearly to the wall-clock detection delay.}
+\label{fig:robust}
+\end{figure*}
 
 \end{document}
