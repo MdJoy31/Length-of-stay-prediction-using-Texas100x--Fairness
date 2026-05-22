@@ -1,0 +1,21 @@
+# CHRONO-Fair monitoring configuration.
+monitor:
+  alpha: 0.05          # anytime-valid e-process significance level
+  fdr_q: 0.10          # step-wise Benjamini-Hochberg level across cells
+  rho0: 0.05           # baseline counterfactual flip rate
+  warmup: 100          # e-process warm-up patients (bet 0 during warm-up)
+  grow_shrink: 0.25    # GROW betting-rate shrinkage factor
+stream:
+  n: 12000             # synthetic stream length
+  drift_at: 6000       # arrival index of injected drift onset (null = none)
+  drift_magnitude: 0.6 # minority-group feature shift after drift
+  aleatoric_bias: 0.05 # fraction of minority labels flipped
+  seed: 42
+flip_hazard:
+  tau_star: 5000       # RMFT clinical horizon (patients)
+ensemble:
+  K: 11                # bootstrap ensemble members for decomposition
+disclaimer: >
+  Research prototype. Not a medical device. Streaming examples are
+  controlled replay or simulation unless connected to a validated
+  deployment stream.

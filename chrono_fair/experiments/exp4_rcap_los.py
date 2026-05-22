@@ -60,7 +60,9 @@ def main():
     rcap.to_csv(os.path.join(out_dir, 'exp4_rcap.csv'), index=False)
 
     # ---- Bootstrap 95% CI for RCAP against White reference ----
-    from chrono_fair.rcap import wasserstein_rcap_ci
+    # RCAP is the Wasserstein-1 distance between the rank-position
+    # distributions u(a) and u(a'), computed by rcap_w1_ci.
+    from chrono_fair.rcap import rcap_w1_ci, rank_positions
     races_for_ci = ['White', 'Black', 'Hispanic', 'Asian/PI', 'Other']
     ci_rows = []
     ref_white_y = df_te.loc[df_te['race'] == 'White', 'y_hat'].to_numpy()
@@ -70,11 +72,13 @@ def main():
             continue
         y_a = sub['y_hat'].to_numpy()
         y_cf = cf_fn(sub, swap_to='White')
-        delta = rank_shift(y_a, y_cf, y_a, ref_white_y)
-        mean, lo, hi = wasserstein_rcap_ci(delta, n_boot=1000, alpha=0.05,
-                                             seed=int(np.frombuffer(r.encode()[:4].ljust(4, b'_'), dtype=np.uint32)[0]) % 2**31)
+        u_a = rank_positions(y_a, y_a)               # factual rank position
+        u_ap = rank_positions(y_cf, ref_white_y)     # counterfactual rank position
+        seed = int(np.frombuffer(r.encode()[:4].ljust(4, b'_'),
+                                  dtype=np.uint32)[0]) % 2**31
+        w1, lo, hi = rcap_w1_ci(u_a, u_ap, n_boot=1000, alpha=0.05, seed=seed)
         ci_rows.append({'race': r, 'n': int(len(sub)),
-                         'rcap_W1': float(mean),
+                         'rcap_W1': float(w1),
                          'ci_low_95': float(lo),
                          'ci_high_95': float(hi)})
     ci_df = pd.DataFrame(ci_rows)

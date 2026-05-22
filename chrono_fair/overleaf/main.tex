@@ -19,11 +19,11 @@
 }
 
 \begin{abstract}
-Clinical prediction models are deployed under regulatory regimes that require fairness monitoring after release. The FDA 2024 Predetermined Change Control Plan guidance and EU AI Act Articles 10 and 17 both expect continuous post-market bias surveillance. The auditing tools in current use compute a group fairness metric on a fixed snapshot of predictions. They then report a point estimate against a threshold, such as the 0.8 rule. A point estimate, however, hides whether the verdict it produces is stable. On the real Texas-100X discharge dataset (925\,128 records), the worst-group true-positive-rate verdict for race reads ``fair'' at a point value of 0.824. The same verdict flips to ``unfair'' in 4 of 20 hospital-network resamples, a Verdict Flip Rate of 0.20. No tool in clinical use reports when such a verdict flips during a live patient stream, nor whether the flip is driven by biased data or by insufficient data.
+Clinical prediction models are deployed under regulatory regimes that require fairness monitoring after release. The FDA 2024 Predetermined Change Control Plan guidance and EU AI Act Articles 10 and 17 both expect continuous post-market bias surveillance. The auditing tools in current use compute a group fairness metric on a fixed snapshot of predictions. They then report a point estimate against a threshold, such as the 0.8 rule. A point estimate, however, hides whether the verdict it produces is stable. On the real Texas-100X discharge dataset (925\,128 records), the worst-group true-positive-rate verdict for race reads ``fair'' at a point value of 0.824. The same verdict flips to ``unfair'' in 4 of 20 hospital-network resamples, a Verdict Flip Rate of 0.20. Existing clinical fairness-audit tools generally do not report when such a verdict flips as patients arrive, nor whether the flip is driven by biased data or by insufficient data.
 
 This gap has three parts that prior work treats in isolation. A bootstrap confidence interval reveals that a verdict is uncertain, but it is computed once and is silent during deployment. The Verdict Flip Rate quantifies how often the verdict flips across resamples, but it is a scalar with no time axis and no statistical false-alarm control. Drift detectors such as ADWIN operate sequentially, but they monitor a single metric and provide no anytime-valid guarantee under repeated inspection. None of the three attributes a detected flip to a cause that a clinical governance team can act on.
 
-This paper presents CHRONO-Fair, a simulation-based monitoring prototype that closes the three parts of the gap with four coordinated estimators. A Flip Hazard survival object recasts the scalar flip rate as a group-conditional Kaplan-Meier curve with log-rank tests. An anytime-valid e-process raises a statistically controlled alarm at any inspection time, with step-wise Benjamini-Hochberg control across intersectional cells. An ensemble entropy decomposition splits a detected flip into an aleatoric (data) cause and an epistemic (sample-size) cause. A Wasserstein-1 Regression Counterfactual Allocation Parity statistic extends the analysis to length-of-stay regression. On the real Texas-100X verdict data, the confidence interval and the Verdict Flip Rate agree on all 12 audited metric-attribute combinations, and both isolate the single unstable verdict that the point estimate misses. On synthetic streams calibrated to the same dataset, the e-process detects an injected drift in 50 of 50 runs at a median delay of 828 patients, against 21 of 50 for ADWIN, while holding the empirical false-alarm rate at or below the nominal level. All findings are simulation-based or based on stored real-data summary statistics, and require external validation on live electronic health record streams.
+This paper presents CHRONO-Fair, a deployment-oriented statistical monitoring framework. It extends static verdict-flip auditing into time-resolved monitoring of counterfactual verdict flips, and combines two evidence layers on a single dataset. The first layer is a real Texas-100X batch verdict-stability analysis. The second is a set of Texas-100X-calibrated controlled streaming experiments for sequential monitoring behaviour. The framework has four coordinated estimators. A Flip Hazard survival object recasts the scalar flip rate as a group-conditional Kaplan-Meier curve with log-rank tests. A per-cell e-process gives anytime-valid Type-I control under repeated inspection through Ville's inequality. A step-wise Benjamini-Hochberg adjustment is then applied across the intersectional cells at each inspection time. This adjustment is a cross-sectional correction, not a full time-uniform online false-discovery guarantee. An ensemble entropy decomposition splits a detected flip into an aleatoric (data) cause and an epistemic (sample-size) cause. A Wasserstein-1 Regression Counterfactual Allocation Parity statistic extends the analysis to length-of-stay regression. On the real Texas-100X verdict data, the confidence interval and the Verdict Flip Rate agree on all 12 audited metric-attribute combinations, and both isolate the single unstable verdict that the point estimate misses. On Texas-100X-calibrated controlled streams, the e-process detects an injected drift in 50 of 50 runs at a median delay of 828 patients, against 21 of 50 for ADWIN, while holding the empirical false-alarm rate at or below the nominal level. All streaming findings are controlled replay or simulation evidence, not prospective clinical validation, which remains future work.
 \end{abstract}
 
 \keywords{algorithmic fairness, clinical machine learning, anytime-valid inference, fairness drift, post-deployment monitoring, length-of-stay prediction}
@@ -40,13 +40,21 @@ Regulatory bodies responded. The U.S. FDA issued its Predetermined Change Contro
 
 The methodological toolchain has not caught up. Open-source audit packages (Aequitas, Fairlearn, AIF360, Microsoft Responsible AI Dashboard) operate in batch mode on snapshot predictions. The online fair-learning line of work \cite{iosifidis2019, iosifidis2020, ntoutsi2020} demonstrates streaming feasibility on COMPAS and credit data, not on EHR streams. Anytime-valid inference \cite{ramdas2023, waudbysmith2024, howard2021, grunwald2024} has been applied to A/B-test monitoring and calibration drift, but not to fairness drift at intersectional granularity. Predictive-multiplicity work \cite{marx2020, black2022, cooper2024} characterises pipeline instability but is framed as reliability rather than fairness.
 
-Prior work by some of the present authors introduced the Verdict Flip Rate (VFR), a scalar that quantifies how often a fairness verdict flips between resamples of a hospital-network bootstrap \cite{joy2025vfr}. VFR captures something the canonical group metrics miss, namely the instability of a fairness verdict under stochastic pipeline choices. The metric is, however, scalar, batch, single-threshold, and gives no actionable indication of when, where, or why a gap arose.
+Prior work introduced the Verdict Flip Rate (VFR), a scalar that quantifies how often a fairness verdict flips between resamples of a hospital-network bootstrap \cite{joy2025vfr}. VFR captures something the canonical group metrics miss, namely the instability of a fairness verdict under stochastic pipeline choices. The metric is, however, scalar, batch, single-threshold, and gives no indication of when, where, or why a gap arose. CHRONO-Fair extends VFR along the time axis. VFR-Audit measures static batch verdict reliability; CHRONO-Fair monitors counterfactual verdict flips as patients arrive. Figure~\ref{fig:concept} contrasts the two.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.9\columnwidth]{figures/fig_concept_vfr_to_chrono.png}
+\caption{VFR-Audit is a static batch scalar. CHRONO-Fair is the streaming extension. The scalar Verdict Flip Rate is recovered as $1 - S$ at the audit horizon, and the framework adds the time axis, the alarm, and the cause.}
+\label{fig:concept}
+\end{figure}
+
 
 \paragraph{Contributions.}
 This paper makes four contributions, each presented as a simulation-based prototype.
 \begin{enumerate}\itemsep0pt
     \item A Flip Hazard estimator that recasts the resampling-based VFR as a group-conditional survival object on the patient arrival index. Kaplan-Meier survival, Nelson-Aalen cumulative hazard, two-sample log-rank statistics, and a Restricted Mean Flip Time (RMFT) are reported per protected group.
-    \item An anytime-valid e-process monitor for the flip indicator with a shrunk GROW betting rule, a warm-up of 100 patients, and step-wise Benjamini-Hochberg multiple-testing control across intersectional cells. The empirical Type-I rate stays at or below the nominal $\alpha$ on synthetic streams.
+    \item A per-cell anytime-valid e-process monitor for the flip indicator, with a shrunk GROW betting rule and a warm-up of 100 patients. A step-wise Benjamini-Hochberg adjustment is applied across intersectional cells at each inspection time. The empirical Type-I rate stays at or below the nominal $\alpha$ on the calibrated streams.
     \item An ensemble entropy decomposition that splits the per-cell flip mass into aleatoric and epistemic components. The split admits a clear governance interpretation: an aleatoric-dominated cell signals label or feature-pipeline bias, an epistemic-dominated cell signals sample-size scarcity.
     \item A Regression Counterfactual Allocation Parity (RCAP) metric for length-of-stay regression. RCAP is the Wasserstein-1 distance between counterfactual rank distributions and is sensitive to allocation shifts that the group-MAE comparator does not register.
 \end{enumerate}
@@ -87,32 +95,36 @@ Maughan and Near \cite{maughan2022} proposed prediction sensitivity, a per-batch
 
 \subsection{Positioning against prior work}
 
-Table~\ref{tab:litcompare} places CHRONO-Fair against eight families of prior work on six capability axes. The axes are the ones a post-deployment clinical monitor needs. Sequential operation means the method updates per patient rather than per batch. Anytime-valid control means the false-alarm rate is bounded under inspection at every step. Intersectional means the method audits cells defined by two or more protected attributes. Root-cause output means a detected gap is attributed to a data or a model cause. Regression support means the method handles a continuous output such as length of stay. Healthcare-evaluated means the method was reported on a clinical dataset.
+Table~\ref{tab:litcompare} places CHRONO-Fair against eight families of prior work on nine capability axes. The axes are the ones a post-deployment clinical monitor needs. Static or streaming records the operating mode. Verdict reliability records whether the method reports the stability of a pass or fail verdict. Anytime-valid per-cell monitoring records a false-alarm rate bounded under inspection at every step. Cross-cell adjustment records a multiple-testing correction across monitored cells. Intersectional records cells defined by two or more protected attributes. Counterfactual-flip monitoring records tracking of verdict flips under a protected-attribute counterfactual. Root-cause output records attribution of a detected gap to a data or a model cause. Regression support records handling of a continuous, rank-allocation output. Real clinical evidence records the empirical clinical data used.
 
 \begin{table*}[t]
 \centering
-\caption{Capability comparison of fairness-audit method families. A check mark denotes the capability is present as a designed feature. A dash denotes it is absent or not reported. The final row is the contribution of this paper.}
+\caption{Capability comparison of fairness-audit method families. ``Y'' denotes the capability is present as a designed feature, ``--'' denotes absent or not reported, and ``P'' denotes partial. The final row is the contribution of this paper.}
 \label{tab:litcompare}
-\small
-\begin{tabular}{l c c c c c c}
+\footnotesize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{l c c c c c c c c l}
 \toprule
-Method family (representative work) & Sequential & Anytime-valid & Intersectional & Root-cause & Regression & Healthcare-eval. \\
+Method family & Static/ & Verdict & Anytime-valid & Cross-cell & Inter- & CF-flip & Root- & Regression/ & Real clinical \\
+(representative work) & streaming & reliability & per-cell & adjustment & sectional & monitoring & cause & rank-alloc. & evidence \\
 \midrule
-Group metrics, batch toolkits (Hardt et al.\ \cite{hardt2016}; Aequitas) & no & no & partial & no & no & yes \\
-Bootstrap-CI fairness audit (Cherian and Cand\`es \cite{cherian2024}) & no & no & no & no & no & no \\
-Predictive multiplicity, eDFR (Marx et al.\ \cite{marx2020}; Miller and Blume \cite{miller2024edfr}) & no & no & no & no & no & yes \\
-Verdict Flip Rate (prior work \cite{joy2025vfr}) & no & no & partial & no & no & yes \\
-Prediction sensitivity (Maughan and Near \cite{maughan2022}) & per batch & no & no & no & no & no \\
-Online fair learning (Iosifidis and Ntoutsi \cite{iosifidis2020}) & yes & no & no & no & no & no \\
-Fairness-drift monitoring (Davis et al.\ \cite{davis2025}) & quarterly & no & partial & no & no & yes \\
-Anytime-valid risk tracking (Podkopaev and Ramdas \cite{podkopaev2023}) & yes & yes & no & no & no & no \\
+Group metrics, batch toolkits \cite{hardt2016} & static & -- & -- & -- & P & -- & -- & -- & various \\
+Bootstrap-CI fairness audit \cite{cherian2024} & static & Y & -- & -- & -- & -- & -- & -- & -- \\
+Predictive multiplicity, eDFR \cite{marx2020, miller2024edfr} & static & Y & -- & -- & -- & -- & -- & -- & some \\
+Verdict Flip Rate \cite{joy2025vfr} & static & Y & -- & -- & P & Y & -- & -- & Texas-100X batch \\
+Prediction sensitivity \cite{maughan2022} & per batch & -- & -- & -- & -- & Y & -- & -- & -- \\
+Online fair learning \cite{iosifidis2020} & streaming & -- & -- & -- & -- & -- & -- & -- & -- \\
+Fairness-drift monitoring \cite{davis2025} & quarterly & P & -- & -- & P & -- & -- & -- & VA cohort \\
+Anytime-valid risk tracking \cite{podkopaev2023} & streaming & -- & Y & -- & -- & -- & -- & -- & -- \\
 \midrule
-\textbf{CHRONO-Fair (this paper)} & \textbf{yes} & \textbf{yes} & \textbf{yes} & \textbf{yes} & \textbf{yes} & \textbf{partial} \\
+\textbf{CHRONO-Fair (this paper)} & \textbf{streaming} & \textbf{Y} & \textbf{Y} & \textbf{Y} & \textbf{Y} & \textbf{Y} & \textbf{Y} & \textbf{Y} & \textbf{Texas-100X batch +} \\
+ & & & & & & & & & \textbf{calibrated streams} \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table*}
 
-The table exposes the gap precisely. No prior family holds more than two of the six capabilities at once. Anytime-valid risk tracking \cite{podkopaev2023} is sequential and anytime-valid, but it monitors aggregate loss, not a group-conditional fairness verdict, and it offers no root-cause output. Fairness-drift monitoring \cite{davis2025} is the closest clinical work, yet it operates on a quarterly cadence, monitors one metric, and gives no statistical guarantee under repeated inspection. The Verdict Flip Rate \cite{joy2025vfr} quantifies verdict instability but collapses it to a scalar with no time axis. CHRONO-Fair is marked \emph{partial} on the healthcare-evaluation axis. The present evaluation is simulation-based, with the real-data component limited to stored summary statistics (Section~\ref{sec:exp_realvfr}). That qualifier is the one capability the framework does not yet fully hold.
+The table exposes the gap precisely. No prior family holds more than two of the nine capabilities at once. Anytime-valid risk tracking \cite{podkopaev2023} is streaming and anytime-valid, but it monitors aggregate loss, not a group-conditional fairness verdict, and it offers no root-cause output. Fairness-drift monitoring \cite{davis2025} is the closest clinical work, yet it operates on a quarterly cadence, monitors one metric, and gives no statistical guarantee under repeated inspection. The Verdict Flip Rate \cite{joy2025vfr} quantifies verdict instability but collapses it to a scalar with no time axis. The CHRONO-Fair real-clinical-evidence cell reads ``Texas-100X batch + calibrated streams'', because the real-data component is a batch verdict-stability analysis on Texas-100X and the streaming component is controlled Texas-100X-calibrated replay, not prospective deployment.
 
 \subsection{Open gaps addressed by this paper}
 
@@ -143,6 +155,16 @@ Each cell $c$ defined by a value of the protected attribute has a baseline flip 
 % ============================================================================
 \section{Method}\label{sec:method}
 % ============================================================================
+
+CHRONO-Fair is one framework with four coordinated estimators that share a single counterfactual flip indicator. Figure~\ref{fig:architecture} shows the data flow. A patient stream feeds the deployed model and its counterfactual, the flip indicator is computed, and the four estimators consume it. The Flip Hazard estimator and the e-process are sequential. The decomposition and RCAP run on demand. The Inspector report aggregates the four outputs for governance review.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/fig0_architecture.png}
+\caption{CHRONO-Fair architecture. A clinical stream feeds a deployed model and a bootstrap ensemble. Four estimators run concurrently: Flip Hazard survival, anytime-valid e-process, aleatoric/epistemic decomposition, and RCAP. The Inspector Agent translates alarms into a structured governance report.}
+\label{fig:architecture}
+\end{figure*}
+
 
 \subsection{Flip Hazard estimator}\label{sec:fliphazard}
 
@@ -185,7 +207,9 @@ The proof follows the supermartingale construction in Ramdas et al.\ \cite{ramda
 
 \paragraph{Intersectional multiple-testing control.}
 
-For $m$ disjoint cells, the framework runs $m$ parallel monitors. At each inspection step, step-wise Benjamini-Hochberg \cite{benjamini1995fdr} is applied to the e-value-implied $p$-values $p_t^{(c)} = 1/E_t^{(c)}$ clipped to $[0,1]$. The step-wise procedure controls the false-discovery proportion at the current step under exchangeability of cell e-values. It does not extend to the time-uniform LORD-style guarantee of Javanmard and Montanari \cite{javanmard2018} or Ramdas et al.\ \cite{ramdas2017}. The framework therefore reports findings as ``flagged at step $t$'' rather than ``time-uniformly significant''.
+For $m$ disjoint cells, the framework runs $m$ parallel monitors. At each inspection step, step-wise Benjamini-Hochberg \cite{benjamini1995fdr} is applied to the e-value-implied $p$-values $p_t^{(c)} = 1/E_t^{(c)}$ clipped to $[0,1]$.
+
+The current multiple-testing layer should be interpreted as cross-sectional adjustment over the monitored cells at each inspection time, not as a full time-uniform online false-discovery guarantee. The per-cell anytime-valid Type-I control of Theorem~\ref{thm:anytime} holds for each cell separately. The cross-sectional step-wise Benjamini-Hochberg adjustment controls the false-discovery proportion among the cells inspected at a given step, under exchangeability of cell e-values. Extending CHRONO-Fair with a time-uniform online false-discovery procedure, such as LORD \cite{javanmard2018}, SAFFRON, alpha-investing \cite{foster2008}, or e-BH, is future work. The framework therefore reports findings as ``flagged at inspection step $t$'' rather than ``time-uniformly significant''.
 
 \paragraph{Complexity.}
 
@@ -205,17 +229,18 @@ For each instance, the flip mass is apportioned in proportion to the aleatoric a
 
 \subsection{Regression Counterfactual Allocation Parity}\label{sec:rcap}
 
-For a regressor $\hat{Y} = f(x, a)$ producing a continuous output (length of stay in days, in this paper), the per-patient counterfactual rank shift is
+Let $f(x, a)$ be a regressor producing a continuous output, length of stay in days in this paper. Let $\hat{F}_{\hat{Y} \mid A = a}$ be the empirical cumulative distribution function of the predicted output within group $a$. For patient $i$ in group $a$, the predicted-rank position under the factual and the counterfactual attribute is
+\begin{align}
+u_i(a)  &= \hat{F}_{\hat{Y} \mid A = a}\bigl(f(x_i, a)\bigr), \\
+u_i(a') &= \hat{F}_{\hat{Y} \mid A = a'}\bigl(f(x_i, a')\bigr).
+\end{align}
+Each $u_i$ lies in $[0, 1]$ and gives the patient's percentile position in the group-conditional predicted-output distribution. The per-patient rank shift is $\Delta_{\mathrm{rank}}(x_i, a, a') = u_i(a) - u_i(a')$. The aggregate RCAP statistic is the Wasserstein-1 distance between the two rank-position distributions
 \begin{equation}
-\Delta(x, a, a') = F^{-1}_{Y \mid A = a}\bigl(f(x, a)\bigr) - F^{-1}_{Y \mid A = a'}\bigl(f(x, a')\bigr),
+\mathrm{RCAP}(a, a') = W_1\bigl(\{u_i(a) : i \in a\},\ \{u_i(a') : i \in a\}\bigr).
 \end{equation}
-where $F_{Y \mid A = a}$ is the empirical CDF of predictions within group $a$. The aggregate RCAP statistic is the Wasserstein-1 distance
-\begin{equation}
-\mathrm{RCAP}(a, a') = W_1\bigl(\{\Delta(x_i, a, a') : i \in a\}\bigr).
-\end{equation}
-A bootstrap 95\% confidence interval is computed by resampling the per-patient $\Delta$ values $B = 1000$ times.
+A bootstrap 95\% confidence interval is computed by resampling the per-patient pairs $(u_i(a), u_i(a'))$ $B = 1000$ times.
 
-RCAP answers the question that triage and bed-allocation pipelines face: by how many quantile positions would this patient shift if their protected attribute were swapped? The group-MAE gap collapses a directional, distribution-aware allocation shift into the average regression error and is not sensitive to allocation-only changes.
+RCAP measures how far a patient's predicted length-of-stay rank position shifts under the protected-attribute counterfactual. The rank position, not the raw error alone, determines prioritisation in length-of-stay-based bed allocation. The group-MAE gap collapses a directional, distribution-aware allocation shift into the average regression error and does not register an allocation-only change. RCAP is reported on the $[0, 1]$ rank scale, so a value of $0.0163$ corresponds to a shift of 1.63 percentile points.
 
 \subsection{Inspector report}\label{sec:inspector}
 
@@ -259,14 +284,15 @@ This deployment description specifies the contract of a prototype, not the certi
 \section{Experiments}\label{sec:experiments}
 % ============================================================================
 
-All experiments use the synthesiser described in Section~\ref{sec:synth}, calibrated to the published Texas-100X demographic mix. Findings are simulation-based. The intent is to characterise the framework's statistical properties under controlled, ground-truth-known conditions. Real-EHR validation is future work.
+This study uses Texas-100X as the only empirical clinical dataset. The evaluation therefore has two layers. The first is a real-data batch verdict-stability analysis on Texas-100X (Section~\ref{sec:exp_realvfr}). The second is a set of controlled Texas-100X-calibrated streaming experiments for sequential monitoring behaviour. The first layer establishes that fairness-verdict instability occurs in the real administrative cohort. The second layer evaluates detection delay, false alarms, decomposition, and stress-test behaviour under known drift settings. Texas-100X is administrative discharge data, not a real-time admission stream, so the streaming experiments use controlled replay and simulation. Prospective EHR-stream validation remains future work.
 
 Table~\ref{tab:expsummary} summarises each experiment.
 
 \begin{table*}[t]
 \centering
-\small
-\begin{tabular}{p{2cm} p{1.0cm} p{1.0cm} p{2.5cm} p{3.5cm} p{4.5cm}}
+\footnotesize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{p{2.4cm} p{1.5cm} p{1.6cm} p{3.4cm} p{3.7cm} p{4.6cm}}
 \toprule
 Experiment & $n$ & Trials & Drift setting & Metric & Baseline(s) \\
 \midrule
@@ -280,7 +306,8 @@ Exp.~7 four-attribute audit & 15\,000 & 1 & no drift; structural racial disparit
 Exp.~8 real Texas-100X VFR & 925\,128 & 1000 boot.\ & real audit (no simulation) & point vs CI vs VFR verdict stability & point estimate; bootstrap CI \\
 Exp.~9 robustness stress tests & 200 to 12\,000 & 100/setting & miscalibration, small cell, label delay & false-alarm rate; detection rate; delay & correctly-calibrated monitor \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \caption{Experiment summary. Each row lists stream length, replication count, drift configuration, primary metric, and baselines.}
 \label{tab:expsummary}
 \end{table*}
@@ -303,6 +330,16 @@ CHRONO-Fair alarmed in 50 of 50 replications with a mean delay of 837 patients (
 \textbf{Interpretation.}
 The detection-rate gap (50 of 50 against 21 of 50) is larger than the delay gap and is the headline result. ADWIN's coverage at $k = 1$ and $k = 25$ is similar, indicating that the framework's advantage is not an artefact of check-frequency. The periodic batch test trades coverage for delay and does not satisfy the FDA PCCP expectation of continuous monitoring \cite{fda2024pccp}.
 
+The corresponding result is plotted in Figure~\ref{fig:delay}.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig1_detection_delay.png}
+\caption{Section~\ref{sec:exp_delay}. Detection delay across 50 Monte-Carlo runs at $n = 10\,000$, drift onset at $t = 5\,000$. CHRONO-Fair: 50 of 50 alarms at mean delay 837. ADWIN variants and Davis-ADWIN: 21 of 50 at mean delay 3\,878 to 3\,927. Periodic batch (500): 24 of 50 at mean 499 without peeking control. Static VFR: 0 of 50.}
+\label{fig:delay}
+\end{figure}
+
+
 \subsection{Decomposition accuracy}\label{sec:exp_decomp}
 
 \textbf{Setup.}
@@ -316,6 +353,16 @@ In Track 1, the framework matched the ground-truth scenario in 90 of 90 trials. 
 
 \textbf{Interpretation.}
 The decomposition formula is correct on inputs that satisfy the controlled-ensemble assumption (Track 1). In realistic ensembles trained on overlapping data and audited at deployment time, the dominant component is frequently \texttt{mixed}. The framework's recommended action under \texttt{mixed} is parallel data-pipeline audit and ensemble-stabilised retraining, which is the same action a clinical safety officer would take when the cause is unclear. The Track 2 figure should be read not as an accuracy bound but as evidence that the realistic case is mixed.
+
+The corresponding result is plotted in Figure~\ref{fig:decomp}.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig2_decomposition_confusion.png}
+\caption{Section~\ref{sec:exp_decomp} Track 1. Controlled decomposition validation, 30 trials per scenario at $n = 1\,000$. Confusion matrix on the left; per-scenario epistemic share on the right. The 0.6 threshold is the Inspector Agent decision boundary.}
+\label{fig:decomp}
+\end{figure}
+
 
 \subsection{Flip Hazard survival on Texas-100X-style data}\label{sec:exp_fliphazard}
 
@@ -331,6 +378,32 @@ RMFT was 4\,817 patients for White ($n = 7\,214$), 3\,940 for Other ($n = 588$),
 \textbf{Interpretation.}
 The scalar VFR collapses the Black-Hispanic ordering (0.190 against 0.201). The RMFT preserves the ordering: Black has the lowest RMFT (2\,459), then Asian/PI (3\,337), then Hispanic (3\,837), then Other (3\,940), then White (4\,817). RMFT distinguishes early-clustering disparity (Black: a flip cluster appears within the first 2\,500 arrivals) from late-clustering disparity (Hispanic: flips spread over a longer arrival window). The clinical meaning is the same in both cases (disparate exposure), but the operational response differs: an early cluster triggers an immediate review, a late cluster triggers a slower investigation.
 
+The corresponding result is plotted in Figure~\ref{fig:km}, Figure~\ref{fig:intersectional}, Figure~\ref{fig:rmft}.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig3_km_curves_intersectional.png}
+\caption{Section~\ref{sec:exp_fliphazard}. Intersectional Flip Hazard: race by sex.}
+\label{fig:intersectional}
+\end{figure}
+
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig3_km_curves_race.png}
+\caption{Section~\ref{sec:exp_fliphazard}. Group-stratified Flip Hazard no-flip survival at $n = 15\,000$. Greenwood 95\% bands shown.}
+\label{fig:km}
+\end{figure}
+
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig3b_rmft_vs_vfr.png}
+\caption{Section~\ref{sec:exp_fliphazard}. Scalar VFR (left bars) against $1 - \mathrm{RMFT}/\tau^\star$ (right bars). RMFT preserves the Black versus Hispanic ordering that the scalar VFR collapses.}
+\label{fig:rmft}
+\end{figure}
+
+
 \subsection{RCAP for length-of-stay regression}\label{sec:exp_rcap}
 
 \textbf{Setup.}
@@ -340,10 +413,28 @@ A stream of $n = 20\,000$ patients was generated with seed 11. A Ridge regressor
 Wasserstein-1 distance between counterfactual rank distributions per group pair, MAE gap against White, and per-patient rank shift histograms.
 
 \textbf{Result.}
-RCAP-against-White, with 1\,000 bootstrap resamples per group, was $W_1 = 0.0163$ (95\% CI 0.0157, 0.0169) for Black ($n = 1\,488$), $W_1 = 0.0142$ (95\% CI 0.0133, 0.0151) for Asian/PI ($n = 552$), $W_1 = 0.0066$ (95\% CI 0.0064, 0.0068) for Hispanic ($n = 3\,643$), and $W_1 = 0.0049$ (95\% CI 0.0046, 0.0052) for Other ($n = 499$). The MAE gap against White was 0.0065 days for Black, 0.0062 for Asian/PI, 0.0006 for Hispanic, and 0.0028 for Other. The MAE ordering was Black, Asian/PI, Other, Hispanic. The RCAP ordering was Black, Asian/PI, Hispanic, Other. The two orderings agreed on the leader (Black) but disagreed on the placement of Hispanic and Other.
+RCAP-against-White, computed as the Wasserstein-1 distance between the factual and counterfactual rank-position distributions with 1\,000 bootstrap resamples per group, was $W_1 = 0.0163$ (95\% CI 0.0088, 0.0336) for Black ($n = 1\,488$), $W_1 = 0.0142$ (95\% CI 0.0117, 0.0425) for Asian/PI ($n = 552$), $W_1 = 0.0066$ (95\% CI 0.0052, 0.0169) for Hispanic ($n = 3\,643$), and $W_1 = 0.0049$ (95\% CI 0.0100, 0.0429) for Other ($n = 499$). The MAE gap against White was 0.0065 days for Black, 0.0062 for Asian/PI, 0.0006 for Hispanic, and 0.0028 for Other. The MAE ordering was Black, Asian/PI, Other, Hispanic. The RCAP ordering was Black, Asian/PI, Hispanic, Other. The two orderings agreed on the leader (Black) but disagreed on the placement of Hispanic and Other. For the Other cell ($n = 499$), the bootstrap CI lies above the point estimate. The empirical Wasserstein-1 plug-in is biased upward for small samples, so for cells near $n = 500$ the RCAP estimate carries a noise floor of roughly 0.01 to 0.04 rank units.
 
 \textbf{Interpretation.}
-The MAE gap measures average error, which a regression model can keep low even while systematically shifting one group's allocation rank. RCAP captures the rank shift directly. The clinical reading is that, under the counterfactual swap, a Black patient is on average reassigned 1.63 quantile positions in the predicted-LOS distribution. The 95\% bootstrap CI excludes zero by a wide margin (lower bound 1.57). The triage and bed-allocation literature treats predicted LOS as an ordinal allocation signal, so a quantile shift is the policy-relevant quantity \cite{stone2022los}.
+The MAE gap measures average error, which a regression model can keep low even while systematically shifting one group's allocation rank. RCAP captures the rank shift directly. The clinical reading is that, under the counterfactual swap, the Black rank-position distribution shifts by 1.63 percentile points from the White-referenced distribution. The 95\% bootstrap CI for the Black cell, 0.88 to 3.36 percentile points, excludes zero. The triage and bed-allocation literature treats predicted LOS as an ordinal allocation signal, so a rank-position shift is the policy-relevant quantity \cite{stone2022los}. The small-sample upward bias of the empirical Wasserstein-1 estimate means RCAP should be read together with the per-cell sample size, and cells near $n = 500$ should be merged or flagged as low-power.
+
+The corresponding result is plotted in Figure~\ref{fig:rcap_hist}, Figure~\ref{fig:rcap_mae}.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig4b_rcap_vs_mae_gap.png}
+\caption{Section~\ref{sec:exp_rcap}. Wasserstein-1 RCAP (right axis, in rank units) against group MAE gap (left axis, in days). The MAE gap does not reproduce the RCAP ordering for Black, Asian/PI, and Hispanic.}
+\label{fig:rcap_mae}
+\end{figure}
+
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/fig4_rcap_rank_shift.png}
+\caption{Section~\ref{sec:exp_rcap}. RCAP per-patient counterfactual rank shifts at $n = 20\,000$. Left: density. Right: cumulative $|\Delta|$.}
+\label{fig:rcap_hist}
+\end{figure*}
+
 
 \subsection{False-alarm calibration}\label{sec:exp_false}
 
@@ -359,6 +450,16 @@ The empirical false-alarm rates were 0.000 ($\alpha = 0.01$), 0.000 ($\alpha = 0
 \textbf{Interpretation.}
 The empirical-vs-nominal alignment confirms Theorem~\ref{thm:anytime} on the synthesiser. Conservatism at small $\alpha$ is the expected trade-off for the GROW shrinkage and the warm-up. Detection-delay results in Section~\ref{sec:exp_delay} were obtained at $\alpha = 0.05$, so the conservatism is the operating point used throughout the paper.
 
+The corresponding result is plotted in Figure~\ref{fig:falsealarm}.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.9\columnwidth]{figures/fig5a_false_alarm_calibration.png}
+\caption{Section~\ref{sec:exp_false}. Empirical false-alarm rate against nominal $\alpha$ on 200 streams per level. Points lie on or below the $y = x$ Ville bound.}
+\label{fig:falsealarm}
+\end{figure}
+
+
 \subsection{Live dashboard rendering}\label{sec:exp_dashboard}
 
 \textbf{Setup.}
@@ -370,6 +471,16 @@ The dashboard exposes four panels populated from the live experiment state: Flip
 \textbf{Interpretation.}
 The dashboard prototype satisfies the visualisation requirement of the FDA PCCP \cite{fda2024pccp}, namely that monitoring outputs be inspectable by a clinical governance team without ML expertise. Replication on a real hospital MLOps stack requires the FHIR adapter described in Section~\ref{sec:deployment}, which is included in the release.
 
+The corresponding result is plotted in Figure~\ref{fig:dashboard}.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/fig6_dashboard_mockup.png}
+\caption{Section~\ref{sec:exp_dashboard}. Static rendering of the four-panel dashboard at $n = 12\,000$ with drift onset at $t = 6\,000$. Inspector Agent card lists cell labels, e-values, hazard ratios, dominant cause, recommended action, and suggested regulatory mapping.}
+\label{fig:dashboard}
+\end{figure*}
+
+
 \subsection{Real Texas-100X verdict stability: point estimate, confidence interval, and VFR}\label{sec:exp_realvfr}
 
 \textbf{Setup.}
@@ -380,6 +491,16 @@ Per combination: point value, point verdict, 95\% bootstrap CI, whether the CI s
 
 \textbf{Result.}
 Of the 12 audited combinations, 11 had a stable verdict. Their bootstrap CIs lay entirely on one side of 0.8 and their VFR was 0.000. One combination was unstable. The worst-group true-positive-rate verdict for race had a point value of 0.824, which the point-estimate procedure read as fair. Its 95\% bootstrap CI was 0.773 to 0.844, straddling 0.8. Its 20-resample split was 16 fair and 4 unfair, a VFR of 0.200. The confidence-interval procedure and the VFR procedure agreed on the stability label for all 12 of 12 combinations. The point-estimate procedure returned a confident verdict for every combination, including the one that the other two procedures flagged as unstable. Figure~\ref{fig:realvfr} shows the point estimate, the 95\% CI, and the 0.8 line for all 12 combinations.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.85\columnwidth]{figures/fig9_real_vfr_forest.png}
+\caption{Section~\ref{sec:exp_realvfr}. Real Texas-100X verdict stability. Point estimate (marker) and 95\% bootstrap confidence interval (bar) for 12 metric-attribute combinations, against the 0.8 fairness line. Red marks the one combination with a non-zero Verdict Flip Rate, race worst-group true-positive rate, where the CI straddles 0.8 and 4 of 20 resamples flip the verdict.}
+\label{fig:realvfr}
+\end{figure}
+
+
+
 
 \textbf{Interpretation.}
 The result establishes three points on real data. First, verdict instability is real and not a simulation artefact. One in 12 audited verdicts on Texas-100X flips across hospital-network resamples. Second, the confidence interval and the Verdict Flip Rate are consistent. They agreed on every combination, which supports using either as a batch instability test. Third, the point estimate alone is unsafe. It reported the race worst-group true-positive-rate verdict as fair, hiding a 1-in-5 resample flip. This is the case for sequential monitoring. A confidence interval or a VFR is computed once before deployment. Neither says whether, on a live patient stream after deployment, the same verdict has crossed 0.8 again, nor when, nor why. The CHRONO-Fair Flip Hazard estimator and e-process (Sections~\ref{sec:exp_fliphazard}, \ref{sec:exp_delay}) supply the time axis and the anytime-valid alarm that the batch procedures lack. The decomposition (Section~\ref{sec:exp_decomp}) supplies the cause.
@@ -398,6 +519,16 @@ Detection rate was 2 of 30 at $\rho_1 = 0.06$, 30 of 30 at $\rho_1 = 0.08$, and 
 \textbf{Interpretation.}
 At a drift of 0.01 above baseline (a 20\% relative change), the e-process detects in 6.7\% of runs. At a drift of 0.03 above baseline (a 60\% relative change), it detects in every run. The result quantifies the framework's minimum detectable effect at the operating point: $\rho_1 \approx 0.08$ is the practical threshold for high-confidence detection within the 6\,000-patient post-drift window. Smaller drifts require longer windows or higher $\alpha$.
 
+The corresponding result is plotted in Figure~\ref{fig:sensitivity}.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig7_sensitivity.png}
+\caption{Section~\ref{sec:exp_sensitivity}. Detection rate (left) and detection delay (right) of the e-process against post-drift rate $\rho_1$ for $\rho_0 = 0.05$ and 30 streams per setting.}
+\label{fig:sensitivity}
+\end{figure}
+
+
 \subsection{Four-attribute audit}\label{sec:exp_attributes}
 
 \textbf{Setup.}
@@ -411,6 +542,16 @@ On race, marginal flip rate was 0.078 (White, $n = 7\,214$), 0.190 (Black, $n = 
 
 \textbf{Interpretation.}
 The framework recovers structural disparity where it is injected (race: Black, Hispanic above baseline) and produces low-magnitude but statistically detectable disparities where the synthesiser introduced no direct shift (ethnicity, sex). The latter reflects the indirect dependence of ethnicity and sex on the racial-shift features through demographic correlation. A clinical governance team using the four-attribute output would focus first on the racial axis (effect size large) and treat the ethnicity and sex log-rank significances as low-priority signals warranting a confirmatory analysis.
+
+The corresponding result is plotted in Figure~\ref{fig:fourattr}.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/fig8_four_attribute_audit.png}
+\caption{Section~\ref{sec:exp_attributes}. Four-attribute Flip Hazard audit. Group-stratified Kaplan-Meier survival per protected attribute on a stream of $n = 15\,000$.}
+\label{fig:fourattr}
+\end{figure*}
+
 
 \subsection{Robustness stress tests}\label{sec:exp_robust}
 
@@ -429,17 +570,67 @@ Baseline miscalibration is asymmetric. An assumed $\rho_0$ of 0.03 or 0.04, belo
 \textbf{Interpretation.}
 The miscalibration result gives a concrete deployment rule. Underestimating $\rho_0$ is unsafe because it inflates false alarms. Overestimating $\rho_0$ is conservative because it only delays detection. A governance team that is uncertain about $\rho_0$ should round it upward. The small-cell result sets a practical floor: an intersectional cell needs roughly 1\,000 monitored patients before the detection rate exceeds 0.95. Cells below that floor should be merged or flagged as low-power. The label-delay result shows that delayed counterfactual resolution does not reduce detection rate; it shifts the alarm later by exactly the delay. Figure~\ref{fig:robust} plots the three tests.
 
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/fig10_robustness.png}
+\caption{Section~\ref{sec:exp_robust}. Robustness stress tests, 100 streams per setting. Left: baseline miscalibration; underestimating $\rho_0$ inflates false alarms, overestimating only delays detection. Centre: small-subgroup reliability; the detection rate exceeds 0.95 once the per-cell stream reaches roughly 1\,000 patients. Right: label delay adds linearly to the wall-clock detection delay.}
+\label{fig:robust}
+\end{figure*}
+
+
+
+
 \subsection{Multiple testing, counterfactual definition, ablation, and correlated arrivals}\label{sec:exp_additional}
 
 Four further experiments address reviewer-relevant design questions. Each used the synthesiser.
 
 \textbf{Multiple-testing procedures.} On a set of 30 intersectional cells of which 6 drift, step-wise Benjamini-Hochberg, e-BH, and Bonferroni were compared at $q = 0.10$ over 200 streams. All three held the false-discovery proportion at 0.000 and reached power 1.000 in a clean-signal regime. Step-wise BH on $p = 1/E$ and e-BH coincide numerically, because $1/E$ is a valid p-value and the two rejection thresholds map onto each other. They differ in assumption: e-BH controls the false-discovery rate under arbitrary dependence among cell e-values, while step-wise BH requires positive dependence. The paper therefore reports the framework's correction as step-wise BH and notes e-BH as the dependence-robust alternative (Figure~\ref{fig:onlinefdr}).
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig11_online_fdr.png}
+\caption{Section~\ref{sec:exp_additional}. Multiple-testing procedures on 30 cells, 6 drifting, $q = 0.10$, 200 streams. False-discovery proportion (left) and power (right).}
+\label{fig:onlinefdr}
+\end{figure}
+
+
+
+
 \textbf{Counterfactual-definition sensitivity.} Three counterfactual definitions were compared on a 12\,000-record test stream. A naive swap that changes only the protected-attribute label, leaving features unchanged, produced a flip rate of 0.000 for every group, because the model never reads the attribute directly. The feature-shift counterfactual produced flip rates of 0.052 (Black) and 0.053 (Hispanic). The proxy-adjusted counterfactual produced larger rates, 0.064 and 0.070. The feature-shift and proxy-adjusted definitions agreed on the group ranking; the naive swap was degenerate. The flip rate depends on the counterfactual definition, which the framework states as a modelling choice rather than a free parameter (Figure~\ref{fig:cfsens}).
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig12_cf_sensitivity.png}
+\caption{Section~\ref{sec:exp_additional}. Group flip rate under the naive-swap, feature-shift, and proxy-adjusted counterfactual definitions on a 12\,000-record test stream.}
+\label{fig:cfsens}
+\end{figure}
+
+
+
 
 \textbf{Module ablation.} Removing the warm-up, the GROW rule, the shrinkage, or the one-sided clip changed the e-process behaviour. Under a correctly calibrated $\rho_0$, the false-alarm rate stayed at or below 0.03 for every ablation. Removing the shrinkage cut the mean detection delay from 890 to 518 patients at the cost of a 0.01 false-alarm rate. The one-sided clip showed no defect under correct calibration; its value is established under miscalibration (Section~\ref{sec:exp_robust}). The ablation confirms that the design choices govern false-alarm control and miscalibration robustness rather than raw detection speed (Figure~\ref{fig:ablfull}).
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig13_ablation_full.png}
+\caption{Section~\ref{sec:exp_additional}. Module ablation. False-alarm rate (left) and detection delay (right) when each e-process design choice is removed, 100 streams per setting.}
+\label{fig:ablfull}
+\end{figure}
+
+
+
+
 \textbf{Correlated arrivals.} Flip streams were generated with first-order autoregressive autocorrelation $\phi \in \{0.0, 0.3, 0.6, 0.9\}$. The $H_0$ false-alarm rate stayed at 0.000 for every $\phi$, and the mean detection delay moved within a narrow band, from 920 patients at $\phi = 0$ to 934 at $\phi = 0.9$. The e-process is robust to the temporal correlation that admission waves induce (Figure~\ref{fig:corr}).
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig14_correlated_arrivals.png}
+\caption{Section~\ref{sec:exp_additional}. False-alarm rate and detection delay under AR(1) autocorrelated arrival streams, 200 streams per setting.}
+\label{fig:corr}
+\end{figure}
+
+
+
 
 \subsection{Real-data flip rate on Texas-100}\label{sec:exp_realtexas}
 
@@ -459,6 +650,17 @@ The ensemble test accuracy was 0.816. The real empirical decision-flip rate was 
 The flip indicator is a non-degenerate quantity on real data. A 2.33\% disagreement rate is small but non-zero, and the Flip Hazard survival curve is well defined and informative on the real stream. The honest limitation is that the released Texas-100 file does not include the official feature description, so the 6\,169 columns cannot be mapped to named protected attributes. Group-stratified and counterfactual fairness analysis on the real records therefore requires the feature-description file or the named-column Texas-100X release, which needs a Texas Department of State Health Services download. The real-data evidence here validates the flip and Flip Hazard machinery; it does not yet validate the group-conditional fairness claims, which remain simulation-based.
 
 % ============================================================================
+
+The corresponding result is plotted in Figure~\ref{fig:realtexas}.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig15_real_texas100.png}
+\caption{Section~\ref{sec:exp_realtexas}. Real Texas-100 data. Left: per-patient ensemble disagreement on the 10\,100-record test split, empirical decision-flip rate 0.0233. Right: Flip Hazard no-flip survival on the real flip stream.}
+\label{fig:realtexas}
+\end{figure}
+
+
 \section{Discussion}\label{sec:discussion}
 % ============================================================================
 
@@ -502,17 +704,15 @@ CHRONO-Fair is not a medical device, a substitute for clinical judgment, or a ce
 \section{Limitations}\label{sec:limitations}
 % ============================================================================
 
-The principal limitation of the experimental design is its reliance on simulation calibrated to demographic summary statistics. Real EHR streams have label delay (sepsis ground truth arrives hours later, mortality at 30 days), informative missingness, and selection bias under triage. None of these are modelled. The expected direction of bias from this limitation is that the framework's detection delay will be longer on real data because label delay shifts the flip event time. A potential limitation of the e-process is its dependence on a baseline flip rate $\rho_0$; if the baseline is mis-calibrated upward, alarms will be suppressed under the alternative. If the baseline is mis-calibrated downward, the framework will alarm during the warm-up. The recommended mitigation is the validation-set calibration procedure of Section~\ref{sec:problem}.
+The study has ten specific limitations. First, Texas-100X is the only empirical clinical dataset used. The findings have not been reproduced on a second cohort. Second, the streaming experiments are Texas-100X-calibrated controlled replay and simulation, not prospective live EHR deployment. Third, Texas-100X is administrative discharge data, not a real-time admission stream, so arrival order is reconstructed rather than observed. Fourth, the feature-shift counterfactual presumes a known marginal effect of the protected attribute on observable features. It is weaker than a structural causal counterfactual and under-attributes indirect effects, so the framework will tend to under-flag. Fifth, the e-process depends on a baseline flip rate $\rho_0$. Section~\ref{sec:exp_robust} shows that underestimating $\rho_0$ inflates the false-alarm rate, while overestimating it only delays detection. Sixth, small intersectional cells are unreliable. The detection rate falls below 0.95 for cells under roughly 1\,000 monitored patients, and the empirical Wasserstein-1 RCAP estimate carries a small-sample upward bias. Seventh, label delay increases the wall-clock detection delay by approximately the delay length. Eighth, the step-wise Benjamini-Hochberg layer is a cross-sectional adjustment at each inspection time, not a time-uniform online false-discovery guarantee. Ninth, the dashboard and Inspector report are governance-support prototypes and have not been clinically validated with users. Tenth, CHRONO-Fair is a research prototype and not a medical device.
 
-The disadvantage of the feature-shift counterfactual is that it presumes a known marginal effect of the protected attribute on observable features. Where the protected attribute has indirect effects (for example, race correlates with neighbourhood, which correlates with insurance, which correlates with admission timing), the feature-shift counterfactual will under-attribute the disparity to the protected attribute. The expected direction of bias is conservative; the framework will under-flag.
-
-Further data collection is required to determine exactly how performative effects \cite{perdomo2020} interact with the e-process. If the framework's alarms cause clinicians to change behaviour, the flip-rate process is no longer i.i.d., and the supermartingale guarantee technically holds only against pre-deployment baselines.
+A further open question concerns performative effects \cite{perdomo2020}. If the framework's alarms cause clinicians to change behaviour, the flip-rate process is no longer independent of past outputs, and the supermartingale guarantee holds only against a fixed pre-deployment baseline. Further data collection is required to determine exactly how performative feedback interacts with the e-process.
 
 % ============================================================================
 \section{Conclusion}\label{sec:conclusion}
 % ============================================================================
 
-The CHRONO-Fair framework was presented as a simulation-based prototype for anytime-valid counterfactual flip monitoring in clinical machine learning. The contribution is the coordinated combination of a Flip Hazard survival estimator, an anytime-valid e-process monitor with step-wise BH intersectional control, an aleatoric and epistemic decomposition of the flip mass, and a Wasserstein-1 RCAP statistic for length-of-stay regression. The four estimators were evaluated on synthetic streams calibrated to Texas-100X. Detection-rate, decomposition-accuracy, log-rank, and false-alarm-calibration findings were reported under the constraints specified in Section~\ref{sec:experiments}. External validation on real EHR streams, formal LORD-style online false-discovery control, and structural causal counterfactuals are the three immediate items on the future-work list. The released open-source package is intended as a reference implementation for clinical governance teams preparing for FDA PCCP and EU AI Act post-deployment obligations.
+CHRONO-Fair extends static VFR-style audit reliability into time-resolved monitoring of fairness-verdict flips. The real Texas-100X batch analysis shows that verdict instability is present in a real administrative cohort: one of 12 audited metric-attribute verdicts flips across hospital-network resamples. The Texas-100X-calibrated controlled streaming experiments show how the sequential monitor behaves under known drift, including its detection delay, its false-alarm control, its root-cause decomposition, and its response to baseline miscalibration, small cells, and label delay. Together the two layers give time-resolved evidence about when and where a fairness verdict begins to flip, which a static batch audit cannot provide. The evidence here is batch-real and stream-controlled; it is not prospective clinical evidence. Prospective EHR-stream validation is the main next step, followed by a time-uniform online false-discovery procedure, a counterfactual-sensitivity study across the swap, feature-shift, and structural definitions, and a governance-user evaluation of the Inspector report.
 
 % ============================================================================
 \bibliographystyle{ACM-Reference-Format}
@@ -542,148 +742,51 @@ Sec.~\ref{sec:exp_attributes}, Fig.~\ref{fig:fourattr} & 15\,000 & 42 & none \\
 \caption{Per-experiment synthesiser configuration. All experiments are reproducible via \texttt{python -m chrono\_fair.experiments.<expN>}.}
 \end{table}
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 % ============================================================================
 % Figures
 % ============================================================================
 
-\begin{figure*}[t]
-\centering
-\includegraphics[width=0.95\textwidth]{figures/fig0_architecture.png}
-\caption{CHRONO-Fair architecture. A clinical stream feeds a deployed model and a bootstrap ensemble. Four estimators run concurrently: Flip Hazard survival, anytime-valid e-process, aleatoric/epistemic decomposition, and RCAP. The Inspector Agent translates alarms into a structured governance report.}
-\label{fig:architecture}
-\end{figure*}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{figures/fig1_detection_delay.png}
-\caption{Section~\ref{sec:exp_delay}. Detection delay across 50 Monte-Carlo runs at $n = 10\,000$, drift onset at $t = 5\,000$. CHRONO-Fair: 50 of 50 alarms at mean delay 837. ADWIN variants and Davis-ADWIN: 21 of 50 at mean delay 3\,878 to 3\,927. Periodic batch (500): 24 of 50 at mean 499 without peeking control. Static VFR: 0 of 50.}
-\label{fig:delay}
-\end{figure}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{figures/fig2_decomposition_confusion.png}
-\caption{Section~\ref{sec:exp_decomp} Track 1. Controlled decomposition validation, 30 trials per scenario at $n = 1\,000$. Confusion matrix on the left; per-scenario epistemic share on the right. The 0.6 threshold is the Inspector Agent decision boundary.}
-\label{fig:decomp}
-\end{figure}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{figures/fig3_km_curves_race.png}
-\caption{Section~\ref{sec:exp_fliphazard}. Group-stratified Flip Hazard no-flip survival at $n = 15\,000$. Greenwood 95\% bands shown.}
-\label{fig:km}
-\end{figure}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{figures/fig3_km_curves_intersectional.png}
-\caption{Section~\ref{sec:exp_fliphazard}. Intersectional Flip Hazard: race by sex.}
-\label{fig:intersectional}
-\end{figure}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{figures/fig3b_rmft_vs_vfr.png}
-\caption{Section~\ref{sec:exp_fliphazard}. Scalar VFR (left bars) against $1 - \mathrm{RMFT}/\tau^\star$ (right bars). RMFT preserves the Black versus Hispanic ordering that the scalar VFR collapses.}
-\label{fig:rmft}
-\end{figure}
 
-\begin{figure*}[t]
-\centering
-\includegraphics[width=0.9\textwidth]{figures/fig4_rcap_rank_shift.png}
-\caption{Section~\ref{sec:exp_rcap}. RCAP per-patient counterfactual rank shifts at $n = 20\,000$. Left: density. Right: cumulative $|\Delta|$.}
-\label{fig:rcap_hist}
-\end{figure*}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{figures/fig4b_rcap_vs_mae_gap.png}
-\caption{Section~\ref{sec:exp_rcap}. Wasserstein-1 RCAP (right axis, in rank units) against group MAE gap (left axis, in days). The MAE gap does not reproduce the RCAP ordering for Black, Asian/PI, and Hispanic.}
-\label{fig:rcap_mae}
-\end{figure}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.9\columnwidth]{figures/fig5a_false_alarm_calibration.png}
-\caption{Section~\ref{sec:exp_false}. Empirical false-alarm rate against nominal $\alpha$ on 200 streams per level. Points lie on or below the $y = x$ Ville bound.}
-\label{fig:falsealarm}
-\end{figure}
 
-\begin{figure*}[t]
-\centering
-\includegraphics[width=0.95\textwidth]{figures/fig6_dashboard_mockup.png}
-\caption{Section~\ref{sec:exp_dashboard}. Static rendering of the four-panel dashboard at $n = 12\,000$ with drift onset at $t = 6\,000$. Inspector Agent card lists cell labels, e-values, hazard ratios, dominant cause, recommended action, and suggested regulatory mapping.}
-\label{fig:dashboard}
-\end{figure*}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{figures/fig7_sensitivity.png}
-\caption{Section~\ref{sec:exp_sensitivity}. Detection rate (left) and detection delay (right) of the e-process against post-drift rate $\rho_1$ for $\rho_0 = 0.05$ and 30 streams per setting.}
-\label{fig:sensitivity}
-\end{figure}
 
-\begin{figure*}[t]
-\centering
-\includegraphics[width=0.95\textwidth]{figures/fig8_four_attribute_audit.png}
-\caption{Section~\ref{sec:exp_attributes}. Four-attribute Flip Hazard audit. Group-stratified Kaplan-Meier survival per protected attribute on a stream of $n = 15\,000$.}
-\label{fig:fourattr}
-\end{figure*}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.85\columnwidth]{figures/fig9_real_vfr_forest.png}
-\caption{Section~\ref{sec:exp_realvfr}. Real Texas-100X verdict stability. Point estimate (marker) and 95\% bootstrap confidence interval (bar) for 12 metric-attribute combinations, against the 0.8 fairness line. Red marks the one combination with a non-zero Verdict Flip Rate, race worst-group true-positive rate, where the CI straddles 0.8 and 4 of 20 resamples flip the verdict.}
-\label{fig:realvfr}
-\end{figure}
 
-\begin{figure*}[t]
-\centering
-\includegraphics[width=0.95\textwidth]{figures/fig10_robustness.png}
-\caption{Section~\ref{sec:exp_robust}. Robustness stress tests, 100 streams per setting. Left: baseline miscalibration; underestimating $\rho_0$ inflates false alarms, overestimating only delays detection. Centre: small-subgroup reliability; the detection rate exceeds 0.95 once the per-cell stream reaches roughly 1\,000 patients. Right: label delay adds linearly to the wall-clock detection delay.}
-\label{fig:robust}
-\end{figure*}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{figures/fig15_real_texas100.png}
-\caption{Section~\ref{sec:exp_realtexas}. Real Texas-100 data. Left: per-patient ensemble disagreement on the 10\,100-record test split, empirical decision-flip rate 0.0233. Right: Flip Hazard no-flip survival on the real flip stream.}
-\label{fig:realtexas}
-\end{figure}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{figures/fig11_online_fdr.png}
-\caption{Section~\ref{sec:exp_additional}. Multiple-testing procedures on 30 cells, 6 drifting, $q = 0.10$, 200 streams. False-discovery proportion (left) and power (right).}
-\label{fig:onlinefdr}
-\end{figure}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{figures/fig12_cf_sensitivity.png}
-\caption{Section~\ref{sec:exp_additional}. Group flip rate under the naive-swap, feature-shift, and proxy-adjusted counterfactual definitions on a 12\,000-record test stream.}
-\label{fig:cfsens}
-\end{figure}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{figures/fig13_ablation_full.png}
-\caption{Section~\ref{sec:exp_additional}. Module ablation. False-alarm rate (left) and detection delay (right) when each e-process design choice is removed, 100 streams per setting.}
-\label{fig:ablfull}
-\end{figure}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{figures/fig14_correlated_arrivals.png}
-\caption{Section~\ref{sec:exp_additional}. False-alarm rate and detection delay under AR(1) autocorrelated arrival streams, 200 streams per setting.}
-\label{fig:corr}
-\end{figure}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.9\columnwidth]{figures/fig_concept_vfr_to_chrono.png}
-\caption{VFR-Audit is a static batch scalar. CHRONO-Fair is the streaming extension. The scalar Verdict Flip Rate is recovered as $1 - S$ at the audit horizon, and the framework adds the time axis, the alarm, and the cause.}
-\label{fig:concept}
-\end{figure}
+
+
+
+
+
 
 \end{document}

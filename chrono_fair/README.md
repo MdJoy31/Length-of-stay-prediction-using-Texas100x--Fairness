@@ -62,3 +62,47 @@ RCAP             ───────────────►   Inspector Ag
 ```
 
 See `paper/chrono_fair.pdf` for the full method, theorem, experiments and references.
+
+## Monitoring dashboard
+
+A Streamlit console with ten tabs (Overview, Live Stream, Flip Hazard,
+Anytime E-Process, RCAP, Decomposition, Texas-100X Verdicts, Robustness,
+Inspector Report, Export).
+
+```bash
+pip install -r requirements.txt
+python -m chrono_fair.data.build_dataset    # build data/ artefacts first
+streamlit run app.py
+```
+
+Configuration defaults are in `config/default.yaml` (alpha, q, rho_0,
+warm-up, drift onset, stream length). A sample input schema is in
+`data/sample_schema.csv`.
+
+Research prototype. Not a medical device. Streaming examples are controlled
+replay or simulation unless connected to a validated deployment stream.
+
+## Tests
+
+```bash
+pip install pytest
+python -m pytest tests/ -q
+```
+
+Twelve tests cover the e-process (false-alarm control, one-sided
+behaviour), RCAP (rank positions, Wasserstein-1, bootstrap CI), and the
+Flip Hazard estimator (monotone survival, log-rank).
+
+## Repository layout
+
+- `app.py` : Streamlit monitoring console
+- `config/default.yaml` : monitoring configuration
+- `data/` : synthetic stream, 70/15/15 splits, real audit artefacts, real
+  Texas-100 subsample, data card
+- `flip_hazard.py, e_process.py, decomposition.py, rcap.py,
+  inspector_agent.py` : the four estimators and the Inspector report
+- `experiments/` : 14 reproducible experiment scripts
+- `tests/` : pytest unit tests
+- `paper/` : LaTeX manuscript and bibliography
+- `overleaf/` : self-contained Overleaf package
+- `CHRONO_Fair_End_to_End.ipynb` : executed end-to-end notebook
