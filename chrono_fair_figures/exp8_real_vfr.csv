@@ -1,0 +1,13 @@
+attribute,metric,point_value,point_verdict,ci_low,ci_high,ci_straddles_0.8,resample_fair,resample_unfair,VFR
+RACE,DI,0.6417,unfair,0.5695,0.7042,False,0,20,0.0
+RACE,WTPR,0.8238,fair,0.7731,0.8436,True,16,4,0.2
+RACE,PPV_Ratio,0.9242,fair,0.9243,0.9243,False,20,0,0.0
+ETHNICITY,DI,0.8253,fair,0.815,0.8353,False,20,0,0.0
+ETHNICITY,WTPR,0.8371,fair,0.8322,0.8425,False,20,0,0.0
+ETHNICITY,PPV_Ratio,0.9969,fair,0.9972,0.9972,False,20,0,0.0
+SEX,DI,0.7606,unfair,0.7533,0.7682,False,0,20,0.0
+SEX,WTPR,0.8413,fair,0.8377,0.8441,False,20,0,0.0
+SEX,PPV_Ratio,0.9971,fair,0.997,0.997,False,20,0,0.0
+AGE_GROUP,DI,0.2508,unfair,0.2444,0.2573,False,0,20,0.0
+AGE_GROUP,WTPR,0.7262,unfair,0.718,0.7337,False,0,20,0.0
+AGE_GROUP,PPV_Ratio,0.9235,fair,0.9243,0.9243,False,20,0,0.0
