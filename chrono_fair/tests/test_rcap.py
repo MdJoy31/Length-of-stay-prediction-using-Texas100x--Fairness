@@ -27,5 +27,5 @@ def test_rcap_ci_brackets_or_exceeds_point():
     rng = np.random.default_rng(3)
     u_a = rng.random(800)
     u_b = np.clip(u_a + 0.1, 0, 1)
-    w1, lo, hi = rcap_w1_ci(u_a, u_b, n_boot=200, seed=0)
-    assert lo <= hi and w1 >= 0.0
+    w1, boot_mean, lo, hi = rcap_w1_ci(u_a, u_b, n_boot=200, seed=0)
+    assert lo <= hi and w1 >= 0.0 and boot_mean >= 0.0

@@ -180,7 +180,7 @@ with tabs[0]:
         u_ap = rank_positions(sub['y_los_hat'].to_numpy()
                                - 0.6 * sub['race'].isin(['Black', 'Hispanic']).to_numpy(),
                                ref)
-        w1, _, _ = rcap_w1_ci(u_a, u_ap, n_boot=200, seed=0)
+        w1, _, _, _ = rcap_w1_ci(u_a, u_ap, n_boot=200, seed=0)
         rcap_by[r] = w1
     top_rcap = max(rcap_by, key=rcap_by.get) if rcap_by else "none"
     kpi(c[2], "Highest RCAP group", f"{top_rcap}")
@@ -338,9 +338,10 @@ with tabs[4]:
         u_ap = rank_positions(
             sub['y_los_hat'].to_numpy()
             - 0.6 * sub['race'].isin(['Black', 'Hispanic']).to_numpy(), ref)
-        w1, lo, hi = rcap_w1_ci(u_a, u_ap, n_boot=400, seed=1)
+        w1, boot_mean, lo, hi = rcap_w1_ci(u_a, u_ap, n_boot=400, seed=1)
         rows.append({'group': r, 'n': len(sub),
-                      'RCAP_W1': round(w1, 4),
+                      'plug_in_W1': round(w1, 4),
+                      'bootstrap_mean': round(boot_mean, 4),
                       'ci_low': round(lo, 4), 'ci_high': round(hi, 4)})
         fig.add_trace(go.Histogram(x=(u_a - u_ap), name=r, opacity=0.6,
                                     marker_color=col, nbinsx=40))
