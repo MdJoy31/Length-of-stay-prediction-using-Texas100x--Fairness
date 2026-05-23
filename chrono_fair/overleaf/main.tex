@@ -21,7 +21,7 @@
 \begin{abstract}
 The use of machine learning in clinical care is expanding rapidly, and with it the catalogue of subgroup-specific fairness failures that surface only after release. The auditing tools in routine use respond to this by computing a group fairness metric on a fixed snapshot of predictions and returning a pass-or-fail verdict against a threshold such as the 0.8 rule. However, a point-estimate verdict hides whether the underlying number is stable: on the real Texas-100X discharge dataset (925\,128 records), the worst-group true-positive-rate verdict for race reads ``fair'' at 0.824, yet the same verdict flips to ``unfair'' in 4 of 20 hospital-network resamples, a Verdict Flip Rate of 0.20. No batch audit will see when, or whether, that flip recurs as new patients arrive.
 
-This paper presents CHRONO-Fair, a prototype monitoring framework evaluated as a controlled validation study. The main contribution is a per-cell anytime-valid e-process on a counterfactual flip indicator, with an inspection-time cross-cell adjustment. Three supporting modules accompany it: a Flip Hazard survival view of group-stratified time-to-flip, an entropy-based diagnostic triage that summarises whether a flip signal is more consistent with data-driven noise, model uncertainty, or a mixed pattern, and a Wasserstein-1 rank-allocation statistic for length-of-stay regression. The evidence base combines a real Texas-100X batch verdict-stability analysis with Texas-100X-calibrated controlled streaming and retrospective replay experiments. On the streams, the e-process detected an injected drift in 50 of 50 Monte-Carlo runs at a median delay of 828 patients, against 21 of 50 for ADWIN, with the empirical false-alarm rate at or below the nominal level for every tested $\alpha$. The streaming evidence is controlled replay and simulation rather than prospective clinical validation, and prospective evaluation on a live electronic-health-record stream is the necessary next step before any operational use.
+This paper presents CHRONO-Fair, a prototype monitoring framework evaluated as a controlled validation study. The main contribution is a per-cell anytime-valid e-process on a counterfactual flip indicator, with an inspection-time cross-cell adjustment. Three supporting modules accompany it: a Flip Hazard survival view of group-stratified time-to-flip, an entropy-based diagnostic triage that summarises whether a flip signal is more consistent with data-driven noise, model uncertainty, or a mixed pattern, and a Wasserstein-1 rank-allocation statistic for length-of-stay regression. The evidence base combines a real Texas-100X batch verdict-stability analysis with Texas-100X-calibrated controlled streaming and retrospective replay experiments. On the streams, the e-process detected an injected drift in 50 of 50 Monte-Carlo runs at a median delay of 828 patients, against 21 of 50 for ADWIN, with the empirical false-alarm rate at or below the nominal level for every tested $\alpha$. The streaming evidence is controlled replay and simulation rather than prospective clinical validation, and prospective evaluation on a live electronic-health-record stream is the necessary next step before any operational adoption.
 \end{abstract}
 
 \keywords{algorithmic fairness, clinical machine learning, anytime-valid inference, fairness drift, post-deployment monitoring, length-of-stay prediction}
@@ -49,7 +49,7 @@ The closest precedent on the verdict-stability question is the prior VFR-Audit w
 
 
 \paragraph{Contribution.}
-The framework introduced in this paper, CHRONO-Fair, sits above an already-corrected clinical machine learning model and monitors whether its thresholded fairness verdict continues to hold as patients arrive. The main contribution is a per-cell e-process on a counterfactual flip indicator, calibrated against the pre-deployment baseline flip rate of the corrected model and combined with an inspection-time cross-cell adjustment. Three supporting modules give the governance-review interface its evidence: a Flip Hazard survival view of group-stratified time-to-flip, an entropy-based diagnostic triage that summarises whether a detected flip signal is more consistent with data-driven noise, model uncertainty, or a mixed pattern, and a Wasserstein-1 rank-allocation statistic for length-of-stay regression. A dashboard and an automatically generated inspection report bundle the four outputs for a clinical safety officer. The supporting modules are reported as auxiliary evidence for the same framework, not as four independently validated contributions.
+The framework introduced in this paper, CHRONO-Fair, sits above a deployed clinical machine learning model and monitors whether its thresholded fairness verdict continues to hold as patients arrive. The deployed model may be uncorrected or may have been fairness-adjusted by any pre-release mitigation method; CHRONO-Fair is agnostic to that choice. This paper makes four contributions, evaluated through real Texas-100X batch evidence and Texas-100X-calibrated controlled streaming and replay experiments. The main contribution is a per-cell e-process on a counterfactual flip indicator, calibrated against a pre-deployment baseline flip rate and combined with an inspection-time cross-cell adjustment. Three supporting modules give the governance-review interface its evidence: a Flip Hazard survival view of group-stratified time-to-flip, an entropy-based diagnostic attribution that summarises whether a detected flip signal is more consistent with data-driven noise, model uncertainty, or a mixed pattern, and a Wasserstein-1 rank-allocation statistic for length-of-stay regression. A dashboard and an automatically generated inspection report bundle the four outputs for a clinical safety officer. The novelty is not a new survival estimator or a new e-process. The contribution is the integration of time-resolved flip-hazard estimation, anytime-valid per-cell alarm evidence, diagnostic flip attribution, and rank-allocation regression monitoring around the governance object that hospitals act on: the thresholded fairness verdict.
 
 % ============================================================================
 \section{Related Work}\label{sec:related}
@@ -81,7 +81,48 @@ Obermeyer et al.\ \cite{obermeyer2019} traced the bias of a care-management algo
 
 \subsection{Counterfactual auditing of deployed classifiers}
 
-Maughan and Near \cite{maughan2022} proposed prediction sensitivity, a per-batch scalar. It estimates how often a counterfactual swap of the protected attribute changes the verdict, without the attribute at inference time. Wachter et al.\ \cite{wachter2017} defined a counterfactual explanation as the smallest input change that flips the decision. Ustun et al.\ \cite{ustun2019actionable} certified whether such a change is attainable through actionable features only. Chen et al.\ \cite{chen2019fairness} bounded a disparity estimate when the protected attribute is unobserved at audit time. These methods return a scalar or a per-instance explanation at a fixed time. They provide no anytime-valid alarm and no decomposition of the flip into a data cause and a model cause. CHRONO-Fair targets that gap.
+Maughan and Near \cite{maughan2022} proposed prediction sensitivity, a per-batch scalar. It estimates how often a counterfactual swap of the protected attribute changes the verdict, without the attribute at inference time. Wachter et al.\ \cite{wachter2017} defined a counterfactual explanation as the smallest input change that flips the decision. Ustun et al.\ \cite{ustun2019actionable} certified whether such a change is attainable through actionable features only. Chen et al.\ \cite{chen2019fairness} bounded a disparity estimate when the protected attribute is unobserved at audit time. These methods return a scalar or a per-instance explanation at a fixed time. They provide no anytime-valid alarm and no diagnostic decomposition of the flip into a data signal and a model signal. CHRONO-Fair targets that gap.
+
+\subsection{Fairness auditing dashboards and post-deployment monitoring tools}\label{sec:dashboards}
+
+A separate line of work has packaged the fairness audit as a tool that an analyst or governance team can run. Aequitas, released by Saleiro and colleagues, exposes group-rate, false-positive-rate, and false-negative-rate parity ratios across protected groups on a fixed prediction file and renders the resulting bias report as a per-attribute web table. Fairlearn, originating from the Microsoft FairLearn project of Bird and colleagues, ships a Python interface that computes selection-rate, equalised-odds, and demographic-parity statistics on a held-out evaluation set together with an in-processing reduction-to-classification mitigator. AIF360, released by Bellamy and colleagues at IBM Research, bundles roughly twenty group and individual fairness metrics with pre-, in-, and post-processing mitigators in one library. The Microsoft Responsible AI Dashboard composes Fairlearn, InterpretML, error-analysis, and counterfactual-explanation components inside a single notebook-embeddable widget aimed at a model developer's review session. All four artefacts operate in batch on a fixed set of predictions, present a snapshot at the moment of inspection, and offer no anytime-valid statistical guarantee under repeated peeking. The Davis et al.\ \cite{davis2025} VA fairness-drift study sits on the empirical side of the same gap: it tracks subgroup performance quarterly across eleven years of deployed predictions, demonstrates that the drift is real, and stops short of providing a per-cell sequential alarm at intersectional granularity. The Verdict Flip Rate of \cite{joy2025vfr} is the closest prior artefact to the present work, in that it scores the stability of the fairness verdict itself rather than of a point metric; it does so in batch mode with no time axis. Table~\ref{tab:dashboards} summarises this auditing-tool layer along five axes that matter for clinical post-deployment use.
+
+\begin{table*}[t]
+\centering
+\caption{Fairness auditing dashboards and monitoring tools, against the operating regime a clinical post-deployment monitor needs. Entries cover function, operating mode, output object, and the residual gap that CHRONO-Fair targets. No new statistical claim is made by this table; it consolidates feature descriptions from each tool's public documentation and from the cited drift- and verdict-stability work.}
+\label{tab:dashboards}
+\footnotesize
+\begin{tabular}{p{2.4cm} p{3.6cm} p{2.4cm} p{3.4cm} p{3.6cm}}
+\toprule
+Tool or work & Main function & Operating mode & Output object & Residual gap for CHRONO-Fair \\
+\midrule
+Aequitas & Group-rate and error-rate parity ratios per protected attribute & Batch on a fixed prediction file & Per-attribute bias report (web table) & No sequential alarm; no per-cell anytime-valid guarantee \\
+Fairlearn & Selection-rate, equalised-odds, demographic-parity metrics; reduction-based mitigator & Batch on held-out evaluation set & Metric dashboard plus mitigator object & No streaming verdict; no diagnostic split \\
+AIF360 & Library of ~20 group and individual metrics with pre-, in-, post-processing mitigators & Batch on held-out evaluation set & Metric report and corrected model & Inspection-time snapshot; no flip-monitoring or hazard estimate \\
+Microsoft RAI Dashboard & Fairlearn + InterpretML + counterfactual-explanation widgets in one developer view & Batch in notebook session & Interactive review widget & Aimed at developer review, not at continuous governance \\
+Fairness drift on VA cohort \cite{davis2025} & Quarterly subgroup performance tracking on deployed VA model & Periodic batch (quarterly) & Trend report per subgroup & No anytime-valid guarantee; single metric per cell \\
+Verdict Flip Rate \cite{joy2025vfr} & Static verdict-stability scalar on Texas-100X batch & Static (one batch evaluation) & Single VFR number per protected attribute & No time axis; no per-cell sequential alarm \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{quote}
+\textbf{Takeaway 1.} The four auditing toolkits in routine use (Aequitas, Fairlearn, AIF360, Microsoft RAI Dashboard) all operate in batch on a fixed prediction file. None of them carries a sequential statistical guarantee under repeated inspection, which is the regime a clinical governance team actually inhabits.
+\end{quote}
+
+\begin{quote}
+\textbf{Takeaway 2.} The closest streaming clinical evidence, the quarterly VA fairness-drift study of Davis et al., demonstrates that the drift is real but stops at quarterly aggregation and at a single subgroup metric. It leaves open the per-cell, anytime-valid layer that CHRONO-Fair contributes.
+\end{quote}
+
+\begin{quote}
+\textbf{Takeaway 3.} The Verdict Flip Rate of the prior VFR-Audit work is the closest object to CHRONO-Fair's monitored quantity, but it is reported as a single batch scalar with no time axis. CHRONO-Fair lifts the same quantity into a per-patient hazard curve under an anytime-valid alarm rule.
+\end{quote}
+
+\begin{quote}
+\textbf{Takeaway 4.} Existing tools report ``what is the disparity now''. They do not report ``when did it open'', ``is the signal larger than noise under repeated peeking'', or ``is this a label-pipeline issue or a sample-size issue''. CHRONO-Fair is built around those three questions.
+\end{quote}
+
+The mapping between each of the four CHRONO-Fair modules and the gap each one closes is direct. The Flip Hazard estimator closes the time-axis gap left open by the four batch toolkits and by static VFR, by reporting a per-arrival-index survival curve rather than a scalar. The per-cell shrunk-GROW e-process with step-wise Benjamini-Hochberg adjustment closes the peeking-penalty gap left open by every batch tool and by the quarterly Davis et al.\ cadence, by giving a per-inspection-time guarantee under Ville's inequality. The aleatoric-epistemic decomposition closes the interpretation gap that all of Aequitas, Fairlearn, AIF360, and the Microsoft RAI Dashboard leave open, by attaching a diagnostic triage label (data-side, model-side, or mixed) to every alarmed cell rather than reporting only its magnitude. RCAP closes the regression-output gap that the flip-rate and verdict literature has not addressed, by quantifying counterfactual rank-position shift on a length-of-stay output for which a binary verdict is not defined. This four-way mapping is the contribution map of the paper.
 
 \subsection{Positioning against prior work}
 
@@ -95,8 +136,8 @@ Table~\ref{tab:litcompare} places CHRONO-Fair against eight families of prior wo
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{l c c c c c c c c l}
 \toprule
-Method family & Static/ & Verdict & Anytime-valid & Cross-cell & Inter- & CF-flip & Triage & Regression/ & Real clinical \\
-(representative work) & streaming & reliability & per-cell & adjustment & sectional & monitoring & (diag.) & rank-alloc. & evidence \\
+Method family & Static/ & Verdict & Anytime-valid & Cross-cell & Inter- & CF-flip & Diagnostic & Regression/ & Real clinical \\
+(representative work) & streaming & reliability & per-cell & adjustment & sectional & monitoring & attribution & rank-alloc. & evidence \\
 \midrule
 Group metrics, batch toolkits \cite{hardt2016} & static & -- & -- & -- & P & -- & -- & -- & various \\
 Bootstrap-CI fairness audit \cite{cherian2024} & static & Y & -- & -- & -- & -- & -- & -- & -- \\
@@ -112,7 +153,7 @@ Anytime-valid risk tracking \cite{podkopaev2023} & streaming & -- & Y & -- & -- 
 \end{tabular}%
 }
 \\[2pt]
-{\footnotesize \textit{Footnote.} For the CHRONO-Fair row, ``P'' on cross-cell adjustment means an inspection-time step-wise Benjamini-Hochberg adjustment rather than a full time-uniform online false-discovery procedure. ``P'' on diagnostic triage means a triage signal that separates aleatoric from epistemic flip mass for governance review, not a confirmed causal attribution. ``P'' on real clinical evidence means a real Texas-100X batch verdict-stability analysis combined with Texas-100X-calibrated controlled streaming and replay experiments, not prospective deployment evidence.}
+{\footnotesize \textit{Footnote.} For the CHRONO-Fair row, ``P'' on cross-cell adjustment means an inspection-time step-wise Benjamini-Hochberg adjustment rather than a full time-uniform online false-discovery procedure. ``P'' on diagnostic attribution means an aleatoric/epistemic triage signal, not a confirmed causal root cause. ``P'' on real clinical evidence means a real Texas-100X batch verdict-stability analysis combined with Texas-100X-calibrated controlled streaming and replay experiments, not prospective deployment evidence.}
 \end{table*}
 
 Read row by row, the table shows that the gap is structural rather than incidental, since no prior method family holds more than two of the nine capabilities at once. The nearest entries each fall short on a different axis. Anytime-valid risk tracking \cite{podkopaev2023} is streaming and anytime-valid, but it monitors aggregate loss rather than a group-conditional fairness verdict and offers no diagnostic attribution. Fairness-drift monitoring \cite{davis2025} is the closest clinical work, yet it operates on a quarterly cadence, monitors a single metric, and gives no statistical guarantee under repeated inspection. The Verdict Flip Rate \cite{joy2025vfr} measures verdict instability directly but collapses it to a scalar with no time axis. CHRONO-Fair occupies the remaining position by combining the streaming, anytime-valid, intersectional, and diagnostic capabilities, while the three partial marks in its row record exactly where its support is qualified rather than complete.
@@ -242,32 +283,13 @@ RCAP measures how far a patient's predicted length-of-stay rank position shifts 
 When the intersectional monitor flags a cell, the framework emits a structured report. Fields include: cell label, observed $n$, current flip rate, baseline flip rate, e-value, hazard ratio against baseline, aleatoric and epistemic shares, dominant component, recommended action, and a suggested regulatory mapping. The recommended action is derived deterministically from the dominant component: an aleatoric-dominated cell triggers a label-pipeline audit recommendation; an epistemic-dominated cell triggers a recommendation to enlarge the stratum sample. The regulatory mapping is a non-binding cross-reference to FDA PCCP \cite{fda2024pccp} sections, EU AI Act \cite{eu2024aiact} articles, and STANDING Together \cite{ricci2025standing} recommendations, intended to accelerate review by clinical governance staff. Formal regulatory validation is future work.
 
 % ============================================================================
-\subsection{Two-stage workflow: VFR canonical correction pipeline, then CHRONO-Fair monitoring}\label{sec:afce_workflow}
+\subsection{Relationship to VFR-Audit and monitored model setup}\label{sec:monitored_model}
 
-CHRONO-Fair is a fairness monitor, not a fairness mitigator. The model whose verdicts it watches in a serious deployment is not a raw classifier but a pre-corrected model produced by an upstream fairness pipeline. That pipeline is the VFR canonical correction framework introduced in the prior VFR-Audit work \cite{joy2025vfr}, which combines five steps: fairness-through-awareness features, an accurate LGB+XGB ensemble, additive per-attribute decision-threshold offsets, hospital-cluster calibration, and a Pareto trade-off control. The pipeline exposes three coordinated levers: a per-attribute correction strength $\alpha \in [0,1]$, a trade-off coefficient $\lambda$ between accuracy and fairness, and an additive per-attribute threshold sweep.
+CHRONO-Fair is not a fairness mitigator. It is a post-deployment monitoring framework. It can monitor any deployed clinical machine learning model after a pre-release fairness audit. The deployed model may be released without mitigation, or after reweighing, threshold adjustment, in-processing constraints, or any other pre-release method. In this paper, VFR-Audit \cite{joy2025vfr} is cited only as the prior static audit framework and conceptual predecessor. VFR-Audit measures whether thresholded fairness verdicts are reliable under three sources of variation. The three sources are resampling, audit-size change, and cross-hospital site change. VFR-Audit introduces the Verdict Flip Rate as a static scalar summary of that reliability. CHRONO-Fair extends that idea by monitoring whether counterfactual fairness-verdict flips emerge over time after deployment.
 
-The deployment sequence is two-stage. Before release, the three-axis correction pipeline runs once on the training cohort and yields a deployed model whose fairness verdict has been brought above the chosen threshold on the protected attributes the pipeline can address. After release, CHRONO-Fair monitors whether that corrected verdict remains stable as patients arrive. The framework's anytime-valid alarm is calibrated against the pre-deployment baseline flip rate $\rho_0$ of the corrected model rather than against an uncorrected baseline. The starting condition the pipeline corrects from is the honest initial Random-Forest baseline on the real Texas-100X test set reported in the prior VFR-Audit work, with accuracy 0.749 and disparate impact 0.596 on race, 0.783 on sex, 0.811 on ethnicity, and 0.518 on age group; only ethnicity passes the 0.8 rule on this raw baseline. The prior work documents how the three-axis pipeline moves that initial baseline to a Fair model satisfying the 0.8 rule on all four protected attributes, at a documented accuracy cost. Those prior-work numbers are not reproduced as a CHRONO-Fair contribution here; the present paper cites them as the documented property of the deployed Fair model and reports an independent procedural replication of the same pipeline on the Texas-100X-calibrated synthetic stream in Table~\ref{tab:replication}.
+The streaming experiments in Section~\ref{sec:experiments} use a pre-release fairness-adjusted model generated for the present experiments. The pre-release adjustment is part of the experimental configuration of this paper. It is not a named contribution and not a method introduced by the VFR-Audit paper. The monitored-model setup is reported in Section~\ref{sec:exp_prerelease}, where the pre-release fairness-adjustment numbers are tabulated.
 
-\begin{table}[t]
-\centering
-\caption{Replication of the three-axis pipeline procedure ($\alpha$-search, $\lambda$ trade-off, per-attribute additive threshold sweep) on a Texas-100X-calibrated synthetic stream of $n_{\mathrm{test}} = 16\,000$ records, gradient-boosting base model with test AUC 0.843. These numbers are the property of the CHRONO-Fair paper and are not the canonical real-data table of \cite{joy2025vfr}.}
-\label{tab:replication}
-\small
-\begin{tabular}{l r r r r r}
-\toprule
-Attribute & Std DI & Fair DI & $\Delta$ DI & Std Acc & Fair Acc \\
-\midrule
-race      & 0.948 & 0.948 & $+0.000$ & 0.838 & 0.838 \\
-sex       & 0.995 & 0.995 & $+0.000$ & 0.838 & 0.838 \\
-ethnicity & 0.983 & 0.983 & $+0.000$ & 0.838 & 0.838 \\
-age\_group & 0.497 & 0.519 & $+0.022$ & 0.838 & 0.715 \\
-\bottomrule
-\end{tabular}
-\\[3pt]
-{\footnotesize \textit{Reading.} On the synthetic stream, the raw initial model already passes the 0.8 disparate-impact rule on race, sex, and ethnicity, so the three-axis correction adds no further movement on those cells. The age-group cell is the hard one and tracks the same pattern reported in the prior real-data work: a threshold sweep alone moves the disparate impact only modestly and pays an accuracy cost, which is why the full VFR canonical framework combines threshold sweep with hospital-cluster calibration and a deliberate $\alpha$-$\lambda$ Pareto search. The procedural replication confirms the pipeline runs on the simulator; the canonical numerical result on the real cohort remains the property of \cite{joy2025vfr}.}
-\end{table}
-
-The AGE\_GROUP cell carries the largest gain across the framework. The raw initial Random-Forest baseline on the real Texas-100X test set has disparate impact 0.518 on age group; after the VFR canonical framework runs, the corrected model reaches disparate impact 0.801. The corrected verdict for AGE\_GROUP therefore moves furthest in the pipeline and is the cell most likely to drift back under deployment conditions, which makes it the highest-priority cell for CHRONO-Fair to monitor after release. The multi-model multi-attribute table of Section~\ref{sec:exp_multimodel} confirms the same attribute is the hardest across all six baseline model families on the same dataset, so the corrected fairness on AGE\_GROUP is a property of the VFR canonical framework rather than a property of any underlying model family.
+CHRONO-Fair does not require any specific pre-release mitigation method. It monitors the stream of factual and counterfactual predictions produced by the deployed model. The same monitor therefore applies after reweighing, threshold adjustment, in-processing mitigation, or no mitigation at all. The baseline flip rate $\rho_0$ in Section~\ref{sec:problem} absorbs whichever pre-release configuration the deployment site used. The framework is in that sense agnostic to the upstream pipeline.
 
 \section{Deployment}\label{sec:deployment}
 % ============================================================================
@@ -301,13 +323,13 @@ The deployment description above specifies the contract of a research prototype,
 The evidence base of this study is organised as three layers that decline in directness from real clinical data toward controlled simulation. Layer 1 is the real Texas-100X batch verdict-stability analysis of Section~\ref{sec:exp_realvfr}. Layer 2 is the set of Texas-100X-calibrated controlled streaming and retrospective replay experiments that characterise sequential monitoring behaviour under known drift settings, including the quarter-based and hospital-group retrospective replays of Section~\ref{sec:exp_replay}, which approximate deployment ordering on the real cohort but do not replace live clinical validation. Layer 3 is a robustness and stress-test layer covering baseline miscalibration, small intersectional cells, and label delay. Only Layer 1 uses real clinical records directly; Layers 2 and 3 evaluate sequential behaviour under controlled replay or simulation. Texas-100X is administrative discharge data rather than a live admission stream, so prospective EHR-stream validation remains future work.
 
 \paragraph{What the framework is compared against, and where each comparator comes from.}
-The post-deployment monitoring comparison is run on a single shared substrate: the same Texas-100X-calibrated stream, the same pre-corrected deployed model (Section~\ref{sec:afce_workflow}), the same patient-level counterfactual flip indicator. Holding the substrate fixed means the reported gap between methods reflects the alarm rule, not the data path. Five comparator rules are drawn from named published instruments, and each enters the comparison as published rather than re-derived.
+The post-deployment monitoring comparison is run on a single shared substrate: the same Texas-100X-calibrated stream, the same pre-corrected deployed model (Section~\ref{sec:monitored_model}), the same patient-level counterfactual flip indicator. Holding the substrate fixed means the reported gap between methods reflects the alarm rule, not the data path. Five comparator rules are drawn from named published instruments, and each enters the comparison as published rather than re-derived.
 
 The snapshot reference is the scalar Verdict Flip Rate of the prior work \cite{joy2025vfr}, computed once on a pre-deployment validation window. It is the simplest possible monitor: a single number, never refreshed after release. Its purpose is to show how much information a deployment loses by not updating at all. Sitting one step above the snapshot is the quarterly-audit instrument of Davis et al.\ \cite{davis2025}, here reproduced as a two-proportion $z$-test on non-overlapping batches of 500 patients. The Davis paper ran its test at a calendar-quarter cadence on a VA cohort; the same statistical object is used here, with the cadence converted to a patient count to fit a single-site deployment. The change-point family is represented by ADWIN of Bifet and Gavalda \cite{bifet2007}, run on the per-patient flip indicator at two inspection schedules to separate cadence effects from rule effects. A fairness-gap variant of ADWIN, in the spirit of the JAMIA 2025 fairness-drift recommendation \cite{davis2025}, applies the same detector to the centred flip series rather than to the raw indicator. The closest direct precedent on the counterfactual side is Prediction Sensitivity \cite{maughan2022}, which reports a per-batch counterfactual-flip rate without an alarm rule; it appears in the comparison as a methods-level reference, since the published version is an audit rather than a sequential alarm.
 
 The framework introduced in this paper sits beside those rules rather than replacing them. Its statistical content is the per-cell shrunk-GROW e-process under Ville's inequality with a step-wise Benjamini-Hochberg cross-cell layer at each inspection time, plus the diagnostic aleatoric-epistemic split and the RCAP rank-allocation statistic. Holding the deployed model and the flip indicator constant across all six rules, the post-deployment comparison in Section~\ref{sec:exp_delay} therefore reads as a head-to-head of alarm rules under matched conditions.
 
-The pre-deployment side of the workflow uses one comparator that operates on the model rather than on the monitor: the VFR canonical correction framework of the prior VFR-Audit work \cite{joy2025vfr}. Its canonical real-data raw-baseline-versus-Fair output is cited in Section~\ref{sec:afce_workflow} and is not reused as a CHRONO-Fair contribution; a procedural replication of the same pipeline on the Texas-100X-calibrated stream, reported in Table~\ref{tab:replication}, is the CHRONO-Fair-owned evidence. A cross-study numerical comparison against other published length-of-stay fairness work was not undertaken because no prior length-of-stay study runs a per-cell anytime-valid monitor or a Flip Hazard estimator on the same substrate, which would make a head-to-head number meaningless.
+The monitored model used in the streaming experiments is described in Section~\ref{sec:experiments}, where the pre-release fairness-adjustment setup is reported as part of the experimental configuration. The pre-release adjustment is not a published method from any prior work; it is a configuration of the present experiments that produces the deployed-model stream that CHRONO-Fair consumes. A cross-study numerical comparison against other published length-of-stay fairness work was not undertaken because no prior length-of-stay study runs a per-cell anytime-valid monitor or a Flip Hazard estimator on the same substrate, which would make a head-to-head number meaningless.
 
 Table~\ref{tab:expsummary} summarises each experiment.
 
@@ -330,7 +352,7 @@ Exp.~8 real Texas-100X VFR & 925\,128 & 1000 boot.\ & real audit (no simulation)
 Exp.~9 robustness stress tests & 200 to 12\,000 & 100/setting & miscalibration, small cell, label delay & false-alarm rate; detection rate; delay & correctly-calibrated monitor \\
 Exp.~10 multi-model fairness & 925\,128 & 1 & real test set; LR, RF, GB, XGBoost, LightGBM, DNN & DI, WTPR, SPD, EOD, PPV across 4 attrs & six models \\
 Exp.~11 temporal/hospital replay & 30\,000; 67\,330 & 1 & quarter drift; hospital case-mix; real record order & alarm; detection delay & ADWIN; static VFR \\
-Exp.~12 VFR canonical correction workflow & 925\,128 & 1 & real test set; alpha-search, threshold sweep, lambda Pareto & DI / WTPR before vs after across 4 attrs & base classifier (uncorrected) \\
+Exp.~12 pre-release fairness-adjustment setup & 925\,128 & 1 & monitored-model configuration for this paper & DI / WTPR per attribute on the pre-release adjusted model & uncorrected base classifier \\
 \bottomrule
 \end{tabular}%
 }
@@ -375,7 +397,7 @@ Two tracks were run. Track 1 generated ensembles of 15 binary classifiers whose 
 The Inspector Agent label (one of \texttt{aleatoric}, \texttt{epistemic}, \texttt{mixed}, \texttt{none}) was compared against the ground-truth scenario. The aggregate confusion matrix and accuracy were reported.
 
 \textbf{Result.}
-In Track 1, the framework matched the ground-truth scenario in 90 of 90 trials. In Track 2, the ML-driven setup, the framework labelled the dominant cause as \texttt{aleatoric} in 3 of 15 aleatoric trials, 1 of 15 epistemic trials, and 1 of 15 mixed trials; the remaining trials were labelled \texttt{mixed}. Net Track 2 accuracy was 37.8\%.
+In Track 1, the framework matched the ground-truth scenario in 90 of 90 trials. In Track 2, the ML-driven setup, the framework labelled the dominant diagnostic signal as \texttt{aleatoric} in 3 of 15 aleatoric trials, 1 of 15 epistemic trials, and 1 of 15 mixed trials; the remaining trials were labelled \texttt{mixed}. Net Track 2 accuracy was 37.8\%.
 
 \textbf{Interpretation.}
 The decomposition formula is correct on inputs that satisfy the controlled-ensemble assumption (Track 1). In realistic ensembles trained on overlapping data and audited at deployment time, the dominant component is frequently \texttt{mixed}. The framework's recommended action under \texttt{mixed} is parallel data-pipeline audit and ensemble-stabilised retraining, which is the same action a clinical safety officer would take when the diagnostic interpretation is unclear. The Track 2 figure should be read not as an accuracy bound but as evidence that the realistic case is mixed.
@@ -509,17 +531,17 @@ Figure~\ref{fig:falsealarm} plots the empirical false-alarm rate against the nom
 A stream of $n = 12\,000$ patients was generated with seed 4, with drift onset at $t = 6\,000$ and aleatoric bias 0.06. Predictions, counterfactual predictions, and the ensemble were generated by the same synthesiser configuration. The dashboard rendering was performed with the static-image pathway, which replicates the four-panel Streamlit layout. All cell labels, $n$ values, e-values, and hazard ratios were taken directly from the experiment outputs, not hard-coded.
 
 \textbf{Result.}
-The dashboard exposes four panels populated from the live experiment state: Flip Hazard survival per group (Panel 1), e-process log $E_t$ trace per group with the $\log(1/\alpha)$ alarm line (Panel 2), aleatoric/epistemic split per group as stacked bars (Panel 3), and RCAP per-patient rank-shift histogram per group (Panel 4). The Inspector Agent action card lists the flagged cells with their cause label, recommended action, and suggested regulatory mapping.
+The dashboard exposes four panels populated from the live experiment state: Flip Hazard survival per group (Panel 1), e-process log $E_t$ trace per group with the $\log(1/\alpha)$ alarm line (Panel 2), aleatoric/epistemic split per group as stacked bars (Panel 3), and RCAP per-patient rank-shift histogram per group (Panel 4). The Inspector Agent action card lists the flagged cells with their diagnostic triage label, recommended action, and suggested regulatory mapping.
 
 \textbf{Interpretation.}
-The dashboard prototype satisfies the visualisation requirement of the FDA PCCP \cite{fda2024pccp}, namely that monitoring outputs be inspectable by a clinical governance team without machine-learning expertise. Replication on a hospital information system uses the data interface described in Section~\ref{sec:deployment}.
+The dashboard prototype is designed to support the type of inspectable monitoring output expected in FDA PCCP-style lifecycle review \cite{fda2024pccp}, namely that monitoring outputs be inspectable by a clinical governance team without machine-learning expertise. Replication on a hospital information system uses the data interface described in Section~\ref{sec:deployment}.
 
 Figure~\ref{fig:dashboard} shows the four-panel dashboard rendered on this stream.
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=0.95\textwidth]{figures/fig6_dashboard_mockup.png}
-\caption{Section~\ref{sec:exp_dashboard}. Static rendering of the four-panel dashboard at $n = 12\,000$ with drift onset at $t = 6\,000$. Inspector Agent card lists cell labels, e-values, hazard ratios, dominant cause, recommended action, and suggested regulatory mapping.}
+\caption{Section~\ref{sec:exp_dashboard}. Static rendering of the four-panel dashboard at $n = 12\,000$ with drift onset at $t = 6\,000$. Inspector Agent card lists cell labels, e-values, hazard ratios, dominant triage signal, recommended action, and suggested regulatory mapping.}
 \label{fig:dashboard}
 \end{figure*}
 
@@ -589,7 +611,38 @@ ETHNICITY is the easiest protected attribute: every tree-based or DNN model pass
 \end{figure*}
 
 \textbf{Interpretation.}
-Two findings have direct bearing on the monitoring framework. First, the per-attribute fairness profile is not a model-family invariant. The gradient-boosted models (XGBoost, LightGBM) substantially improve over the linear baseline and the random forest on RACE and SEX, while AGE\_GROUP fails uniformly across all six models, which points to a data-side rather than a model-side cause. Second, this is exactly the setting CHRONO-Fair targets. The race worst-group true-positive-rate verdict that flips across resamples in Section~\ref{sec:exp_realvfr} is itself a cell in this grid (XGBoost RACE WTPR passes here, LR RACE WTPR fails), and the framework's diagnostic decomposition is intended to flag whether such a swap reflects label bias on the affected attribute (an aleatoric signal) or limited sample size (an epistemic signal). The grid therefore motivates the framework's per-cell monitoring across all four protected attributes simultaneously rather than racial-cell monitoring alone, which is the configuration the Live Stream tab in the released dashboard uses by default.
+Two findings have direct bearing on the monitoring framework. First, the per-attribute fairness profile is not a model-family invariant. The gradient-boosted models (XGBoost, LightGBM) substantially improve over the linear baseline and the random forest on RACE and SEX, while AGE\_GROUP fails uniformly across all six models, which points to a data-side rather than a model-side signal. Second, this is exactly the setting CHRONO-Fair targets. The race worst-group true-positive-rate verdict that flips across resamples in Section~\ref{sec:exp_realvfr} is itself a cell in this grid (XGBoost RACE WTPR passes here, LR RACE WTPR fails), and the framework's diagnostic decomposition is intended to flag whether such a swap reflects label bias on the affected attribute (an aleatoric signal) or limited sample size (an epistemic signal). The grid therefore motivates the framework's per-cell monitoring across all four protected attributes simultaneously rather than racial-cell monitoring alone, which is the configuration the Live Stream tab in the released dashboard uses by default.
+
+\subsection{Pre-release fairness-adjustment setup}\label{sec:exp_prerelease}
+
+\textbf{Setup.}
+The streaming experiments require a deployed model whose verdicts can be monitored. A pre-release fairness-adjusted model was generated for the present experiments. The adjustment combined group-conditional decision-threshold offsets with a per-attribute accuracy-fairness trade-off search. The Texas-100X-calibrated stream supplied $n_{\mathrm{test}} = 16\,000$ records for evaluation. The base classifier was a gradient-boosting model with test AUC 0.843. This pre-release adjustment is the monitored-model setup for this paper. It is not a published method from any prior work.
+
+\textbf{Metric.}
+Disparate impact (DI) and accuracy were computed per protected attribute on the held-out test stream before and after the pre-release adjustment.
+
+\textbf{Result.}
+Table~\ref{tab:prerelease} reports the per-attribute before-and-after numbers. On race, sex, and ethnicity the raw classifier already satisfies the 0.8 disparate-impact rule, so the adjustment leaves those cells unchanged. On AGE\_GROUP the disparate impact moves from 0.497 to 0.519 with a 12 percentage point accuracy cost. This residual AGE\_GROUP gap is the cell the streaming experiments treat as most likely to drift after release.
+
+\begin{table}[t]
+\centering
+\caption{Pre-release fairness-adjustment check on the Texas-100X-calibrated stream ($n_{\mathrm{test}} = 16\,000$, gradient-boosting base classifier, test AUC 0.843). The adjustment is part of the experimental configuration of this paper, not a method from any prior work.}
+\label{tab:prerelease}
+\small
+\begin{tabular}{l r r r r r}
+\toprule
+Attribute & DI (raw) & DI (adjusted) & $\Delta$ DI & Acc (raw) & Acc (adjusted) \\
+\midrule
+race      & 0.948 & 0.948 & $+0.000$ & 0.838 & 0.838 \\
+sex       & 0.995 & 0.995 & $+0.000$ & 0.838 & 0.838 \\
+ethnicity & 0.983 & 0.983 & $+0.000$ & 0.838 & 0.838 \\
+age\_group & 0.497 & 0.519 & $+0.022$ & 0.838 & 0.715 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Interpretation.}
+The pre-release adjustment defines the monitored model for the streaming experiments. AGE\_GROUP carries the largest residual gap and the largest accuracy cost. The streaming experiments treat AGE\_GROUP as the highest-priority cell for CHRONO-Fair to monitor after release. The configuration here is not a contribution of this paper; it is the experimental setup that produces the deployed-model stream the monitoring framework consumes.
 
 \subsection{Sensitivity to drift magnitude}\label{sec:exp_sensitivity}
 
@@ -832,7 +885,7 @@ The step-wise BH multiple-testing control is not a time-uniform LORD-style false
 
 \subsection{Clinical interpretation}
 
-A clinician inspecting the dashboard reads three signals: a survival curve (which patients are flipping and how fast), an e-process alarm (whether the change is statistically meaningful), and a cause label (whether to escalate to a data audit or a retraining request). The aleatoric label is associated with biased input data; the epistemic label is associated with under-representation. The two require different mitigations and the framework distinguishes them. Schwartz et al.\ \cite{schwartz2023} and Tonekaboni et al.\ \cite{tonekaboni2019} report that clinicians prefer monitoring outputs that translate into a concrete next step. The Inspector report is designed to satisfy that preference.
+A clinician inspecting the dashboard reads three signals: a survival curve (which patients are flipping and how fast), an e-process alarm (whether the change is statistically meaningful), and a diagnostic triage label (whether to escalate to a data audit or a retraining request). The aleatoric label is associated with biased input data; the epistemic label is associated with under-representation. The two require different mitigations and the framework distinguishes them. Schwartz et al.\ \cite{schwartz2023} and Tonekaboni et al.\ \cite{tonekaboni2019} report that clinicians prefer monitoring outputs that translate into a concrete next step. The Inspector report is designed to satisfy that preference.
 
 \subsection{Regulatory positioning}
 
