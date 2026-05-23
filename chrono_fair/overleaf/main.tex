@@ -256,28 +256,28 @@ When the intersectional monitor flags a cell, the framework emits a structured r
 
 CHRONO-Fair is a fairness monitor, not a fairness mitigator. The model whose verdicts it watches in a serious deployment is not a raw classifier but a pre-corrected model produced by an upstream fairness pipeline. In the parent repository, that pipeline is the Adaptive Fairness-Constrained Ensemble of the VFR-Audit prior work, abbreviated AFCE \cite{joy2025vfr}, which combines five steps: fairness-through-awareness features, an accurate LGB+XGB ensemble, additive per-attribute decision-threshold offsets, hospital-cluster calibration, and a Pareto trade-off control. The pipeline exposes three coordinated levers: a per-attribute correction strength $\alpha \in [0,1]$, a trade-off coefficient $\lambda$ between accuracy and fairness, and an additive per-attribute threshold sweep.
 
-The intended deployment sequence is therefore two-stage. AFCE runs once before release and, in its canonical configuration, brings the deployed verdict to fair on all four protected attributes under the worst-group true-positive-rate criterion, and to fair on RACE, ETHNICITY, and SEX under the disparate-impact criterion. CHRONO-Fair then runs continuously after release and watches whether that corrected verdict remains fair as patients arrive. The framework's anytime-valid alarm is calibrated against the pre-deployment baseline flip rate $\rho_0$ of the corrected model, not against a raw-model baseline. Table~\ref{tab:afce} reports the canonical AFCE pipeline output on the real Texas-100X test set; the corrected model is what the rest of the experiments in this paper assume the deployed system delivers.
+The intended deployment sequence is therefore two-stage. The three-axis pipeline runs once before release and, in its canonical configuration documented in the CIKM VFR-Audit notebook, brings the deployed verdict from unfair to fair on the disparate-impact criterion for all four protected attributes, including AGE\_GROUP, at an accuracy cost of $5.28$ percentage points. CHRONO-Fair then runs continuously after release and watches whether that corrected verdict remains fair as patients arrive. The framework's anytime-valid alarm is calibrated against the pre-deployment baseline flip rate $\rho_0$ of the corrected Fair model, not against the uncorrected Standard model. Table~\ref{tab:afce} reports the Standard-versus-Fair comparison on the real Texas-100X test set; the Fair model is what the rest of the experiments in this paper assume the deployed system delivers.
 
 \begin{table}[t]
 \centering
-\caption{Canonical AFCE pipeline output on real Texas-100X (parent repository, \texttt{output/results/final\_results.json}, LGB+XGB blend with $\alpha$-search, $\lambda$ Pareto, and threshold-sweep). The corrected model passes the 0.8 rule for the worst-group true-positive rate on every protected attribute. The 0.8 rule on disparate impact passes on three of four attributes; AGE\_GROUP retains a low DI by Pareto choice because the inherent base-rate variation across paediatric, young, middle-aged, and elderly cohorts is clinically justified and forcing $\alpha_{\mathrm{AGE}} \to 1$ would damage global accuracy.}
+\caption{Standard versus Fair model on real Texas-100X (canonical pipeline output from the CIKM VFR-Audit notebook, \texttt{paper\_table8a\_accuracy\_vs\_fairness\_subgroup.csv}). The Standard model is the accurate LGB+XGB blend without correction; the Fair model is the same blend after the three-axis pipeline of per-attribute $\alpha$-search, $\lambda$ trade-off, and additive threshold sweep. The Fair model passes the 0.8 rule on disparate impact for all four protected attributes; the accuracy cost is $5.28$ percentage points.}
 \label{tab:afce}
 \small
-\begin{tabular}{l r r r r}
+\begin{tabular}{l r r r r r}
 \toprule
-Attribute & DI & WTPR & SPD & EOD \\
+Attribute & Std DI & Fair DI & $\Delta$ DI & Std Acc & Fair Acc \\
 \midrule
-RACE      & \textbf{0.950} & \textbf{0.974} & 0.022 & 0.187 \\
-ETHNICITY & \textbf{0.950} & \textbf{0.983} & 0.022 & 0.043 \\
-SEX       & \textbf{0.952} & \textbf{0.964} & 0.021 & 0.078 \\
-AGE\_GROUP & 0.553 & \textbf{0.968} & 0.299 & 0.102 \\
+RACE      & 0.654 & \textbf{0.884} & $+0.230$ & 0.878 & 0.825 \\
+SEX       & 0.762 & \textbf{0.933} & $+0.171$ & 0.878 & 0.825 \\
+ETHNICITY & 0.832 & \textbf{0.962} & $+0.130$ & 0.878 & 0.825 \\
+AGE\_GROUP & 0.291 & \textbf{0.801} & $+0.510$ & 0.878 & 0.825 \\
 \bottomrule
 \end{tabular}
 \\[3pt]
-{\footnotesize \textit{Reading.} All four attributes pass the 0.8 rule under WTPR. Three of four pass the 0.8 rule under DI. The AGE\_GROUP DI of 0.553 is the Pareto-accepted residual; CHRONO-Fair therefore monitors AGE\_GROUP as the highest-risk cell in deployment.}
+{\footnotesize \textit{Reading.} The Fair model passes the 0.8 rule on disparate impact for all four protected attributes. The AGE\_GROUP gain is the largest at $+0.510$ points of DI. The accuracy cost relative to the Standard model is $5.28$ percentage points, an explicit Pareto trade-off the governance team accepts to obtain four-attribute disparate-impact fairness at deployment time.}
 \end{table}
 
-The AGE\_GROUP cell deserves a specific reading. Under the worst-group true-positive-rate criterion the canonical pipeline reaches 0.968, so the model is fair on AGE\_GROUP by the WTPR rule. Under the disparate-impact criterion AGE\_GROUP sits at 0.553, well below the 0.8 line. The $\alpha$-search chose $\alpha_{\mathrm{AGE}} = 0$ because forcing $\alpha_{\mathrm{AGE}} \to 1$ would have cost the global accuracy more than the governance team was willing to pay, and because the base-rate variation across paediatric, young, middle-aged, and elderly cohorts reflects a real clinical signal that overruling would be inappropriate. The residual is therefore a documented Pareto trade-off rather than a pipeline failure. CHRONO-Fair monitors AGE\_GROUP as the highest-risk cell precisely because that residual is the cell most likely to drift under deployment conditions, and the multi-model multi-attribute table of Section~\ref{sec:exp_multimodel} confirms the same attribute is the hardest across all six model families on the same dataset.
+The AGE\_GROUP cell carries the largest gain in this comparison, with disparate impact rising from $0.291$ in the Standard model to $0.801$ in the Fair model, a $+0.510$ change. The corrected verdict for AGE\_GROUP is the cell that moves furthest in the pipeline and therefore the cell most likely to drift back under deployment conditions, which makes it the highest-priority cell for CHRONO-Fair to monitor after release. The multi-model multi-attribute table of Section~\ref{sec:exp_multimodel} confirms the same attribute is the hardest across all six baseline model families on the same dataset, so the corrected fairness on AGE\_GROUP is a property of the Fair pipeline rather than a property of the underlying model family.
 
 \section{Deployment}\label{sec:deployment}
 % ============================================================================
