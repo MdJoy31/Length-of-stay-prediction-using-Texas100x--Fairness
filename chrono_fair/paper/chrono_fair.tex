@@ -252,6 +252,31 @@ RCAP measures how far a patient's predicted length-of-stay rank position shifts 
 When the intersectional monitor flags a cell, the framework emits a structured report. Fields include: cell label, observed $n$, current flip rate, baseline flip rate, e-value, hazard ratio against baseline, aleatoric and epistemic shares, dominant component, recommended action, and a suggested regulatory mapping. The recommended action is derived deterministically from the dominant component: an aleatoric-dominated cell triggers a label-pipeline audit recommendation; an epistemic-dominated cell triggers a recommendation to enlarge the stratum sample. The regulatory mapping is a non-binding cross-reference to FDA PCCP \cite{fda2024pccp} sections, EU AI Act \cite{eu2024aiact} articles, and STANDING Together \cite{ricci2025standing} recommendations, intended to accelerate review by clinical governance staff. Formal regulatory validation is future work.
 
 % ============================================================================
+\subsection{Two-stage workflow: AFCE pre-correction, then CHRONO-Fair monitoring}\label{sec:afce_workflow}
+
+CHRONO-Fair is a fairness monitor, not a fairness mitigator. The model whose verdicts it watches in a serious deployment is not a raw classifier but a pre-corrected model produced by an upstream fairness pipeline. In the parent repository, that pipeline is the Adaptive Fairness-Constrained Ensemble of the VFR-Audit prior work, abbreviated AFCE \cite{joy2025vfr}, which combines five steps: fairness-through-awareness features, an accurate LGB+XGB ensemble, additive per-attribute decision-threshold offsets, hospital-cluster calibration, and a Pareto trade-off control. The pipeline exposes three coordinated levers: a per-attribute correction strength $\alpha \in [0,1]$, a trade-off coefficient $\lambda$ between accuracy and fairness, and an additive per-attribute threshold sweep.
+
+The intended deployment sequence is therefore two-stage. AFCE runs once before release and brings the deployed verdict from unfair to fair on the protected attributes where the alpha-search permits it. CHRONO-Fair then runs continuously after release and watches whether that corrected verdict remains fair as patients arrive. The framework's anytime-valid alarm is calibrated against the pre-deployment baseline flip rate $\rho_0$ of the corrected model, not against a raw-model baseline. Table~\ref{tab:afce} reports the AFCE BEFORE and AFTER numbers on the real Texas-100X test set; the corrected model is what the rest of the experiments in this paper assume the deployed system delivers.
+
+\begin{table}[t]
+\centering
+\caption{AFCE pre-deployment correction on real Texas-100X (parent repository pipeline output). The alpha configuration was $\{$RACE: 1.0, ETHNICITY: 1.0, SEX: 1.0, AGE\_GROUP: 0.0$\}$, chosen by the alpha-search to preserve accuracy. AFCE accuracy was 0.8785 against a base of 0.8787, a 0.02-point trade-off.}
+\label{tab:afce}
+\small
+\begin{tabular}{l r r r r l}
+\toprule
+Attribute & DI before & DI after & WTPR before & WTPR after & Fair after \\
+\midrule
+RACE      & 0.613 & \textbf{0.803} & 0.818 & 0.858 & yes \\
+ETHNICITY & 0.834 & 0.851 & 0.841 & 0.856 & yes \\
+SEX       & 0.790 & 0.802 & 0.847 & 0.857 & yes \\
+AGE\_GROUP & 0.252 & 0.257 & 0.726 & 0.738 & no (alpha=0) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The residual AGE\_GROUP unfairness is a known accepted Pareto trade-off rather than a pipeline failure. The alpha-search chose $\alpha = 0$ on AGE\_GROUP because forcing $\alpha \to 1$ on that attribute would have cost the global accuracy more than the governance team was willing to pay. CHRONO-Fair therefore monitors AGE\_GROUP as the highest-risk cell in deployment, and the multi-model multi-attribute table of Section~\ref{sec:exp_multimodel} confirms that AGE\_GROUP is the hardest attribute across all six model families on the same dataset.
+
 \section{Deployment}\label{sec:deployment}
 % ============================================================================
 
@@ -312,6 +337,7 @@ Exp.~8 real Texas-100X VFR & 925\,128 & 1000 boot.\ & real audit (no simulation)
 Exp.~9 robustness stress tests & 200 to 12\,000 & 100/setting & miscalibration, small cell, label delay & false-alarm rate; detection rate; delay & correctly-calibrated monitor \\
 Exp.~10 multi-model fairness & 925\,128 & 1 & real test set; LR, RF, GB, XGBoost, LightGBM, DNN & DI, WTPR, SPD, EOD, PPV across 4 attrs & six models \\
 Exp.~11 temporal/hospital replay & 30\,000; 67\,330 & 1 & quarter drift; hospital case-mix; real record order & alarm; detection delay & ADWIN; static VFR \\
+Exp.~12 AFCE pre-correction workflow & 925\,128 & 1 & real test set; alpha-search, threshold sweep, lambda Pareto & DI / WTPR before vs after across 4 attrs & base classifier (uncorrected) \\
 \bottomrule
 \end{tabular}%
 }
