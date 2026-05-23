@@ -19,7 +19,7 @@
 }
 
 \begin{abstract}
-The use of machine learning in clinical care is expanding rapidly, and with it the catalogue of subgroup-specific fairness failures that surface only after release. The auditing tools in routine use respond to this by computing a group fairness metric on a fixed snapshot of predictions and returning a pass-or-fail verdict against a threshold such as the 0.8 rule. However, a point-estimate verdict hides whether the underlying number is stable: on the real Texas-100X discharge dataset (925\,128 records), the worst-group true-positive-rate verdict for race reads ``fair'' at 0.824, yet the same verdict flips to ``unfair'' in 4 of 20 hospital-network resamples, a Verdict Flip Rate of 0.20. No batch audit will see when, or whether, that flip recurs as new patients arrive.
+The use of machine learning in clinical care is expanding rapidly, and with it the catalogue of subgroup-specific fairness failures that surface only after release. The auditing tools in routine use respond to this by computing a group fairness metric on a fixed snapshot of predictions and returning a pass-or-fail verdict against a threshold such as the 0.8 rule. However, a point-estimate verdict hides whether the underlying number is stable: on the real Texas-100X discharge dataset (925\,128 records), the worst-group true-positive-rate verdict for race reads ``fair'' at 0.824, yet the same verdict flips to ``unfair'' in 4 of 20 hospital-network resamples, a Verdict Flip Rate of 0.20. A batch audit cannot determine when, or whether, that verdict reversal recurs as new patients arrive.
 
 This paper presents CHRONO-Fair, a monitoring framework that watches an already-deployed clinical machine learning model. The monitored model may start from a point-estimate Fair verdict on every protected attribute, as in the prior VFR-Audit pre-release static audit, and the framework detects when that verdict begins to flip as new patients arrive. The main contribution is a per-cell anytime-valid e-process on a counterfactual flip indicator, with an inspection-time cross-cell adjustment. Three supporting modules accompany it: a Flip Hazard survival view of group-stratified time-to-flip, an entropy-based diagnostic attribution that summarises whether a flip signal is more consistent with data-driven noise, model uncertainty, or a mixed pattern, and a Wasserstein-1 rank-allocation statistic for length-of-stay regression. CHRONO-Fair does not perform pre-release mitigation. The evidence base combines a real Texas-100X batch verdict-stability analysis with Texas-100X-calibrated controlled streaming and retrospective replay experiments. On the streams, the e-process detected an injected drift in 50 of 50 Monte-Carlo runs at a median delay of 828 patients, against 21 of 50 for ADWIN, with the empirical false-alarm rate at or below the nominal level for every tested $\alpha$. The streaming evidence is controlled replay and simulation rather than prospective clinical validation, and prospective evaluation on a live electronic-health-record stream is the necessary next step before any operational adoption.
 \end{abstract}
@@ -245,11 +245,11 @@ The proof follows the supermartingale construction in Ramdas et al.\ \cite{ramda
 
 For $m$ disjoint cells, the framework runs $m$ parallel monitors. At each inspection step, step-wise Benjamini-Hochberg \cite{benjamini1995fdr} is applied to the e-value-implied $p$-values $p_t^{(c)} = 1/E_t^{(c)}$ clipped to $[0,1]$.
 
-The current multiple-testing layer should be interpreted as cross-sectional adjustment over the monitored cells at each inspection time, not as a full time-uniform online false-discovery guarantee. The per-cell anytime-valid Type-I control of Theorem~\ref{thm:anytime} holds for each cell separately. The cross-sectional step-wise Benjamini-Hochberg adjustment controls the false-discovery proportion among the cells inspected at a given step, under exchangeability of cell e-values. Extending CHRONO-Fair with a time-uniform online false-discovery procedure, such as LORD \cite{javanmard2018}, SAFFRON, alpha-investing \cite{foster2008}, or e-BH, is future work. The framework therefore reports findings as ``flagged at inspection step $t$'' rather than ``time-uniformly significant''.
+The e-process provides anytime-valid Type-I control for each monitored cell. The step-wise Benjamini-Hochberg layer is applied across cells at each inspection time and should not be interpreted as a time-uniform online false-discovery guarantee. The per-cell anytime-valid Type-I control of Theorem~\ref{thm:anytime} holds for each cell separately. The cross-sectional step-wise Benjamini-Hochberg adjustment controls the false-discovery proportion among the cells inspected at a given step, under exchangeability of cell e-values. Extending CHRONO-Fair with a time-uniform online false-discovery procedure, such as LORD \cite{javanmard2018}, SAFFRON, alpha-investing \cite{foster2008}, or e-BH, is future work. The framework therefore reports findings as ``flagged at inspection step $t$'' rather than ``time-uniformly significant''.
 
 \paragraph{Complexity.}
 
-Per arriving patient, the e-process update is $O(1)$ per cell. The step-wise BH sort across $m$ cells is $O(m \log m)$. For a four-attribute deployment, $m$ ranges from 13 marginal cells to 80 full intersectional cells. End-to-end latency on a single CPU core is below 5\,ms per patient.
+Per arriving patient, the e-process update is $O(1)$ per cell. The step-wise BH sort across $m$ cells is $O(m \log m)$. For a four-attribute deployment, $m$ ranges from 13 marginal cells to 80 full intersectional cells. The per-patient update path was below 10\,ms on a single CPU core in the released implementation, profiled on a 10\,000-patient stream with 13 marginal cells, excluding ensemble decomposition and dashboard rendering (further hardware and configuration details: AUTHOR CONFIRM).
 
 \subsection{Aleatoric and epistemic decomposition}\label{sec:decomposition}
 
@@ -306,7 +306,7 @@ The framework consumes a stream of records carrying an arrival timestamp, a pati
 
 \subsection{Latency and failure modes}
 
-The per-patient update path is well below 10\,ms on a single CPU core in the released implementation, so the monitor is unlikely to be the bottleneck in any realistic admission stream. The framework handles missing protected attributes by dropping the affected record from the intersectional monitor while the marginal monitor continues, an ensemble crash by skipping the decomposition while the e-process continues, and a corrupted counterfactual by recording the indicator as missing and extending the warm-up window.
+The per-patient update path was below 10\,ms on a single CPU core in the released implementation, so the monitor is unlikely to be the bottleneck in any realistic admission stream. The framework handles missing protected attributes by dropping the affected record from the intersectional monitor while the marginal monitor continues, an ensemble crash by skipping the decomposition while the e-process continues, and a corrupted counterfactual by recording the indicator as missing and extending the warm-up window.
 
 \subsection{PHI handling and configuration}
 
@@ -376,7 +376,7 @@ For each method and replication, the number of patients between drift onset at $
 CHRONO-Fair alarmed in 50 of 50 replications with a mean delay of 837 patients (median 828, standard deviation 221). ADWIN at $k = 1$ alarmed in 21 of 50 replications at mean delay 3\,878 patients. ADWIN at $k = 25$ alarmed in 21 of 50 at mean 3\,927. Davis-ADWIN alarmed in 21 of 50 at mean 3\,904. The periodic batch test alarmed in 24 of 50 at mean 499 patients but did not control false alarms across repeated peeks. Static VFR did not alarm. Under a separate no-disparity sanity scenario at $n = 10\,000$ and seeds 10\,000 to 10\,049, CHRONO-Fair raised 0 alarms in 50 replications.
 
 \textbf{Interpretation.}
-The detection-rate gap (50 of 50 against 21 of 50) is larger than the delay gap and is the headline result. ADWIN's coverage at $k = 1$ and $k = 25$ is similar, indicating that the framework's advantage is not an artefact of check-frequency. The periodic batch test trades coverage for delay and does not satisfy the FDA PCCP expectation of continuous monitoring \cite{fda2024pccp}.
+The detection-rate gap (50 of 50 against 21 of 50) is larger than the delay gap and is the headline result. ADWIN's coverage at $k = 1$ and $k = 25$ is similar, indicating that the framework's advantage is not an artefact of check-frequency. The periodic batch test trades coverage for delay and provides weaker support for the continuous-monitoring posture motivated by FDA PCCP guidance \cite{fda2024pccp}.
 
 Figure~\ref{fig:delay} plots the per-method detection delay across the 50 runs.
 
@@ -426,7 +426,7 @@ RMFT was 4\,817 patients for White ($n = 7\,214$), 3\,940 for Other ($n = 588$),
 \textbf{Interpretation.}
 The scalar VFR collapses the Black-Hispanic ordering (0.190 against 0.201). The RMFT preserves the ordering: Black has the lowest RMFT (2\,459), then Asian/PI (3\,337), then Hispanic (3\,837), then Other (3\,940), then White (4\,817). RMFT distinguishes early-clustering disparity (Black: a flip cluster appears within the first 2\,500 arrivals) from late-clustering disparity (Hispanic: flips spread over a longer arrival window). The clinical meaning is the same in both cases (disparate exposure), but the operational response differs: an early cluster triggers an immediate review, a late cluster triggers a slower investigation.
 
-Figures~\ref{fig:km} to \ref{fig:rmft} plot the group-stratified survival curves, the intersectional curves, and the RMFT comparison against scalar VFR.
+Figures~\ref{fig:intersectional} to \ref{fig:rmft} plot the intersectional curves, the group-stratified survival curves, and the RMFT comparison against scalar VFR.
 
 \begin{figure}[t]
 \centering
@@ -483,7 +483,7 @@ Other    & 499    & 0.0049 & 0.0208 & [0.0100, 0.0429] \\
 \textbf{Interpretation.}
 The MAE gap measures average error, which a regression model can keep low even while systematically shifting one group's allocation rank. RCAP captures the rank shift directly. The clinical reading is that, under the counterfactual swap, the Black rank-position distribution shifts by 1.63 percentile points from the White-referenced distribution on the plug-in estimate, with a 95\% percentile interval of 0.88 to 3.36 percentile points that excludes zero. The triage and bed-allocation literature treats predicted LOS as an ordinal allocation signal, so a rank-position shift is the policy-relevant quantity \cite{stone2022los}. Because the empirical Wasserstein-1 estimator is upward-biased at small $n$, RCAP must be read together with the per-cell sample size, and cells near $n = 500$ such as Other should be merged or flagged as low-power rather than interpreted at face value.
 
-Figures~\ref{fig:rcap_hist} and \ref{fig:rcap_mae} plot the per-patient rank-shift distribution and the RCAP-versus-MAE-gap comparison.
+Figures~\ref{fig:rcap_mae} and \ref{fig:rcap_hist} plot the RCAP-versus-MAE-gap comparison and the per-patient rank-shift distribution.
 
 \begin{figure}[t]
 \centering
@@ -622,7 +622,7 @@ The streaming experiments require a deployed model whose post-release fairness c
 Disparate impact (DI) is computed per protected attribute on the real Texas-100X test set. A cell passes the four-fifths rule when DI $\geq$ 0.80. Overall accuracy is reported alongside DI for both the Standard and the Fair monitored model.
 
 \textbf{Result.}
-Table~\ref{tab:prerelease} reports the Standard-versus-Fair monitored-model setup. The Standard model fails the DI rule on Race, Sex, and Age Group, and passes only on Ethnicity. The Fair monitored model satisfies DI $\geq$ 0.80 on all four protected attributes. The Fair model carries an overall accuracy cost of $-5.28$ percentage points against the Standard model. These values are taken directly from the prior VFR-Audit study \cite{joy2025vfr} and are reproduced here as the deployed-model configuration that CHRONO-Fair monitors. They are not a CHRONO-Fair contribution.
+Table~\ref{tab:prerelease} reports the Standard-versus-Fair monitored-model setup. The Standard model fails the DI rule on Race, Sex, and Age Group, and passes only on Ethnicity. The Fair monitored model satisfies DI $\geq$ 0.80 on all four protected attributes. The Fair monitored model reduces overall accuracy by 5.28 percentage points relative to the Standard model. These values are taken directly from the prior VFR-Audit study \cite{joy2025vfr} and are reproduced here as the deployed-model configuration that CHRONO-Fair monitors. They are not a CHRONO-Fair contribution.
 
 \begin{table}[t]
 \centering
