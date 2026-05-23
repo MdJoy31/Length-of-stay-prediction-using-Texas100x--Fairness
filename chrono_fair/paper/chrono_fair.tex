@@ -310,7 +310,8 @@ Exp.~6 sensitivity & 12\,000 & 30/$\rho_1$ & onset at $t = 6\,000$; $\rho_1 \in 
 Exp.~7 four-attribute audit & 15\,000 & 1 & no drift; structural racial disparity & log-rank $\chi^2$ across race, ethnicity, sex, age & marginal flip rate \\
 Exp.~8 real Texas-100X VFR & 925\,128 & 1000 boot.\ & real audit (no simulation) & point vs CI vs VFR verdict stability & point estimate; bootstrap CI \\
 Exp.~9 robustness stress tests & 200 to 12\,000 & 100/setting & miscalibration, small cell, label delay & false-alarm rate; detection rate; delay & correctly-calibrated monitor \\
-Exp.~10 temporal/hospital replay & 30\,000; 67\,330 & 1 & quarter drift; hospital case-mix; real record order & alarm; detection delay & ADWIN; static VFR \\
+Exp.~10 multi-model fairness & 925\,128 & 1 & real test set; LR, RF, GB, XGBoost, LightGBM, DNN & DI, WTPR, SPD, EOD, PPV across 4 attrs & six models \\
+Exp.~11 temporal/hospital replay & 30\,000; 67\,330 & 1 & quarter drift; hospital case-mix; real record order & alarm; detection delay & ADWIN; static VFR \\
 \bottomrule
 \end{tabular}%
 }
@@ -527,6 +528,49 @@ Of the 12 audited combinations, 11 had a stable verdict. Their bootstrap CIs lay
 
 \textbf{Interpretation.}
 The result establishes three points on real data. First, verdict instability is real and not a simulation artefact. One in 12 audited verdicts on Texas-100X flips across hospital-network resamples. Second, the confidence interval and the Verdict Flip Rate are consistent. They agreed on every combination, which supports using either as a batch instability test. Third, the point estimate alone is unsafe. It reported the race worst-group true-positive-rate verdict as fair, hiding a 1-in-5 resample flip. This is the case for sequential monitoring. A confidence interval or a VFR is computed once before deployment. Neither says whether, on a live patient stream after deployment, the same verdict has crossed 0.8 again, nor when, nor why. The CHRONO-Fair Flip Hazard estimator and e-process (Sections~\ref{sec:exp_fliphazard}, \ref{sec:exp_delay}) supply the time axis and the anytime-valid alarm that the batch procedures lack. The decomposition (Section~\ref{sec:exp_decomp}) supplies the cause.
+
+\subsection{Multi-model, multi-attribute fairness on real Texas-100X}\label{sec:exp_multimodel}
+
+\textbf{Evaluation question.}
+Does the verdict instability shown in Section~\ref{sec:exp_realvfr} reflect one fragile combination of model and attribute, or a pattern that repeats across model families and protected attributes? CHRONO-Fair monitors the thresholded verdict; this subsection examines what the underlying verdicts look like across all four protected attributes for six modelling choices.
+
+\textbf{Setup.}
+The parent repository's stored fairness numbers are used. Six model variants trained on the full Texas-100X training set and evaluated on the 185\,026-record held-out test set are compared: logistic regression (LR), random forest (RF), gradient boosting (GB), XGBoost, LightGBM, and a PyTorch deep neural network (DNN). For each model, six fairness metrics are computed across the four protected attributes RACE, ETHNICITY, SEX, and AGE\_GROUP: disparate impact (DI), worst-group true-positive rate (WTPR), statistical-parity difference (SPD), equalised-odds difference (EOD), positive-predictive-value ratio (PPV\_Ratio), and the aggregate equalised-odds value (Eq\_Odds).
+
+\textbf{Metric.}
+The fairness verdict for each (model, attribute, metric) cell. The 0.8 rule is applied to DI, WTPR, and PPV\_Ratio. A 0.1 gap rule is applied to SPD, EOD, and Eq\_Odds. The cell summary in Table~\ref{tab:multimodel} reports the count of fair metrics out of six for each (model, attribute) cell.
+
+\begin{table}[t]
+\centering
+\caption{Multi-model multi-attribute fairness on real Texas-100X. Each cell is the count of fair metrics out of six (DI, WTPR, SPD, EOD, PPV\_Ratio, Eq\_Odds) at the 0.8 ratio rule and the 0.1 gap rule. Higher is fairer. Numbers are derived from the stored real test-set fairness summary.}
+\label{tab:multimodel}
+\small
+\begin{tabular}{l r r r r}
+\toprule
+Model & RACE & ETHNICITY & SEX & AGE\_GROUP \\
+\midrule
+LR       & 1 & 2 & 2 & 1 \\
+RF       & 2 & 6 & 3 & 1 \\
+GB       & 2 & 6 & 4 & 1 \\
+XGBoost  & 4 & 6 & 4 & 1 \\
+LightGBM & 4 & 6 & 4 & 1 \\
+DNN      & 2 & 6 & 3 & 1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Result.}
+ETHNICITY is the easiest protected attribute: every tree-based or DNN model passes six of six metrics, and LR passes two. AGE\_GROUP is uniformly the hardest: every model passes exactly one metric, the positive-predictive-value ratio, and fails the other five. RACE divides the models clearly: XGBoost and LightGBM pass four of six metrics, the tree-based RF, GB, and the DNN pass two, and LR passes only one. SEX falls between, with XGBoost, GB, and LightGBM passing four of six, and LR passing two. Figure~\ref{fig:multimodel} shows the underlying DI, WTPR, SPD, and EOD values across the same grid.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{../../chrono_fair_figures/fig17_multi_model_fairness.png}
+\caption{Section~\ref{sec:exp_multimodel}. Multi-model multi-attribute fairness on real Texas-100X. Each panel is one metric (DI, WTPR, SPD, EOD) across six models and four protected attributes. Cell value is the metric; colour encodes pass-or-fail under the 0.8 rule for the ratio metrics and the 0.1 gap rule for SPD/EOD.}
+\label{fig:multimodel}
+\end{figure*}
+
+\textbf{Interpretation.}
+Two findings have direct bearing on the monitoring framework. First, the per-attribute fairness profile is not a model-family invariant. The gradient-boosted models (XGBoost, LightGBM) substantially improve over the linear baseline and the random forest on RACE and SEX, while AGE\_GROUP fails uniformly across all six models, which points to a data-side rather than a model-side cause. Second, this is exactly the setting CHRONO-Fair targets. The race worst-group true-positive-rate verdict that flips across resamples in Section~\ref{sec:exp_realvfr} is itself a cell in this grid (XGBoost RACE WTPR passes here, LR RACE WTPR fails), and the framework's diagnostic decomposition is intended to flag whether such a swap reflects label bias on the affected attribute (an aleatoric signal) or limited sample size (an epistemic signal). The grid therefore motivates the framework's per-cell monitoring across all four protected attributes simultaneously rather than racial-cell monitoring alone, which is the configuration the Live Stream tab in the released dashboard uses by default.
 
 \subsection{Sensitivity to drift magnitude}\label{sec:exp_sensitivity}
 

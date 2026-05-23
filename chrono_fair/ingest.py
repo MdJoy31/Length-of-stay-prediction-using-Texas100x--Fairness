@@ -225,6 +225,53 @@ class MonitorRunner:
 
 
 # ----------------------------------------------------------------------------
+# Multi-attribute wrapper: monitor race, sex, ethnicity, age_group together
+# ----------------------------------------------------------------------------
+@dataclass
+class MultiAttributeMonitor:
+    """Run one MonitorRunner per protected attribute on the same stream.
+
+    The wrapper accepts a dict mapping each attribute name to its per-cell
+    rho_0 dict. Every incoming record is forwarded to each underlying
+    runner, so race, sex, ethnicity, and age-group monitors update in
+    lockstep. get_status() returns a nested dict keyed by attribute.
+    """
+    rho0_per_attribute: Dict[str, Dict[str, float]]
+    alpha: float = 0.05
+    on_alarm: Optional[Callable[[str, str, int], None]] = None
+
+    runners: Dict[str, 'MonitorRunner'] = field(init=False)
+
+    def __post_init__(self) -> None:
+        self.runners = {}
+        for attr, rho0_map in self.rho0_per_attribute.items():
+            cb = (lambda cell, t, a=attr: self.on_alarm(a, cell, t)) \
+                  if self.on_alarm is not None else None
+            self.runners[attr] = MonitorRunner(
+                sensitive_col=attr, rho0_per_cell=rho0_map,
+                alpha=self.alpha, on_alarm=cb)
+
+    def update_one(self, record: Dict) -> None:
+        for runner in self.runners.values():
+            runner.update_one(record)
+
+    def consume(self, stream: Iterator[Dict]) -> None:
+        for rec in stream:
+            self.update_one(rec)
+
+    def get_status(self) -> Dict[str, Dict[str, Dict]]:
+        return {a: r.get_status() for a, r in self.runners.items()}
+
+    def flagged_cells(self) -> Dict[str, list]:
+        """Return {attribute: [list of cell names currently alarming]}."""
+        out = {}
+        for attr, runner in self.runners.items():
+            out[attr] = [c for c, m in runner.monitors.items()
+                          if m.alarm_at is not None]
+        return out
+
+
+# ----------------------------------------------------------------------------
 # Convenience: spin a producer thread that tails a CSV
 # ----------------------------------------------------------------------------
 def csv_to_queue(csv_path: str, queue_adapter: QueueAdapter,

@@ -106,7 +106,20 @@ n_stream = st.sidebar.select_slider("Stream length",
 drift_on = st.sidebar.checkbox("Inject drift", True)
 drift_at = st.sidebar.slider("Drift onset index", 1000, n_stream - 1000,
                                min(6000, n_stream - 1000), 500) if drift_on else None
-seed = st.sidebar.number_input("Random seed", 0, 9999, 42)
+
+# EHR-style randomisation. The Regenerate button pins a fresh random seed
+# into session state, so the stream is reproducible within a session but a
+# new one is drawn each time the button is pressed.
+manual_seed = st.sidebar.number_input("Random seed", 0, 99_999, 42)
+if st.sidebar.button("Regenerate stream (fresh random)"):
+    import secrets
+    st.session_state['active_seed'] = secrets.randbits(31)
+seed = int(st.session_state.get('active_seed', manual_seed))
+st.sidebar.caption(f"Active seed: {seed}")
+
+attr_options = ['race', 'sex', 'ethnicity', 'age_group']
+monitored_attrs = st.sidebar.multiselect(
+    "Protected attributes to monitor", attr_options, default=attr_options)
 
 uploaded = st.sidebar.file_uploader("Or load a prediction CSV", type="csv")
 
@@ -132,6 +145,33 @@ df['flip'] = (df['y_hat'] != df['y_hat_cf']).astype(int)
 RACES = [r for r in ['White', 'Black', 'Hispanic', 'Asian/PI', 'Other']
           if r in set(df['race'])]
 
+# Per-attribute level lists (only the levels that actually appear).
+ATTR_LEVELS = {
+    'race': RACES,
+    'sex': [v for v in ['Female', 'Male'] if v in set(df['sex'])],
+    'ethnicity': [v for v in ['Non-Hispanic', 'Hispanic']
+                   if v in set(df['ethnicity'])],
+    'age_group': [v for v in ['Pediatric', 'Young Adult',
+                                'Middle-aged', 'Elderly']
+                   if v in set(df['age_group'])],
+}
+# Only the attributes the user actually selected for monitoring.
+ATTR_LEVELS = {a: v for a, v in ATTR_LEVELS.items() if a in monitored_attrs}
+
+
+def per_cell_e_processes(attr: str):
+    """Run one EProcessMonitor per cell of the given attribute and return
+    (cell_monitor_dict, per_cell_log_E_traces)."""
+    mons = {c: EProcessMonitor(rho0=rho0, alpha=alpha)
+             for c in ATTR_LEVELS[attr]}
+    traces = {c: [] for c in ATTR_LEVELS[attr]}
+    for c in ATTR_LEVELS[attr]:
+        m = mons[c]
+        for z in df.loc[df[attr] == c, 'flip'].values:
+            m.update(int(z))
+            traces[c].append(m.log_E)
+    return mons, traces
+
 st.title("CHRONO-Fair Monitoring Console")
 st.caption("Time-resolved counterfactual fairness monitoring for clinical "
             "machine learning")
@@ -146,32 +186,66 @@ tabs = st.tabs(["Overview", "Live Stream", "Flip Hazard", "Anytime E-Process",
 with tabs[0]:
     st.subheader("Monitoring overview")
     overall_flip = df['flip'].mean()
-    # quick e-process pass per race
-    cell_e, flagged = {}, []
-    for r in RACES:
-        sub = df[df['race'] == r]
-        m = EProcessMonitor(rho0=rho0, alpha=alpha)
-        for z in sub['flip']:
-            m.update(int(z))
-        cell_e[r] = float(np.exp(min(m.log_E, 700)))
-        if m.alarm_at is not None:
-            flagged.append(r)
-    top_e = max(cell_e.values()) if cell_e else 1.0
-    top_e_race = max(cell_e, key=cell_e.get) if cell_e else "none"
+
+    # Run e-processes for every (attribute, level) the user selected.
+    all_cells = {}    # key: "race=Black" etc.
+    for attr, levels in ATTR_LEVELS.items():
+        for c in levels:
+            sub = df[df[attr] == c]
+            if len(sub) < 5:
+                continue
+            m = EProcessMonitor(rho0=rho0, alpha=alpha)
+            for z in sub['flip']:
+                m.update(int(z))
+            all_cells[f'{attr}={c}'] = {
+                'n': int(len(sub)),
+                'flip_rate': float(sub['flip'].mean()),
+                'e_value': float(np.exp(min(m.log_E, 700))),
+                'alarm_at': m.alarm_at,
+                'attribute': attr,
+            }
+    flagged = [c for c, s in all_cells.items() if s['alarm_at'] is not None]
+    top_e_cell = (max(all_cells, key=lambda c: all_cells[c]['e_value'])
+                   if all_cells else 'none')
+    top_e = all_cells[top_e_cell]['e_value'] if all_cells else 1.0
 
     c = st.columns(4)
     kpi(c[0], "Monitored patients", f"{len(df):,}")
-    kpi(c[1], "Protected groups", f"{len(RACES)}")
-    kpi(c[2], "Flagged cells", f"{len(flagged)}",
+    kpi(c[1], "Cells monitored",
+        f"{len(all_cells)} ({len(ATTR_LEVELS)} attrs)")
+    kpi(c[2], "Cells alarming", f"{len(flagged)}",
         "red" if flagged else "green")
-    kpi(c[3], "Highest e-value", f"{top_e:.1f} ({top_e_race})",
+    kpi(c[3], "Highest e-value", f"{top_e:.1f} ({top_e_cell})",
         "red" if top_e > 1 / alpha else "green")
+    # Per-attribute alarm summary
+    st.markdown("**Alarm summary by protected attribute**")
+    summary_rows = []
+    for attr in ATTR_LEVELS:
+        attr_cells = {k: v for k, v in all_cells.items()
+                       if v['attribute'] == attr}
+        attr_alarming = [k for k, v in attr_cells.items()
+                          if v['alarm_at'] is not None]
+        summary_rows.append({
+            'attribute': attr,
+            'levels_monitored': len(attr_cells),
+            'cells_alarming': len(attr_alarming),
+            'top_cell_e': round(max((v['e_value']
+                                       for v in attr_cells.values()),
+                                      default=1.0), 2),
+            'alarming_cells': ', '.join(k.split('=', 1)[1]
+                                          for k in attr_alarming) or '-',
+        })
+    st.dataframe(pd.DataFrame(summary_rows), use_container_width=True)
+
     c = st.columns(4)
     kpi(c[0], "Current flip rate", f"{overall_flip:.1%}",
         "amber" if overall_flip > rho0 else "green")
     kpi(c[1], "Baseline rho_0", f"{rho0:.3f}")
-    # highest RCAP group
-    ref = df.loc[df['race'] == RACES[0], 'y_los_hat'].to_numpy()
+    # highest RCAP group across selected attributes
+    ref_attr = next(iter(ATTR_LEVELS)) if ATTR_LEVELS else 'race'
+    ref_level = ATTR_LEVELS[ref_attr][0] if ATTR_LEVELS.get(ref_attr) else None
+    ref = (df.loc[df[ref_attr] == ref_level, 'y_los_hat'].to_numpy()
+            if ref_level else df['y_los_hat'].to_numpy())
     rcap_by = {}
     for r in RACES:
         sub = df[df['race'] == r]
@@ -232,25 +306,25 @@ with tabs[1]:
 
     if cursor > 0:
         seen = df.iloc[:cursor]
-        # Per-cell e-processes
-        cell_mon = {r: EProcessMonitor(rho0=rho0, alpha=alpha) for r in RACES}
-        for _, row in seen.iterrows():
-            if row['race'] in cell_mon:
-                cell_mon[row['race']].update(int(row['flip']))
-        # Per-cell trace for the chart: build all at once
-        traces = {r: [] for r in RACES}
-        for r in RACES:
-            m = EProcessMonitor(rho0=rho0, alpha=alpha)
-            for z in seen.loc[seen['race'] == r, 'flip']:
-                m.update(int(z))
-                traces[r].append(m.log_E)
+        # Run a per-cell e-process for every selected (attribute, level).
+        cell_mon = {}      # (attr, cell) -> EProcessMonitor
+        traces = {}        # (attr, cell) -> list of log_E values
+        for attr, levels in ATTR_LEVELS.items():
+            for c in levels:
+                cell_mon[(attr, c)] = EProcessMonitor(rho0=rho0, alpha=alpha)
+                traces[(attr, c)] = []
+                for z in seen.loc[seen[attr] == c, 'flip'].values:
+                    cell_mon[(attr, c)].update(int(z))
+                    traces[(attr, c)].append(cell_mon[(attr, c)].log_E)
+        alarms_now = [f"{a}={c}" for (a, c), m in cell_mon.items()
+                       if m.alarm_at is not None]
 
-        alarms_now = [r for r in RACES if cell_mon[r].alarm_at is not None]
         k = st.columns(4)
         kpi(k[0], "Flip rate so far",
             f"{seen['flip'].mean():.1%}",
             "amber" if seen['flip'].mean() > rho0 else "green")
-        kpi(k[1], "Active cells", f"{len(cell_mon)}")
+        kpi(k[1], "Cells monitored",
+            f"{len(cell_mon)} ({len(ATTR_LEVELS)} attrs)")
         kpi(k[2], "Cells alarming",
             f"{len(alarms_now)}", "red" if alarms_now else "green")
         kpi(k[3], "Status",
@@ -261,18 +335,28 @@ with tabs[1]:
             st.error("Alarm raised on cell(s): " + ", ".join(alarms_now)
                       + ". See Inspector Report tab for the action card.")
 
-        fig = go.Figure()
-        for r, col in zip(RACES, palette := ['#3498db', '#e74c3c', '#2ecc71',
-                                              '#f39c12', '#9b59b6']):
-            if traces[r]:
-                fig.add_trace(go.Scatter(y=traces[r], mode='lines',
-                                          name=r, line=dict(color=col)))
-        fig.add_hline(y=np.log(1 / alpha), line_dash="dash",
-                       line_color="#e74c3c",
-                       annotation_text="log(1/alpha) alarm boundary")
-        fig.update_layout(title="Per-cell log E_t trajectory",
-                           xaxis_title="Patients seen on the cell",
-                           yaxis_title="log E_t", **PLOT_LAYOUT)
+        # One subplot per selected attribute.
+        import plotly.subplots as ps
+        attrs = list(ATTR_LEVELS.keys())
+        fig = ps.make_subplots(rows=len(attrs), cols=1,
+                                 subplot_titles=[f"{a} (log E_t)" for a in attrs],
+                                 shared_xaxes=False, vertical_spacing=0.08)
+        palette = ['#3498db', '#e74c3c', '#2ecc71', '#f39c12',
+                    '#9b59b6', '#16a085']
+        for i, attr in enumerate(attrs, start=1):
+            for j, c in enumerate(ATTR_LEVELS[attr]):
+                tr = traces[(attr, c)]
+                if not tr:
+                    continue
+                fig.add_trace(go.Scatter(y=tr, mode='lines',
+                                          name=f"{attr}={c}",
+                                          line=dict(color=palette[j %
+                                                                    len(palette)])),
+                                row=i, col=1)
+            fig.add_hline(y=np.log(1 / alpha), line_dash="dash",
+                           line_color="#e74c3c", row=i, col=1)
+        fig.update_layout(height=240 * max(1, len(attrs)),
+                           showlegend=True, **PLOT_LAYOUT)
         st.plotly_chart(fig, use_container_width=True)
 
         # Auto-advance on Play (Streamlit reruns the script after sleep)

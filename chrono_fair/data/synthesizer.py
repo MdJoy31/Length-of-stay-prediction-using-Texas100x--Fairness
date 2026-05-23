@@ -40,7 +40,7 @@ class StreamConfig:
     drift_magnitude: float = 0.0  # 0 = no shift; 1.0 = full mean shift in minority group
     aleatoric_bias: float = 0.0   # fraction of minority-group labels flipped
     base_los_mean: float = 4.2
-    seed: int = 42
+    seed: int | None = 42        # set to None for fresh randomisation each call
     n_hospitals: int = 30        # number of modelled hospital sites
     start_time: pd.Timestamp = field(default_factory=lambda: pd.Timestamp("2006-01-01"))
 
