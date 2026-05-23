@@ -10,7 +10,7 @@
 
 \begin{document}
 
-\title{CHRONO-Fair: A Controlled Validation Study of Anytime-Valid Counterfactual Fairness Monitoring for Clinical Machine Learning}
+\title{CHRONO-Fair: A Controlled Validation Study of Time-Resolved Counterfactual Fairness Monitoring in Clinical Machine Learning}
 
 \author{Anonymous Author(s)}
 \affiliation{%
@@ -43,7 +43,7 @@ The closest precedent on the verdict-stability question is the prior VFR-Audit w
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.9\columnwidth]{../../chrono_fair_figures/fig_concept_vfr_to_chrono.png}
-\caption{VFR-Audit is a static batch scalar. CHRONO-Fair is the streaming extension. The scalar Verdict Flip Rate is recovered as $1 - S$ at the audit horizon, and the framework adds the time axis, the alarm, and the diagnostic triage.}
+\caption{VFR-Audit reports a static batch scalar. CHRONO-Fair extends the same verdict-flip object into time-resolved monitoring with an alarm and diagnostic triage.}
 \label{fig:concept}
 \end{figure}
 
@@ -197,7 +197,7 @@ CHRONO-Fair is one framework with four coordinated estimators that share a singl
 \begin{figure*}[t]
 \centering
 \includegraphics[width=0.95\textwidth]{../../chrono_fair_figures/fig0_architecture.png}
-\caption{CHRONO-Fair architecture. A clinical stream feeds a deployed model and a bootstrap ensemble. Four estimators run concurrently: Flip Hazard survival, anytime-valid e-process, aleatoric/epistemic decomposition, and RCAP. The Inspector Agent translates alarms into a structured governance report.}
+\caption{CHRONO-Fair architecture. The patient stream feeds the deployed model, the factual and counterfactual predictions yield the flip indicator, and four modules consume it: Flip Hazard survival, the per-cell anytime-valid e-process, diagnostic attribution, and RCAP. The Inspector report aggregates the four outputs for governance review.}
 \label{fig:architecture}
 \end{figure*}
 
@@ -249,7 +249,7 @@ The e-process provides anytime-valid Type-I control for each monitored cell. The
 
 \paragraph{Complexity.}
 
-Per arriving patient, the e-process update is $O(1)$ per cell. The step-wise BH sort across $m$ cells is $O(m \log m)$. For a four-attribute deployment, $m$ ranges from 13 marginal cells to 80 full intersectional cells. The per-patient update path was below 10\,ms on a single CPU core in the released implementation, profiled on a 10\,000-patient stream with 13 marginal cells, excluding ensemble decomposition and dashboard rendering (further hardware and configuration details: AUTHOR CONFIRM).
+Per arriving patient, the e-process update is $O(1)$ per cell. The step-wise BH sort across $m$ cells is $O(m \log m)$. For a four-attribute deployment, $m$ ranges from 13 marginal cells to 80 full intersectional cells. The per-patient update path was below 10\,ms on a single CPU core when profiled on a 10\,000-patient stream with 13 marginal cells, excluding ensemble decomposition and dashboard rendering.
 
 \subsection{Aleatoric and epistemic decomposition}\label{sec:decomposition}
 
@@ -294,7 +294,7 @@ CHRONO-Fair does not require any specific pre-release mitigation method. It moni
 \section{Deployment}\label{sec:deployment}
 % ============================================================================
 
-The reference implementation is open-sourced as a Python 3.11 package with no GPU dependency.
+A Python 3.11 research prototype with no GPU dependency will be released with the journal artifact package, subject to anonymisation requirements.
 
 \subsection{Software stack}
 
