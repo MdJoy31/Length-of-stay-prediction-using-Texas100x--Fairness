@@ -201,42 +201,88 @@ with tabs[0]:
     st.plotly_chart(fig, use_container_width=True)
 
 # ----------------------------------------------------------------------------
-# Tab 2: Live Stream Monitor
+# Tab 2: Live Stream Monitor (auto-play + per-cell live alarms)
 # ----------------------------------------------------------------------------
 with tabs[1]:
     st.subheader("Live stream monitor")
-    st.caption("Replays the stream patient by patient. Controlled replay, "
-                "not a live clinical feed.")
-    cc = st.columns(3)
-    if cc[0].button("Start / step 500"):
-        st.session_state['cursor'] = st.session_state.get('cursor', 0) + 500
-    if cc[1].button("Reset"):
-        st.session_state['cursor'] = 0
-    cursor = min(st.session_state.get('cursor', 1000), len(df))
-    cc[2].metric("Current patient index", f"{cursor:,}")
+    st.caption("Replay or live ingest. The Play button auto-advances the "
+                "cursor at the chosen rate; Step advances once. Either path "
+                "feeds the same incremental update used in the deployment "
+                "adapter (see chrono_fair/ingest.py).")
 
-    seen = df.iloc[:cursor]
-    if len(seen) > 0:
-        m = EProcessMonitor(rho0=rho0, alpha=alpha)
-        trace = []
-        for z in seen['flip']:
-            r = m.update(int(z))
-            trace.append(r['log_E'])
-        k = st.columns(3)
-        kpi(k[0], "Flip rate so far", f"{seen['flip'].mean():.1%}")
-        kpi(k[1], "log E_t", f"{m.log_E:.2f}")
-        kpi(k[2], "Alarm", "RAISED" if m.alarm_at else "none",
-            "red" if m.alarm_at else "green")
+    cc = st.columns(5)
+    if cc[0].button("Play"):
+        st.session_state['playing'] = True
+    if cc[1].button("Pause"):
+        st.session_state['playing'] = False
+    if cc[2].button("Step"):
+        st.session_state['cursor'] = st.session_state.get('cursor', 0) + 200
+    if cc[3].button("Reset"):
+        st.session_state['cursor'] = 0
+        st.session_state['playing'] = False
+    rate = cc[4].selectbox("Patients per refresh",
+                            [100, 200, 500, 1000], index=1)
+
+    cursor = min(st.session_state.get('cursor', 0), len(df))
+    playing = st.session_state.get('playing', False)
+
+    progress = cursor / max(1, len(df))
+    st.progress(progress, text=f"Cursor {cursor:,} / {len(df):,} patients "
+                                  f"({progress*100:.1f}%)")
+
+    if cursor > 0:
+        seen = df.iloc[:cursor]
+        # Per-cell e-processes
+        cell_mon = {r: EProcessMonitor(rho0=rho0, alpha=alpha) for r in RACES}
+        for _, row in seen.iterrows():
+            if row['race'] in cell_mon:
+                cell_mon[row['race']].update(int(row['flip']))
+        # Per-cell trace for the chart: build all at once
+        traces = {r: [] for r in RACES}
+        for r in RACES:
+            m = EProcessMonitor(rho0=rho0, alpha=alpha)
+            for z in seen.loc[seen['race'] == r, 'flip']:
+                m.update(int(z))
+                traces[r].append(m.log_E)
+
+        alarms_now = [r for r in RACES if cell_mon[r].alarm_at is not None]
+        k = st.columns(4)
+        kpi(k[0], "Flip rate so far",
+            f"{seen['flip'].mean():.1%}",
+            "amber" if seen['flip'].mean() > rho0 else "green")
+        kpi(k[1], "Active cells", f"{len(cell_mon)}")
+        kpi(k[2], "Cells alarming",
+            f"{len(alarms_now)}", "red" if alarms_now else "green")
+        kpi(k[3], "Status",
+            "ALARM" if alarms_now else ("PLAYING" if playing else "PAUSED"),
+            "red" if alarms_now else ("amber" if playing else "green"))
+
+        if alarms_now:
+            st.error("Alarm raised on cell(s): " + ", ".join(alarms_now)
+                      + ". See Inspector Report tab for the action card.")
+
         fig = go.Figure()
-        fig.add_trace(go.Scatter(y=trace, mode='lines',
-                                  line=dict(color='#f39c12')))
+        for r, col in zip(RACES, palette := ['#3498db', '#e74c3c', '#2ecc71',
+                                              '#f39c12', '#9b59b6']):
+            if traces[r]:
+                fig.add_trace(go.Scatter(y=traces[r], mode='lines',
+                                          name=r, line=dict(color=col)))
         fig.add_hline(y=np.log(1 / alpha), line_dash="dash",
                        line_color="#e74c3c",
                        annotation_text="log(1/alpha) alarm boundary")
-        fig.update_layout(title="E-process trajectory (replay so far)",
-                           xaxis_title="Patient", yaxis_title="log E_t",
-                           **PLOT_LAYOUT)
+        fig.update_layout(title="Per-cell log E_t trajectory",
+                           xaxis_title="Patients seen on the cell",
+                           yaxis_title="log E_t", **PLOT_LAYOUT)
         st.plotly_chart(fig, use_container_width=True)
+
+        # Auto-advance on Play (Streamlit reruns the script after sleep)
+        if playing and cursor < len(df):
+            import time
+            time.sleep(0.4)
+            st.session_state['cursor'] = cursor + int(rate)
+            st.rerun()
+    else:
+        st.info("Press Play to start the stream, or Step to advance once.")
 
 # ----------------------------------------------------------------------------
 # Tab 3: Flip Hazard
