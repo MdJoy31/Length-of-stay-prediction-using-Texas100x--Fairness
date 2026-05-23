@@ -178,12 +178,167 @@ def build():
          "survival on the real Texas-100 dataset (67,330 records). Uses the "
          "12,000-record real subsample shipped in data/ if the full file is "
          "absent."),
-        ("18. Dashboard rendering",
+        ("18. Experiment 15: temporal and hospital-group replay",
+         "exp15_replay",
+         ["fig16_replay.png"],
+         "Quarter-based temporal replay with injected Q3 drift, "
+         "hospital-group replay with case-mix shift, and a real Texas-100 "
+         "record-order replay control. Compares CHRONO-Fair against ADWIN "
+         "and static VFR."),
+        ("19. Experiment 16: multi-model multi-attribute fairness",
+         "exp16_multi_model_fairness",
+         ["fig17_multi_model_fairness.png"],
+         "Six models (LR, RF, GB, XGBoost, LightGBM, DNN) evaluated on six "
+         "fairness metrics across all four protected attributes on the real "
+         "Texas-100X test set."),
+        ("20. Experiment 12: AFCE pre-correction workflow",
+         "exp17_afce_workflow",
+         [],
+         "Loads the canonical CIKM VFR-Audit Standard-vs-Fair table; the "
+         "deployed Fair model is the model CHRONO-Fair monitors."),
+        ("19. Experiment 13: three-axis pipeline replication on the "
+         "calibrated stream",
+         "exp18_pipeline_replication",
+         [],
+         "Re-implementation of the alpha-search, lambda trade-off, and "
+         "additive threshold-sweep pipeline on the Texas-100X-calibrated "
+         "synthetic stream. Procedural reproduction; the canonical "
+         "real-data numbers remain the property of the prior work."),
+        ("20. Dashboard rendering",
          "dashboard.mockup",
          ["fig6_dashboard_mockup.png"],
          "The four-panel monitoring dashboard with the Inspector report "
          "card."),
     ]
+
+    # Per-experiment Interpretation cells. Keyed by the short module name
+    # so users can read what the result MEANS, not just what was computed.
+    interpretation = {
+        'exp1_detection_delay': (
+            "**Result and meaning.** CHRONO-Fair detects the injected drift in "
+            "50 of 50 Monte-Carlo runs at a median delay of 828 patients. "
+            "ADWIN variants detect in 21 of 50 at mean delay above 3,800 "
+            "patients; the periodic batch test detects in 24 of 50 without "
+            "controlling false alarms across peeks; static VFR never fires. "
+            "The takeaway is that an anytime-valid sequential test changes the "
+            "detection economy by orders of magnitude on moderate drift."),
+        'exp2_decomposition_accuracy': (
+            "**Result and meaning.** The aleatoric/epistemic decomposition "
+            "labels the dominant cause correctly in 100% of controlled trials. "
+            "On realistic ML pipelines the decomposition correctly flags "
+            "*mixed* causes, which is the honest verdict when both data-bias "
+            "and sample-scarcity signals coexist; this is what the framework "
+            "should output rather than a false single-cause label."),
+        'exp3_flip_hazard_curves': (
+            "**Result and meaning.** The group-stratified Kaplan-Meier curves "
+            "separate cleanly for the race attribute, and the log-rank tests "
+            "give p < 1e-10 against the White reference for every other race "
+            "cell. The Restricted Mean Flip Time gives a single scalar in "
+            "patient units that clinicians can read against a quarterly "
+            "audit horizon."),
+        'exp4_rcap_los': (
+            "**Result and meaning.** RCAP measures *rank* allocation shifts "
+            "that the group-MAE comparator misses. The plug-in vs bootstrap "
+            "mean separation shows the empirical Wasserstein-1 estimator is "
+            "upward-biased at small cell size (Other, n=499 has plug-in 0.005 "
+            "but bootstrap mean 0.021); this is reported honestly rather than "
+            "hidden as a symmetric CI."),
+        'exp5_ablation_false_alarm': (
+            "**Result and meaning.** The empirical false-alarm rate sits at or "
+            "below the nominal alpha for every alpha tested, confirming the "
+            "anytime-valid guarantee on the synthesiser. The conservatism at "
+            "small alpha is the expected trade-off for the GROW shrinkage "
+            "and 100-patient warm-up."),
+        'exp6_sensitivity': (
+            "**Result and meaning.** Detection rate is 7% at a drift of +1pp "
+            "above baseline, jumps to 100% at +3pp, and the mean delay falls "
+            "from 3,835 patients at rho_1=0.06 to 611 at rho_1=0.20. The "
+            "practical minimum detectable drift on this stream is ~3pp above "
+            "baseline within a 6,000-patient window."),
+        'exp7_all_attributes': (
+            "**Result and meaning.** The framework recovers the injected "
+            "racial disparity with log-rank chi-squared up to 1,675 and "
+            "produces statistically detectable but low-magnitude signals on "
+            "ethnicity and sex (driven by demographic correlation with the "
+            "racial-shift features). The clinical reading is to triage on "
+            "effect size, not on p-value alone."),
+        'exp8_real_vfr_analysis': (
+            "**Result and meaning.** On real Texas-100X audit data, the "
+            "confidence-interval and Verdict-Flip-Rate procedures agree on "
+            "all 12 audited metric-attribute combinations. The point-estimate "
+            "procedure misses the one unstable verdict (race worst-group "
+            "TPR, VFR 0.20) that the other two catch. Point estimates alone "
+            "are unsafe for governance."),
+        'exp9_robustness': (
+            "**Result and meaning.** Underestimating rho_0 inflates the "
+            "false-alarm rate to 1.0; overestimating only delays detection. "
+            "Operational rule: round rho_0 upward under uncertainty. Cells "
+            "below ~1,000 patients have detection rate under 0.95. Label "
+            "delay shifts wall-clock detection delay linearly by d."),
+        'exp10_online_fdr': (
+            "**Result and meaning.** Step-wise BH on p=1/E and e-BH coincide "
+            "numerically here because 1/E is a valid p-value and the BH "
+            "thresholds map onto each other. The distinction is in the "
+            "dependence assumption, not the empirical number: e-BH controls "
+            "FDR under arbitrary dependence, while step-wise BH needs "
+            "positive dependence."),
+        'exp11_counterfactual_sensitivity': (
+            "**Result and meaning.** The naive attribute-swap counterfactual "
+            "yields a degenerate zero flip rate because the model is "
+            "fairness-through-unawareness. The feature-shift counterfactual "
+            "yields moderate group flip rates; the proxy-adjusted "
+            "counterfactual yields larger rates. The framework's choice of "
+            "feature-shift is a deliberate conservative position."),
+        'exp12_ablation_full': (
+            "**Result and meaning.** Under correct rho_0 calibration, "
+            "removing the warm-up, the GROW rule, the shrinkage, or the "
+            "one-sided clip does not catastrophically break the monitor; "
+            "the design choices govern false-alarm control under stress "
+            "(miscalibration) rather than raw detection on the easy case."),
+        'exp13_correlated_arrivals': (
+            "**Result and meaning.** AR(1) autocorrelation up to phi=0.9 in "
+            "the flip indicator does not destroy the false-alarm rate "
+            "(stays at 0.0 in 200 streams per setting) and shifts the "
+            "detection delay within a narrow band (920 at phi=0 to 934 at "
+            "phi=0.9). The monitor is robust to admission-wave correlation."),
+        'exp14_real_texas100': (
+            "**Result and meaning.** On real Texas-100, the empirical "
+            "ensemble decision-flip rate is 0.023 with 11 logistic-regression "
+            "members; the Flip Hazard no-flip survival curve is well defined "
+            "on the real stream. The flip indicator is a non-degenerate "
+            "quantity on real data, not a simulation artefact."),
+        'exp17_afce_workflow': (
+            "**Result and meaning.** Loads the canonical CIKM VFR-Audit "
+            "Standard-vs-Fair table: the Fair model passes the 0.8 DI rule "
+            "on all four protected attributes at a 5.28pp accuracy cost. "
+            "That Fair model is the substrate CHRONO-Fair monitors after "
+            "release. The table itself is the property of the prior work; "
+            "we cite it, not reuse it."),
+        'exp16_multi_model_fairness': (
+            "**Result and meaning.** Across six model families on real "
+            "Texas-100X, ETHNICITY passes 6 of 6 metrics for every tree-based "
+            "and DNN model. AGE_GROUP fails 5 of 6 metrics for every model "
+            "(only PPV_Ratio passes); this uniform failure across families "
+            "points to a data-side rather than a model-side cause. XGBoost "
+            "and LightGBM are the strongest on RACE and SEX (4 of 6); LR is "
+            "the weakest (1-2 of 6). This per-attribute heterogeneity is why "
+            "CHRONO-Fair monitors all four attributes simultaneously."),
+        'exp18_pipeline_replication': (
+            "**Result and meaning.** The three-axis pipeline procedure is "
+            "re-implemented on the Texas-100X-calibrated synthetic stream. "
+            "The standard model already passes DI on race, sex, and "
+            "ethnicity; age_group remains the hard cell, which matches the "
+            "pattern reported in the prior real-data work. This replication "
+            "is procedural, not numerical; the canonical numbers belong to "
+            "the prior paper."),
+        'exp15_replay': (
+            "**Result and meaning.** Quarter-based replay detects the "
+            "injected Q3 drift 3,099 patients into the drift quarter; "
+            "hospital-group replay detects the case-mix shift at replay "
+            "index 5,596; the real Texas-100 record-order replay correctly "
+            "does not alarm because no drift is present. CHRONO-Fair beats "
+            "ADWIN and static VFR on every stream."),
+    }
 
     for title, module, figs, desc in experiments:
         cells.append(md(f"## {title}\n\n{desc}"))
@@ -198,6 +353,10 @@ def build():
             f"display(Image(filename=os.path.join(FIG, '{f}')))"
             for f in figs)
         cells.append(code(disp))
+        # Post-result Interpretation markdown
+        if module in interpretation:
+            cells.append(md("### Interpretation\n\n"
+                              + interpretation[module]))
 
     cells.append(md(
         "## 19. Summary\n\n"

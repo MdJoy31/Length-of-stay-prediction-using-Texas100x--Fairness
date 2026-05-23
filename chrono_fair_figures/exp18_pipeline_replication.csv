@@ -1,0 +1,5 @@
+attribute,Std_DI,Fair_DI,Delta_DI,Std_Acc,Fair_Acc,Delta_Acc_pp,Std_passes_0.8,Fair_passes_0.8
+race,0.9475,0.9475,0.0,0.8376,0.8376,0.0,True,True
+sex,0.995,0.995,0.0,0.8376,0.8376,0.0,True,True
+ethnicity,0.9832,0.9832,0.0,0.8376,0.8376,0.0,True,True
+age_group,0.4973,0.5187,0.0214,0.8376,0.7146,-12.31,False,False

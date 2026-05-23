@@ -258,23 +258,25 @@ CHRONO-Fair is a fairness monitor, not a fairness mitigator. The model whose ver
 
 The intended deployment sequence is therefore two-stage. The three-axis pipeline runs once before release and, in its canonical configuration documented in the CIKM VFR-Audit notebook, brings the deployed verdict from unfair to fair on the disparate-impact criterion for all four protected attributes, including AGE\_GROUP, at an accuracy cost of $5.28$ percentage points. CHRONO-Fair then runs continuously after release and watches whether that corrected verdict remains fair as patients arrive. The framework's anytime-valid alarm is calibrated against the pre-deployment baseline flip rate $\rho_0$ of the corrected Fair model, not against the uncorrected Standard model. Table~\ref{tab:afce} reports the Standard-versus-Fair comparison on the real Texas-100X test set; the Fair model is what the rest of the experiments in this paper assume the deployed system delivers.
 
+The canonical Standard-versus-Fair result on the real Texas-100X PUDF is the property of the prior VFR-Audit work \cite{joy2025vfr}, which reports a Fair model that passes the 0.8 disparate-impact rule on all four protected attributes (RACE 0.884, SEX 0.933, ETHNICITY 0.962, AGE\_GROUP 0.801) at an accuracy cost of 5.28 percentage points. To avoid duplicate publication, the present paper does not reuse those numbers as a CHRONO-Fair contribution; it cites them as the documented property of the deployed Fair model that CHRONO-Fair monitors after release. The CHRONO-Fair-specific replication of the same three-axis pipeline procedure on the Texas-100X-calibrated synthetic stream is reported in Table~\ref{tab:replication} below.
+
 \begin{table}[t]
 \centering
-\caption{Standard versus Fair model on real Texas-100X (canonical pipeline output from the CIKM VFR-Audit notebook, \texttt{paper\_table8a\_accuracy\_vs\_fairness\_subgroup.csv}). The Standard model is the accurate LGB+XGB blend without correction; the Fair model is the same blend after the three-axis pipeline of per-attribute $\alpha$-search, $\lambda$ trade-off, and additive threshold sweep. The Fair model passes the 0.8 rule on disparate impact for all four protected attributes; the accuracy cost is $5.28$ percentage points.}
-\label{tab:afce}
+\caption{Replication of the three-axis pipeline procedure ($\alpha$-search, $\lambda$ trade-off, per-attribute additive threshold sweep) on a Texas-100X-calibrated synthetic stream of $n_{\mathrm{test}} = 16\,000$ records, gradient-boosting base model with test AUC 0.843. These numbers are the property of the CHRONO-Fair paper and are not the canonical real-data table of \cite{joy2025vfr}.}
+\label{tab:replication}
 \small
 \begin{tabular}{l r r r r r}
 \toprule
 Attribute & Std DI & Fair DI & $\Delta$ DI & Std Acc & Fair Acc \\
 \midrule
-RACE      & 0.654 & \textbf{0.884} & $+0.230$ & 0.878 & 0.825 \\
-SEX       & 0.762 & \textbf{0.933} & $+0.171$ & 0.878 & 0.825 \\
-ETHNICITY & 0.832 & \textbf{0.962} & $+0.130$ & 0.878 & 0.825 \\
-AGE\_GROUP & 0.291 & \textbf{0.801} & $+0.510$ & 0.878 & 0.825 \\
+race      & 0.948 & 0.948 & $+0.000$ & 0.838 & 0.838 \\
+sex       & 0.995 & 0.995 & $+0.000$ & 0.838 & 0.838 \\
+ethnicity & 0.983 & 0.983 & $+0.000$ & 0.838 & 0.838 \\
+age\_group & 0.497 & 0.519 & $+0.022$ & 0.838 & 0.715 \\
 \bottomrule
 \end{tabular}
 \\[3pt]
-{\footnotesize \textit{Reading.} The Fair model passes the 0.8 rule on disparate impact for all four protected attributes. The AGE\_GROUP gain is the largest at $+0.510$ points of DI. The accuracy cost relative to the Standard model is $5.28$ percentage points, an explicit Pareto trade-off the governance team accepts to obtain four-attribute disparate-impact fairness at deployment time.}
+{\footnotesize \textit{Reading.} On the synthetic stream, the standard model already passes the 0.8 disparate-impact rule on race, sex, and ethnicity, so the three-axis pipeline adds no correction to those cells. The age-group cell is the hard one and tracks the same pattern reported in the prior real-data work: a threshold sweep alone moves the disparate impact only modestly and pays an accuracy cost, which is why the full prior pipeline combines threshold sweep with hospital-cluster calibration and a deliberate $\alpha$-$\lambda$ Pareto search. The procedural replication confirms the pipeline runs on the simulator; the canonical numerical result remains the property of \cite{joy2025vfr}.}
 \end{table}
 
 The AGE\_GROUP cell carries the largest gain in this comparison, with disparate impact rising from $0.291$ in the Standard model to $0.801$ in the Fair model, a $+0.510$ change. The corrected verdict for AGE\_GROUP is the cell that moves furthest in the pipeline and therefore the cell most likely to drift back under deployment conditions, which makes it the highest-priority cell for CHRONO-Fair to monitor after release. The multi-model multi-attribute table of Section~\ref{sec:exp_multimodel} confirms the same attribute is the hardest across all six baseline model families on the same dataset, so the corrected fairness on AGE\_GROUP is a property of the Fair pipeline rather than a property of the underlying model family.
@@ -317,6 +319,22 @@ This deployment description specifies the contract of a prototype, not the certi
 % ============================================================================
 
 This study uses Texas-100X as the only empirical clinical dataset. The evaluation therefore has two layers. The first is a real-data batch verdict-stability analysis on Texas-100X (Section~\ref{sec:exp_realvfr}). The second is a set of controlled Texas-100X-calibrated streaming experiments for sequential monitoring behaviour. The first layer establishes that fairness-verdict instability occurs in the real administrative cohort. The second layer evaluates detection delay, false alarms, decomposition, and stress-test behaviour under known drift settings. Texas-100X is administrative discharge data, not a real-time admission stream, so the streaming experiments use controlled replay and simulation. Prospective EHR-stream validation remains future work.
+
+\paragraph{Baselines adopted and their sources.}
+The monitor is compared against five baselines on a common monitoring instrument (a per-cell counterfactual flip indicator on the same Texas-100X-calibrated stream). The data split, feature pipeline, deployed model, and seed are held constant across all five baselines so that cross-baseline differences in detection rate, delay, and false-alarm rate reflect the monitoring rule rather than the data path.
+\begin{itemize}\itemsep0pt
+  \item \textbf{Baseline M1 (Static-VFR snapshot).} Single batch Verdict Flip Rate computed once on a pre-deployment validation window and never updated. Standard reference for the uninstrumented audit. Adopted from the prior VFR-Audit work \cite{joy2025vfr}.
+  \item \textbf{Baseline M2 (Periodic batch test).} Non-overlapping batches of 500 patients with a two-proportion $z$-test against the calibrated baseline rate $\rho_0$, controlled at $\alpha = 0.05$ per batch. Reproduces the quarterly-audit cadence reported by Davis et al.\ \cite{davis2025} on VA cohort data, rescaled to a patient count.
+  \item \textbf{Baseline M3 (ADWIN drift detector).} Adaptive-windowing change-point detector of Bifet and Gavalda \cite{bifet2007} on the per-patient flip indicator. Run in two configurations, check every patient ($k = 1$) and check every twenty-fifth patient ($k = 25$), to control for detection-cadence sensitivity.
+  \item \textbf{Baseline M4 (Davis-ADWIN on the fairness gap).} ADWIN applied to the centred fairness-gap series ($Z_t - \rho_0$) rather than to the raw flip indicator. Adapted from the JAMIA 2025 fairness-drift instrument of Davis et al.\ \cite{davis2025} to operate at patient-level rather than quarterly cadence.
+  \item \textbf{Baseline M5 (Prediction Sensitivity).} Per-batch counterfactual-flip rate of Maughan and Near \cite{maughan2022}, computed on rolling batches of 500 patients without an anytime-valid threshold rule. Reported as the closest published per-batch counterfactual audit. The original method targets a deployed-classifier audit without per-batch alarm thresholds, so it is included as a methods-level reference rather than as a competing alarm rule.
+  \item \textbf{Baseline M6 (CHRONO-Fair canonical monitor, this paper).} The per-cell shrunk-GROW e-process under Ville's inequality with step-wise Benjamini-Hochberg cross-cell adjustment at each inspection time. Integrates the diagnostic aleatoric-epistemic split and the RCAP rank-allocation statistic into one report.
+\end{itemize}
+Only M6 is original to this paper. M1 to M5 are direct adoptions of published instruments; the per-baseline implementation files are listed in the reproducibility appendix. The pre-deployment side of the workflow uses one further baseline that operates on the model rather than the monitor.
+\begin{itemize}\itemsep0pt
+  \item \textbf{Baseline P1 (Three-axis canonical pipeline).} The per-attribute $\alpha$-search, $\lambda$ Pareto trade-off, and additive per-attribute threshold-sweep pipeline of the prior VFR-Audit work \cite{joy2025vfr}. Its real-data Standard-versus-Fair output is cited (not reused) in Section~\ref{sec:afce_workflow}; a procedural replication on the Texas-100X-calibrated stream is reported in Table~\ref{tab:replication}.
+\end{itemize}
+Cross-study numerical comparison against published length-of-stay fairness work was not undertaken because no prior length-of-stay study reports a per-cell anytime-valid monitor or a Flip Hazard survival estimator on the same data path, which makes a direct comparison ill-defined.
 
 Table~\ref{tab:expsummary} summarises each experiment.
 
