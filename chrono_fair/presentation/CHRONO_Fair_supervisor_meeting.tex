@@ -61,11 +61,10 @@
   leftrule=4pt, arc=2pt, top=4pt, bottom=4pt, left=8pt, right=8pt,
   fontupper=\small, before skip=4pt, after skip=4pt, #1}
 
-% Custom title chip
+% Custom title chip (uses colorbox; no TikZ -> not fragile inside frame titles)
 \newcommand{\chip}[2][amber]{%
-  \tikz[baseline=(c.base)]\node[fill=#1, text=ink, rounded corners=3pt,
-                                  inner xsep=6pt, inner ysep=3pt,
-                                  font=\bfseries\small] (c) {#2};}
+  \begingroup\setlength{\fboxsep}{4pt}%
+  \colorbox{#1}{\color{ink}\bfseries\small #2}\endgroup}
 
 \title{CHRONO-Fair}
 \subtitle{Time-Resolved Counterfactual Fairness Monitoring \\ for Clinical Machine Learning}
@@ -260,28 +259,22 @@ VFR-Audit (our prior)~[17]   & Static & Verdict Flip Rate scalar         & No ti
 % ==========================================================
 % Slide 9: Mathematics attribution
 % ==========================================================
-\begin{frame}{Mathematics: \hfill \chip[soft]{what is taken vs what is ours}}
-\scriptsize
-\setlength{\arrayrulewidth}{0.6pt}\arrayrulecolor{rule}
-\begin{tabular}{>{\bfseries}p{4.4cm} p{8.3cm}}
-\toprule
-\rowcolor{ink}
-{\color{paper}\textbf{Equation / construct}} & {\color{paper}\textbf{Attribution}} \\
-\midrule
-Flip indicator $Z_i$ & \color{emerald}\textbf{Our definition}; same idea as prediction sensitivity~[22] \\
-\rowcolor{soft}Flip Hazard $\lambda_a(t)$ & Standard hazard form (Kaplan-Meier~[24]; Nelson-Aalen 1972); \color{emerald}our naming and application \\
-RMFT integral & Standard Restricted Mean Survival Time; adopted \\
-\rowcolor{soft}e-process wealth $E_t$ & Waudby-Smith and Ramdas~[29]; Ramdas et al.~[20]; adopted \\
-Shrunk GROW bet $\lambda_s$ & \color{emerald}\textbf{Our finite-sample shrinkage} of the GROW rule of~[29] \\
-\rowcolor{soft}Ville's inequality (Thm.\ 1) & Ville 1939~[18]; standard application \\
-Ensemble flip probability $\bar p^{\mathrm{flip}}$ & \color{emerald}\textbf{Our definition} \\
-\rowcolor{soft}Aleatoric/epistemic entropy split & Depeweg et al.~[30]; Hullermeier and Waegeman~[21]; adopted \\
-RCAP rank positions $u_i$ & Standard nonparametric group-conditional CDF; \color{emerald}our naming \\
-\rowcolor{soft}RCAP $= W_1(\ldots)$ & Wasserstein-1 from optimal transport; adopted \\
-\bottomrule
-\end{tabular}
-\vspace{4pt}\\
-\textbf{\color{ink}The novelty is not a new survival estimator or a new e-process. The contribution is the coordinated integration of these instruments around the thresholded fairness verdict.}
+\begin{frame}{What is new here}
+\vspace{-4pt}
+\begin{teabox}[colframe=emerald]
+\textbf{\color{emerald}\faIcon{lightbulb}\enspace Five things are new}, even though each statistical instrument is published elsewhere.
+\end{teabox}
+\vspace{-2pt}
+\footnotesize
+\begin{enumerate}\setlength\itemsep{1pt}
+\item \textbf{New monitored object.} The \emph{per-cell counterfactual fairness-verdict flip} as a time-indexed stream. Prior anytime-valid work~[19, 20, 29] monitors aggregate risk. Prior fairness work~[13, 14, 15, 22] reports static metrics. Verdict flips per cell over time is not a monitored quantity in either literature.
+\item \textbf{Coordinated framework.} Flip Hazard ($\rightarrow$ \emph{when}); per-cell e-process ($\rightarrow$ \emph{alarm}); aleatoric/epistemic decomposition ($\rightarrow$ \emph{triage}); RCAP ($\rightarrow$ \emph{regression}). All four feed one indicator and one Inspector report.
+\item \textbf{Shrunk-GROW bet $\lambda_s$ + warm-up.} Finite-sample stabilisation of the GROW rule of~[29] for the small-flip-rate regime typical of clinical fairness.
+\item \textbf{RCAP statistic.} $W_1$ is textbook~[23]; applying it to counterfactual rank-position distributions of an LOS-regression output is, to our knowledge, new.
+\item \textbf{Anchor + controlled-replay evidence.} Real Texas-100X verdict instability at scale; then characterised under known drift.
+\end{enumerate}
+\vspace{-2pt}
+{\scriptsize\color{muted}\itshape Honest attribution: hazard form~[24]; RMST; e-process wealth~[29]; Ville's inequality~[18]; aleatoric/epistemic split~[21, 30]; Wasserstein-1~[23]; step-wise BH~[26]. The contribution is the coordinated application, not the invention of new estimators.}
 \end{frame}
 
 % ==========================================================
@@ -348,13 +341,13 @@ Static VFR                        & 0 / 50 & \textendash \\
 \begin{frame}{Plan: how the gap will actually be closed}
 \small
 \begin{itemize}\setlength\itemsep{4pt}
-\item[\chip[amber]{Phase 1}] \textbf{Controlled-validation evidence.} Real Texas-100X batch + Texas-100X-calibrated streaming/replay + robustness stress tests.\\
+\item[{\chip[amber]{Phase 1}}] \textbf{Controlled-validation evidence.} Real Texas-100X batch + Texas-100X-calibrated streaming/replay + robustness stress tests.\\
   \textcolor{muted}{\itshape Status: drafted, in revision for Q1 submission.}
-\item[\chip[amber]{Phase 2}] \textbf{Methodological strengthening.} Time-uniform online FDR~[25, 26]; SCM counterfactual sensitivity~[27, 28].\\
+\item[{\chip[amber]{Phase 2}}] \textbf{Methodological strengthening.} Time-uniform online FDR~[25, 26]; SCM counterfactual sensitivity~[27, 28].\\
   \textcolor{muted}{\itshape Status: planned for next revision.}
-\item[\chip[amber]{Phase 3}] \textbf{Prospective evaluation.} Site-partnered EHR-stream validation; governance-user evaluation.\\
+\item[{\chip[amber]{Phase 3}}] \textbf{Prospective evaluation.} Site-partnered EHR-stream validation; governance-user evaluation.\\
   \textcolor{muted}{\itshape Status: scoping, partner search.}
-\item[\chip[amber]{Phase 4}] \textbf{Artifact release.} Anonymised proof-of-concept prototype + configs + seeds + scripts.\\
+\item[{\chip[amber]{Phase 4}}] \textbf{Artifact release.} Anonymised proof-of-concept prototype + configs + seeds + scripts.\\
   \textcolor{muted}{\itshape Status: scheduled for camera-ready.}
 \end{itemize}
 \end{frame}
