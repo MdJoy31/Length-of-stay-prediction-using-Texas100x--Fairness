@@ -6,7 +6,7 @@ A time-resolved, anytime-valid, intersectionally-decomposed, automatically-inspe
 
 1. **Time resolution** — `flip_hazard.py`: Kaplan–Meier / Nelson–Aalen / log-rank / RMFT
 2. **Anytime-valid statistical control** — `e_process.py`: shrunk-GROW e-process + intersectional step-wise FDR
-3. **Root-cause attribution** — `decomposition.py`: aleatoric vs epistemic split of flip mass
+3. **Diagnostic attribution** — `decomposition.py`: aleatoric vs epistemic triage split of flip mass (triage signal, not causal proof)
 4. **Regression coverage** — `rcap.py`: Wasserstein-1 counterfactual rank shift (LOS)
 
 Plus:
@@ -81,6 +81,38 @@ warm-up, drift onset, stream length). A sample input schema is in
 
 Research prototype. Not a medical device. Streaming examples are controlled
 replay or simulation unless connected to a validated deployment stream.
+
+## Live monitoring and end-to-end verification
+
+Appending rows to a prediction CSV (by hand or with a script) updates the
+per-cell scores and alarms incrementally. Two tools demonstrate this.
+
+**One-shot end-to-end check** (trains a model, generates factual and
+counterfactual predictions, appends rows in batches, confirms the scores
+move and an alarm fires, smoke-tests the dashboard):
+
+```bash
+python -m chrono_fair.verify_end_to_end
+```
+
+**Two-process live demo.** Run a producer that appends rows over time in
+one terminal and a monitor that tails the same CSV in another. The monitor
+prints the per-cell flip rate, e-value, and alarm as soon as new rows land.
+
+```bash
+# Terminal A: append a 200-row batch every 2 seconds, drift after row 3000
+python -m chrono_fair.live_demo produce --csv /tmp/feed.csv \
+    --interval 2 --batch 200 --drift-after 3000
+
+# Terminal B: tail the CSV and print live scores
+python -m chrono_fair.live_demo monitor --csv /tmp/feed.csv \
+    --attr race --rho0 0.05 --alpha 0.05
+```
+
+You can also append rows to `/tmp/feed.csv` with any tool; the monitor
+picks up whatever lands in the file on its next poll. The ingest contract
+and adapters (`CSVTailAdapter`, `QueueAdapter`, `MonitorRunner`) are in
+`ingest.py`.
 
 ## Tests
 
