@@ -33,9 +33,69 @@ class InspectionReport:
     cause: str
     suggested_action: str
     regulatory_mapping: Dict[str, str]
+    altai_mapping: Dict[str, str]
 
     def to_json(self) -> str:
         return json.dumps(asdict(self), indent=2, default=str)
+
+
+# Z-Inspection / ALTAI structural alignment.
+# Each cause label is mapped to the subset of ALTAI's seven Trustworthy AI
+# requirements (European Commission HLEG, 2019) that the recommended action
+# touches. This is structural alignment in the style of Z-Inspection
+# (Zicari et al., IEEE Transactions on Technology and Society 2021); it does
+# NOT implement the full Z-Inspection protocol (no stakeholder set-up phase,
+# no ethical-tension catalogue). The mapping is for governance review only.
+_ALTAI_REQUIREMENTS = {
+    'R1': 'Human agency and oversight',
+    'R2': 'Technical robustness and safety',
+    'R3': 'Privacy and data governance',
+    'R4': 'Transparency',
+    'R5': 'Diversity, non-discrimination and fairness',
+    'R6': 'Societal and environmental wellbeing',
+    'R7': 'Accountability',
+}
+
+_ALTAI_MAP = {
+    'epistemic': {
+        'R2 (Technical robustness and safety)':
+            'Retrain with augmented stratum sample to reduce model '
+            'uncertainty on the under-represented cell.',
+        'R5 (Diversity, non-discrimination and fairness)':
+            'Address under-representation of the alarmed stratum in the '
+            'training distribution.',
+        'R7 (Accountability)':
+            'Record the trigger, the additional-sample budget, and the '
+            'retrain decision in the append-only audit log.',
+    },
+    'aleatoric': {
+        'R1 (Human agency and oversight)':
+            'Escalate to clinical-governance review before further model '
+            'influence on the alarmed stratum.',
+        'R3 (Privacy and data governance)':
+            'Audit the label-generation and feature-extraction pipeline for '
+            'systematic bias on this stratum.',
+        'R5 (Diversity, non-discrimination and fairness)':
+            'Address label-encoded or feature-encoded historical bias; '
+            'retraining alone will not close the gap.',
+        'R7 (Accountability)':
+            'Record the pause-and-audit decision in the append-only audit '
+            'log with the responsible governance owner.',
+    },
+    'mixed': {
+        'R1 (Human agency and oversight)':
+            'Escalate for joint data-pipeline and model-uncertainty review.',
+        'R2 (Technical robustness and safety)':
+            'Joint mitigation: stratum-reweighted retrain + pipeline audit.',
+        'R3 (Privacy and data governance)':
+            'Audit the data pipeline for both representativeness and bias.',
+        'R5 (Diversity, non-discrimination and fairness)':
+            'Address both under-representation and historical encoding bias.',
+        'R7 (Accountability)':
+            'Record the joint mitigation plan and ownership in the audit log.',
+    },
+    'none': {},
+}
 
 
 _REG_MAP = {
@@ -88,6 +148,7 @@ def build_report(
         cause=cause,
         suggested_action=_action_for(cause, decomposition_row),
         regulatory_mapping=_REG_MAP.get(cause, {}),
+        altai_mapping=_ALTAI_MAP.get(cause, {}),
     )
 
 
